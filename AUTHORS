@@ -1,0 +1,13 @@
+If you are running a pair programming or mob programming session, add a
+line to the end of your commit message to honor, credit and thank your
+partners correctly in GitHub.
+
+Use this file to speedup the procedure, copying and pasting directly the adresses:
+
+Co-authored-by: Néstor Salceda <nestor.salceda@sysdig.com>
+Co-authored-by: Fede Barcelona <fede.barcelona@sysdig.com>
+Co-authored-by: Miguel Angel Baztán <miguel.baztan@sysdig.com>
+Co-authored-by: Rubén Eguiluz <ruben.eguiluz@sysdig.com>
+Co-authored-by: Iru <irune.prado@sysdig.com>
+Co-authored-by: Hayk Kocharyan <hayk.kocharyan@sysdig.com>
+Co-authored-by: David González Diez <david.gonzalez@sysdig.com>
