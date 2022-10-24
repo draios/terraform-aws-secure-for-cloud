@@ -15,29 +15,12 @@ module "ssm" {
   tags                    = var.tags
 }
 
-
-#
-# scanning
-#
-
-module "codebuild" {
-  count = var.deploy_image_scanning_ecr || var.deploy_image_scanning_ecs ? 1 : 0
-
-  source                       = "../../modules/infrastructure/codebuild"
-  name                         = "${var.name}-codebuild"
-  secure_api_token_secret_name = module.ssm.secure_api_token_secret_name
-
-  tags = var.tags
-  # note. this is required to avoid racing conditions
-  depends_on = [module.ssm]
-}
-
-
 #
 # threat-detection
 #
 
 module "cloud_connector" {
+  count = var.deploy_cloud_connector ? 1 : 0
   source = "../../modules/services/cloud-connector-ecs"
   name   = "${var.name}-cloudconnector"
 
@@ -49,8 +32,8 @@ module "cloud_connector" {
 
   is_organizational = false
 
-  build_project_arn  = length(module.codebuild) == 1 ? module.codebuild[0].project_arn : "na"
-  build_project_name = length(module.codebuild) == 1 ? module.codebuild[0].project_name : "na"
+  build_project_arn  = "na"
+  build_project_name = "na"
 
   existing_cloudtrail_config = {
     cloudtrail_sns_arn = local.cloudtrail_sns_arn

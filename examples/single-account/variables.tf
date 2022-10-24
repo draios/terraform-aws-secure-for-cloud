@@ -111,7 +111,15 @@ variable "benchmark_regions" {
   description = "List of regions in which to run the benchmark. If empty, the task will contain all aws regions by default."
   default     = []
 }
+#
+# cloud connector configuration
+#
 
+variable "deploy_cloud_connector" {
+  type = bool
+  description = "Whether to deploy or not cloud connector"
+  default = true
+}
 
 #
 # general

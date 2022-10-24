@@ -79,29 +79,6 @@ variable "existing_cloudtrail_config" {
 
 
 #
-# scanning configuration
-#
-
-variable "deploy_beta_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the beta image scanning on ECR pushed images (experimental and unsupported)"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECR pushed images"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecs" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECS running images"
-  default     = false
-}
-
-
-#
 # benchmark configuration
 #
 
@@ -166,7 +143,15 @@ variable "ecs_task_memory" {
   default     = "512"
 }
 
+#
+# cloud connector configuration
+#
 
+variable "deploy_cloud_connector" {
+  type = bool
+  description = "Whether to deploy or not cloud connector"
+  default = true
+}
 
 #
 # general

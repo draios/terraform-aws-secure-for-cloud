@@ -38,7 +38,7 @@ module "codebuild" {
 #
 
 module "deploy_cloud_connector" {
-  count = var.deploy_image_scanning_ecr ? 1 : 0
+  count = var.deploy_cloud_connector ? 1 : 0
   source = "../../modules/services/cloud-connector-ecs"
   name   = "${var.name}-cloudconnector"
 
