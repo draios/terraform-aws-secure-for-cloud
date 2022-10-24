@@ -42,31 +42,6 @@ locals {
   )
 }
 
-resource "random_integer" "minute" {
-  max = 59
-  min = 0
-}
-
-resource "random_integer" "hour" {
-  max = 23
-  min = 0
-}
-
-resource "sysdig_secure_benchmark_task" "benchmark_task" {
-  name     = "Sysdig Secure for Cloud (AWS) - ${local.benchmark_task_name} - ${var.name}"
-  schedule = "${random_integer.minute.result} ${random_integer.hour.result} * * *"
-  schema   = "aws_foundations_bench-1.3.0"
-  scope    = "${local.accounts_scope_clause}${local.regions_scope_clause}"
-
-  # Creation of a task requires that the Cloud Account already exists in the backend, and has `role_enabled = true`
-  # We only want to create the task once the rust relationship is established, otherwise running the task will fail.
-  depends_on = [
-    sysdig_secure_cloud_account.cloud_account,
-    aws_iam_role_policy_attachment.cloudbench_security_audit, # Depends on cloudbench_role implicitly
-  ]
-}
-
-
 #----------------------------------------------------------
 # If this is not an Organizational deploy, create role/polices directly
 #----------------------------------------------------------

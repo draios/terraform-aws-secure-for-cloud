@@ -37,7 +37,8 @@ module "codebuild" {
 # threat-detection
 #
 
-module "cloud_connector" {
+module "deploy_cloud_connector" {
+  count = var.deploy_image_scanning_ecr ? 1 : 0
   source = "../../modules/services/cloud-connector-ecs"
   name   = "${var.name}-cloudconnector"
 

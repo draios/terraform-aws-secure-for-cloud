@@ -112,6 +112,16 @@ variable "benchmark_regions" {
   default     = []
 }
 
+#
+# cloud connector configuration
+#
+
+variable "deploy_cloud_connector" {
+  type = bool
+  description = "Whether to deploy or not cloud connector"
+  default = true
+}
+
 
 #
 # general
