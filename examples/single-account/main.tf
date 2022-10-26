@@ -26,10 +26,6 @@ module "cloud_connector" {
 
   secure_api_token_secret_name = module.ssm.secure_api_token_secret_name
 
-  deploy_beta_image_scanning_ecr = var.deploy_beta_image_scanning_ecr
-  deploy_image_scanning_ecr      = var.deploy_image_scanning_ecr
-  deploy_image_scanning_ecs      = var.deploy_image_scanning_ecs
-
   is_organizational = false
 
   build_project_arn  = "na"

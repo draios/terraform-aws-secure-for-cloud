@@ -56,8 +56,8 @@ with Diagram("Sysdig Secure for Cloud\n(organizational)", graph_attr=diagram_att
 
             with Cluster("CFT StackSet Instance"):
                 cft_stack_3 = CloudformationStack("cloudformation-stack")
-                cloud_bench_role_3 = IAMRole("SysdigCloudBench\n(aws:SecurityAudit policy)", **role_attr)
-                cft_stack_3 >> Edge(color=color_creates) >> cloud_bench_role_3
+                cspm_role_3 = IAMRole("SysdigCSPMRole\n(aws:SecurityAudit policy)", **role_attr)
+                cft_stack_3 >> Edge(color=color_creates) >> cspm_role_3
 
 #             management_credentials >> Edge(style="invis") >> secure_for_cloud_role
 
@@ -71,8 +71,8 @@ with Diagram("Sysdig Secure for Cloud\n(organizational)", graph_attr=diagram_att
 
             with Cluster("CFT StackSet Instance"):
                 cft_stack_2 = CloudformationStack("cloudformation-stack")
-                cloud_bench_role_2 = IAMRole("SysdigCloudBench\n(aws:SecurityAudit policy)", **role_attr)
-                cft_stack_2 >> Edge(color=color_creates) >> cloud_bench_role_2
+                cspm_role_2 = IAMRole("SysdigCSPMRole\n(aws:SecurityAudit policy)", **role_attr)
+                cft_stack_2 >> Edge(color=color_creates) >> cspm_role_2
 
             with Cluster("ecs-cluster"):
                 cloud_connector = ElasticContainerServiceService("cloud-connector")
@@ -102,8 +102,8 @@ with Diagram("Sysdig Secure for Cloud\n(organizational)", graph_attr=diagram_att
 
             with Cluster("CFT StackSet Instance"):
                 cft_stack = CloudformationStack("cloudformation-stack")
-                cloud_bench_role = IAMRole("SysdigCloudBench\n(aws:SecurityAudit policy)", **role_attr)
-                cft_stack >> Edge(color=color_creates) >> cloud_bench_role
+                cspm_role = IAMRole("SysdigCSPMRole\n(aws:SecurityAudit policy)", **role_attr)
+                cft_stack >> Edge(color=color_creates) >> cspm_role
 
             org_member_role_1 = IAMRole("OrganizationAccountAccessRole\n(created by AWS for org. \nmember accounts)", **role_attr)
             org_member_role_1 >> Edge(style="invis") >> cft_stack
@@ -118,16 +118,16 @@ with Diagram("Sysdig Secure for Cloud\n(organizational)", graph_attr=diagram_att
 
 
     with Cluster("AWS account (sysdig)"):
-        sds = Custom("Sysdig Secure\n*receives cloud-connector and cloud-build results\n*assumeRole on SysdigCloudBench", "../../resources/diag-sysdig-icon.png")
-        sds_account = General("cloud-bench")
+        sds = Custom("Sysdig Secure\n*receives cloud-connector and cloud-build results\n*assumeRole on SysdigCSPMRole", "../../resources/diag-sysdig-icon.png")
+        sds_account = General("cspm")
         sds - Edge(label="aws_foundations_bench\n schedule on rand rand * * *") >>  sds_account
 
     cloud_connector >> Edge(color=color_sds) >> sds
     codebuild >> Edge(color=color_sds) >>  sds
 
-    sds_account >> Edge(color=color_permission) >> cloud_bench_role
-    sds_account >> Edge(color=color_permission) >> cloud_bench_role_2
-    sds_account >> Edge(color=color_permission) >> cloud_bench_role_3
+    sds_account >> Edge(color=color_permission) >> cspm_role
+    sds_account >> Edge(color=color_permission) >> cspm_role_2
+    sds_account >> Edge(color=color_permission) >> cspm_role_3
 
     # Invisible edges to help with layout
     sns >> Edge(style="invis") >> org_member_role_2

@@ -152,18 +152,18 @@ $ terraform apply
 
 ## Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_cloud_bench_org"></a> [cloud\_bench\_org](#module\_cloud\_bench\_org) | ../../modules/services/cloud-bench | n/a |
-| <a name="module_cloud_bench_single"></a> [cloud\_bench\_single](#module\_cloud\_bench\_single) | ../../modules/services/cloud-bench | n/a |
-| <a name="module_cloud_connector"></a> [cloud\_connector](#module\_cloud\_connector) | ../../modules/services/cloud-connector-ecs | n/a |
-| <a name="module_cloudtrail"></a> [cloudtrail](#module\_cloudtrail) | ../../modules/infrastructure/cloudtrail | n/a |
-| <a name="module_codebuild"></a> [codebuild](#module\_codebuild) | ../../modules/infrastructure/codebuild | n/a |
-| <a name="module_ecs_vpc"></a> [ecs\_vpc](#module\_ecs\_vpc) | ../../modules/infrastructure/ecs-vpc | n/a |
-| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | ../../modules/infrastructure/resource-group | n/a |
-| <a name="module_resource_group_secure_for_cloud_member"></a> [resource\_group\_secure\_for\_cloud\_member](#module\_resource\_group\_secure\_for\_cloud\_member) | ../../modules/infrastructure/resource-group | n/a |
-| <a name="module_secure_for_cloud_role"></a> [secure\_for\_cloud\_role](#module\_secure\_for\_cloud\_role) | ../../modules/infrastructure/permissions/org-role-ecs | n/a |
-| <a name="module_ssm"></a> [ssm](#module\_ssm) | ../../modules/infrastructure/ssm | n/a |
+| Name                                                                                                                                                             | Source                                                | Version |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|---------|
+| <a name="module_cspm_org"></a> [cspm\_org](#module\_cspm\_org)                                                                                                   | ../../modules/services/cspm                           | n/a |
+| <a name="module_cspm_single"></a> [cspm\_single](#module\_cspm\_single)                                                                                          | ../../modules/services/cspm                           | n/a |
+| <a name="module_cloud_connector"></a> [cloud\_connector](#module\_cloud\_connector)                                                                              | ../../modules/services/cloud-connector-ecs            | n/a |
+| <a name="module_cloudtrail"></a> [cloudtrail](#module\_cloudtrail)                                                                                               | ../../modules/infrastructure/cloudtrail               | n/a |
+| <a name="module_codebuild"></a> [codebuild](#module\_codebuild)                                                                                                  | ../../modules/infrastructure/codebuild                | n/a |
+| <a name="module_ecs_vpc"></a> [ecs\_vpc](#module\_ecs\_vpc)                                                                                                      | ../../modules/infrastructure/ecs-vpc                  | n/a |
+| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group)                                                                                 | ../../modules/infrastructure/resource-group           | n/a |
+| <a name="module_resource_group_secure_for_cloud_member"></a> [resource\_group\_secure\_for\_cloud\_member](#module\_resource\_group\_secure\_for\_cloud\_member) | ../../modules/infrastructure/resource-group           | n/a |
+| <a name="module_secure_for_cloud_role"></a> [secure\_for\_cloud\_role](#module\_secure\_for\_cloud\_role)                                                        | ../../modules/infrastructure/permissions/org-role-ecs | n/a |
+| <a name="module_ssm"></a> [ssm](#module\_ssm)                                                                                                                    | ../../modules/infrastructure/ssm                      | n/a |
 
 ## Resources
 

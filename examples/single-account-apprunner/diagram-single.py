@@ -77,18 +77,18 @@ with Diagram("Sysdig Secure for Cloud{}(single-account)".format("\n"), graph_att
 
 
             # bench-role
-            cloud_bench_role = IAMRole("SysdigCloudBench\n(aws:SecurityAudit policy)", **role_attr)
+            cspm_role = IAMRole("SysdigCSPMRole\n(aws:SecurityAudit policy)", **role_attr)
 
         #account_resources >> Edge(color=color_event, style="dashed") >>  cloudtrail
         sns >> Edge(color=color_event, style="dashed") >> sqs
         (cloudtrail_s3 << Edge(color=color_non_important)) -  cloud_connector
 
     with Cluster("AWS account (sysdig)"):
-        sds = Custom("Sysdig Secure\n*receives cloud-connector and cloud-build results\n*assumeRole on SysdigCloudBench", "../../resources/diag-sysdig-icon.png")
-        sds_account = General("cloud-bench")
+        sds = Custom("Sysdig Secure\n*receives cloud-connector and cloud-build results\n*assumeRole on SysdigCSPMRole", "../../resources/diag-sysdig-icon.png")
+        sds_account = General("cspm")
         sds - Edge(label="aws_foundations_bench\n schedule on rand rand * * *") >>  sds_account
 
 
     cloud_connector >> Edge(color=color_sysdig) >> sds
     codebuild >> Edge(color=color_sysdig) >>  sds
-    sds_account >> Edge(color=color_permission, fontcolor=color_permission) >> cloud_bench_role
+    sds_account >> Edge(color=color_permission, fontcolor=color_permission) >> cspm_role

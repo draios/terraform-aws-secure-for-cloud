@@ -66,7 +66,7 @@ data "aws_iam_policy_document" "trust_relationship" {
   }
 }
 
-resource "aws_iam_role" "cloudbench_role" {
+resource "aws_iam_role" "cspm_role" {
   count = var.is_organizational && !var.provision_caller_account ? 0 : 1
 
   name               = var.name
@@ -75,10 +75,10 @@ resource "aws_iam_role" "cloudbench_role" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "cloudbench_security_audit" {
+resource "aws_iam_role_policy_attachment" "cspm_security_audit" {
   count = var.is_organizational && !var.provision_caller_account ? 0 : 1
 
-  role       = aws_iam_role.cloudbench_role[0].id
+  role       = aws_iam_role.cspm_role[0].id
   policy_arn = data.aws_iam_policy.security_audit.arn
 }
 
@@ -102,7 +102,7 @@ resource "aws_cloudformation_stack_set" "stackset" {
 
   template_body = <<TEMPLATE
 Resources:
-  SysdigCloudBench:
+  SysdigCSPMRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: ${var.name}

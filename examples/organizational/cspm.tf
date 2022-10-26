@@ -1,4 +1,4 @@
-# note; had to split cloud_bench module due to not being able to use dynamics on provider
+# note; had to split cspm module due to not being able to use dynamics on provider
 # https://github.com/hashicorp/terraform/issues/25244
 
 module "cspm_org" {
@@ -15,7 +15,7 @@ module "cspm_org" {
 }
 
 module "cspm_single" {
-  count = var.deploy_benchmark && !var.deploy_benchmark_organizational ? 1 : 0
+  count1 = var.deploy_benchmark && !var.deploy_benchmark_organizational ? 1 : 0
   providers = {
     aws = aws.member
   }

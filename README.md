@@ -44,7 +44,7 @@ More info in [`./examples/organizational`](https://github.com/draios/terraform-a
 
 If no [examples](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/examples) fit your use-case, be free to call desired modules directly.
 
-In this use-case we will ONLY deploy cloud-bench, into the target account, calling modules directly
+In this use-case we will ONLY deploy cspm, into the target account, calling modules directly
 
 ```terraform
 terraform {
