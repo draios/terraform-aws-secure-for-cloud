@@ -16,10 +16,6 @@ locals {
   caller_account        = data.aws_caller_identity.me.account_id
   member_account_ids    = var.is_organizational ? [for a in data.aws_organizations_organization.org[0].non_master_accounts : a.id] : []
   account_ids_to_deploy = var.is_organizational && var.provision_caller_account ? concat(local.member_account_ids, [data.aws_organizations_organization.org[0].master_account_id]) : local.member_account_ids
-
-  benchmark_task_name   = var.is_organizational ? "Organization: ${data.aws_organizations_organization.org[0].id}" : local.caller_account
-  accounts_scope_clause = var.is_organizational ? "aws.accountId in (\"${join("\", \"", local.account_ids_to_deploy)}\")" : "aws.accountId = \"${local.caller_account}\""
-  regions_scope_clause  = length(var.benchmark_regions) == 0 ? "" : " and aws.region in (\"${join("\", \"", var.benchmark_regions)}\")"
 }
 
 #----------------------------------------------------------

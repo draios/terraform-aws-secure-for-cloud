@@ -74,30 +74,7 @@ variable "ecs_task_memory" {
 }
 
 #
-# scanning configuration
-#
-
-variable "deploy_beta_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the beta image scanning on ECR pushed images (experimental and unsupported)"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECR pushed images"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecs" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECS running images"
-  default     = false
-}
-
-
-#
-# benchmark configuration
+# cspm configuration
 #
 
 variable "deploy_benchmark" {
@@ -106,11 +83,6 @@ variable "deploy_benchmark" {
   default     = true
 }
 
-variable "benchmark_regions" {
-  type        = list(string)
-  description = "List of regions in which to run the benchmark. If empty, the task will contain all aws regions by default."
-  default     = []
-}
 #
 # cloud connector configuration
 #
