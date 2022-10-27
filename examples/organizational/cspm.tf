@@ -15,7 +15,7 @@ module "cspm_org" {
 }
 
 module "cspm_single" {
-  count1 = var.deploy_benchmark && !var.deploy_benchmark_organizational ? 1 : 0
+  count = var.deploy_benchmark && !var.deploy_benchmark_organizational ? 1 : 0
   providers = {
     aws = aws.member
   }
