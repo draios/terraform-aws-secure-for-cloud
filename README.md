@@ -64,9 +64,11 @@ provider "sysdig" {
   sysdig_secure_api_token  = "00000000-1111-2222-3333-444444444444"
 }
 
-module "cspm" {
-  source      = "draios/secure-for-cloud/aws//modules/cspm"
+module "secure-for-cloud_example_single-account" {  
+  source = "sysdiglabs/secure-for-cloud/aws//examples/single-account" 
+  deploy_cloud_connector = false 
 }
+
 
 ```
 See [inputs summary](#inputs) or main [module `variables.tf`](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/variables.tf) file for more optional configuration.
