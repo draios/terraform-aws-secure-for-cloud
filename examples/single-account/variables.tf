@@ -77,7 +77,7 @@ variable "ecs_task_memory" {
 # cspm configuration
 #
 
-variable "deploy_benchmark" {
+variable "deploy_cspm" {
   type        = bool
   description = "Whether to deploy or not the cloud benchmarking"
   default     = true

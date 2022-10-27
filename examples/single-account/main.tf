@@ -16,6 +16,18 @@ module "ssm" {
 }
 
 #
+# cspm
+#
+
+module "cspm-single-account" {
+  source = "../../modules/services/cspm"
+  count  = var.deploy_cspm ? 1 : 0
+
+  name              = "${var.name}-cspm"
+  tags = var.tags
+}
+
+#
 # threat-detection
 #
 
@@ -25,6 +37,8 @@ module "cloud_connector" {
   name   = "${var.name}-cloudconnector"
 
   secure_api_token_secret_name = module.ssm.secure_api_token_secret_name
+  // maybe need to add ecs scanning
+  // we are removing ecr scanning from here talk to evan
 
   is_organizational = false
 

@@ -14,7 +14,7 @@ module "resource_group" {
 }
 
 module "resource_group_secure_for_cloud_member" {
-  count1 = local.deploy_same_account ? 0 : 1
+  count = local.deploy_same_account ? 0 : 1
   providers = {
     aws = aws.member
   }
