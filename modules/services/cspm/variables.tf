@@ -5,7 +5,7 @@
 variable "name" {
   type        = string
   description = "The name of the IAM Role that will be created."
-  default     = "sfc-cloudbench"
+  default     = "sfc-cspm"
 }
 
 variable "is_organizational" {
