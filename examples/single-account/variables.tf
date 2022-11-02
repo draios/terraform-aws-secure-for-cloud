@@ -3,7 +3,20 @@
 #---------------------------------
 # optionals - with defaults
 #---------------------------------
+variable "sysdig_secure_api_token" {
+  description = "Api token for deployment"
+  default     = ""
+}
 
+variable "sysdig_secure_endpoint" {
+  description = "Backend url where results are sent"
+  default     = ""
+}
+
+variable "region" {
+  description = "AWS region where resources are deployed"
+  default     = ""
+}
 
 #
 # cloudtrail configuration
@@ -76,11 +89,10 @@ variable "ecs_task_memory" {
 #
 # cspm configuration
 #
-
-variable "deploy_cspm" {
-  type        = bool
-  description = "Whether to deploy or not the cloud benchmarking"
-  default     = true
+variable "role_name" {
+  type = string
+  description = "Role name for cspm"
+  default = "sfc-cspm-role"
 }
 
 #
@@ -90,7 +102,7 @@ variable "deploy_cspm" {
 variable "deploy_cloud_connector" {
   type = bool
   description = "Whether to deploy or not cloud connector"
-  default = true
+  default = false
 }
 
 #

@@ -28,7 +28,7 @@ resource "sysdig_secure_cloud_account" "cloud_account" {
   account_id     = each.value
   cloud_provider = "aws"
   role_enabled   = "true"
-  role_name      = var.name
+  role_name      = var.role_name
 }
 
 locals {
@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "trust_relationship" {
 resource "aws_iam_role" "cspm_role" {
   count = var.is_organizational && !var.provision_caller_account ? 0 : 1
 
-  name               = var.name
+  name               = var.role_name
   assume_role_policy = data.aws_iam_policy_document.trust_relationship.json
   tags               = var.tags
 }
@@ -86,7 +86,7 @@ resource "aws_iam_role_policy_attachment" "cspm_security_audit" {
 resource "aws_cloudformation_stack_set" "stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name             = var.name
+  name             = var.role_name
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
@@ -101,7 +101,7 @@ Resources:
   SysdigCSPMRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ${var.name}
+      RoleName: ${var.role_name}
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
