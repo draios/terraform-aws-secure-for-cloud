@@ -87,25 +87,6 @@ variable "ecs_task_memory" {
 }
 
 #
-# cspm configuration
-#
-variable "role_name" {
-  type = string
-  description = "Role name for cspm"
-  default = "sfc-cspm-role"
-}
-
-#
-# cloud connector configuration
-#
-
-variable "deploy_cloud_connector" {
-  type = bool
-  description = "Whether to deploy or not cloud connector"
-  default = false
-}
-
-#
 # general
 #
 

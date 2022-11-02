@@ -16,22 +16,10 @@ module "ssm" {
 }
 
 #
-# cspm
-#
-
-module "cspm" {
-  source = "../../modules/services/cspm"
-//  name   = "${var.name}-cspm"
-  tags = var.tags
-  role_name = var.role_name
-}
-
-#
 # threat-detection
 #
 
 module "cloud_connector" {
-  count = var.deploy_cloud_connector ? 1 : 0
   source = "../../modules/services/cloud-connector-ecs"
   name   = "${var.name}-cloudconnector"
 
