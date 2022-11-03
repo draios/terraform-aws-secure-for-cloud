@@ -33,8 +33,8 @@ resource "sysdig_secure_cloud_account" "cloud_account" {
 
 locals {
   external_id = try(
-  sysdig_secure_cloud_account.cloud_account[local.account_ids_to_deploy[0]].external_id,
-  sysdig_secure_cloud_account.cloud_account[local.caller_account].external_id,
+    sysdig_secure_cloud_account.cloud_account[local.account_ids_to_deploy[0]].external_id,
+    sysdig_secure_cloud_account.cloud_account[local.caller_account].external_id,
   )
 }
 

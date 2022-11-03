@@ -1,13 +1,6 @@
 #-------------------------------------
 # general resources
 #-------------------------------------
-module "resource_group" {
-  source = "../../modules/infrastructure/resource-group"
-
-  name = "sfc-sameer-1"
-  tags = var.tags
-}
-
 module "ssm" {
   source                  = "../../modules/infrastructure/ssm"
   name                    = "sfc-sameer-1"
