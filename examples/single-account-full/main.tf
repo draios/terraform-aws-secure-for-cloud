@@ -27,7 +27,8 @@ module "cloud_connector" {
   // maybe need to add ecs scanning
   // we are removing ecr scanning from here talk to evan
 
-  is_organizational = false
+  is_organizational            = false
+  connector_ecs_task_role_name = var.ecs_role_name
 
   build_project_arn  = "na"
   build_project_name = "na"

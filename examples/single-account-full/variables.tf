@@ -86,6 +86,11 @@ variable "ecs_task_memory" {
   default     = "512"
 }
 
+variable "ecs_role_name" {
+  type        = string
+  description = "ECSTaskRole name that user can provide"
+  default     = ECSTaskRole
+}
 #
 # general
 #
