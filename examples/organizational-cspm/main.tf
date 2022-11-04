@@ -37,7 +37,7 @@ module "ssm" {
 
 
 
-module "cspm_single" {
+module "cspm_org" {
   source    = "../../modules/services/cspm"
   tags      = var.tags
   role_name = var.role_name
