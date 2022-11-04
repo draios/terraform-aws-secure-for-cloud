@@ -48,6 +48,12 @@ variable "cloudtrail_s3_bucket_expiration_days" {
 # ecs, security group,  vpc
 #
 
+variable "ecs_role_name" {
+  type        = string
+  description = "ECSTaskRole name that user can provide"
+  default     = "ECSTaskRole"
+}
+
 variable "ecs_cluster_name" {
   type        = string
   default     = "create"
@@ -84,12 +90,6 @@ variable "ecs_task_memory" {
   type        = string
   description = "Amount of memory (in megabytes) to reserve for cloud-connector task"
   default     = "512"
-}
-
-variable "ecs_role_name" {
-  type        = string
-  description = "ECSTaskRole name that user can provide"
-  default     = ECSTaskRole
 }
 #
 # general

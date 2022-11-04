@@ -12,6 +12,12 @@ variable "organizational_member_default_admin_role" {
   default     = "OrganizationAccountAccessRole"
   description = "Default role created by AWS for management-account users to be able to admin member accounts.<br/>https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html"
 }
+
+variable "role_name" {
+  type        = string
+  description = "Role name for cspm"
+  default     = "sfc-cspm-role"
+}
 #
 # general
 #

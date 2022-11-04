@@ -35,27 +35,11 @@ module "ssm" {
   tags                    = var.tags
 }
 
-module "cspm_org" {
-  source = "../../modules/services/cspm"
 
-  name              = "${var.name}-cspm"
-  is_organizational = true
-  region            = data.aws_region.current.name
-
-  tags = var.tags
-}
 
 module "cspm_single" {
-  providers = {
-    aws = aws.member
-  }
-
-  source = "../../modules/services/cspm"
-
-  name              = "${var.name}-cspm"
-  is_organizational = false
-  region            = data.aws_region.current.name
-  benchmark_regions = var.benchmark_regions
-
-  tags = var.tags
+  source    = "../../modules/services/cspm"
+  tags      = var.tags
+  role_name = var.role_name
+  is_organizational = true
 }

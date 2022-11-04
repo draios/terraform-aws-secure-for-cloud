@@ -30,9 +30,6 @@ module "cloud_connector" {
   is_organizational            = false
   connector_ecs_task_role_name = var.ecs_role_name
 
-  build_project_arn  = "na"
-  build_project_name = "na"
-
   existing_cloudtrail_config = {
     cloudtrail_sns_arn = local.cloudtrail_sns_arn
   }
