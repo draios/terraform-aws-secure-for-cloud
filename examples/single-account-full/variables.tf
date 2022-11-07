@@ -44,15 +44,18 @@ variable "cloudtrail_s3_bucket_expiration_days" {
   default     = 5
   description = "Number of days that the logs will persist in the bucket"
 }
+
+#
+# cspm configuration
+#
+variable "role_name" {
+  type        = string
+  description = "Role name for cspm"
+  default     = "sfc-cspm-role"
+}
 #
 # ecs, security group,  vpc
 #
-
-variable "ecs_role_name" {
-  type        = string
-  description = "ECSTaskRole name that user can provide"
-  default     = "ECSTaskRole"
-}
 
 variable "ecs_cluster_name" {
   type        = string

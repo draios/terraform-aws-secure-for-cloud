@@ -16,6 +16,16 @@ module "ssm" {
 }
 
 #
+# cspm
+#
+
+module "cspm_single" {
+  source    = "../../modules/services/cspm"
+  tags      = var.tags
+  role_name = var.role_name
+}
+
+#
 # threat-detection
 #
 
@@ -28,7 +38,6 @@ module "cloud_connector" {
   // we are removing ecr scanning from here talk to evan
 
   is_organizational            = false
-  connector_ecs_task_role_name = var.ecs_role_name
 
   existing_cloudtrail_config = {
     cloudtrail_sns_arn = local.cloudtrail_sns_arn
