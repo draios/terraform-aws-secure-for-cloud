@@ -1,13 +1,3 @@
-#-------------------------------------
-# general resources
-#-------------------------------------
-module "ssm" {
-  source                  = "../../modules/infrastructure/ssm"
-  name                    = "sfc-sameer-1"
-  sysdig_secure_api_token = data.sysdig_secure_connection.current.secure_api_token
-  tags                    = var.tags
-}
-
 #
 # cspm
 #
