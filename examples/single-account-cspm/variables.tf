@@ -19,7 +19,7 @@ variable "region" {
 }
 
 #
-# cspm configuration
+# trust-relationship configuration
 #
 variable "role_name" {
   type        = string

@@ -1,10 +1,10 @@
-# note; had to split cspm module due to not being able to use dynamics on provider
+# note; had to split trust-relationship module due to not being able to use dynamics on provider
 # https://github.com/hashicorp/terraform/issues/25244
 
 module "cspm_org" {
   count = var.deploy_benchmark && var.deploy_benchmark_organizational ? 1 : 0
 
-  source = "../../modules/services/cspm"
+  source = "../../modules/services/trust-relationship"
 
   name              = "${var.name}-cspm"
   is_organizational = true
@@ -20,7 +20,7 @@ module "cspm_single" {
     aws = aws.member
   }
 
-  source = "../../modules/services/cspm"
+  source = "../../modules/services/trust-relationship"
 
   name              = "${var.name}-cspm"
   is_organizational = false

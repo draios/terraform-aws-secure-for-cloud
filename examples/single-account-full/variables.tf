@@ -46,7 +46,7 @@ variable "cloudtrail_s3_bucket_expiration_days" {
 }
 
 #
-# cspm configuration
+# trust-relationship configuration
 #
 variable "role_name" {
   type        = string

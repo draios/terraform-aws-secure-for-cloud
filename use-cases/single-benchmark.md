@@ -34,7 +34,7 @@ provider "aws" {
 }
 
 module "sysdig-sfc" {
-  source = "sysdiglabs/secure-for-cloud/aws//module/services/cspm"
-  name    = "TEST-NAME-cspm"  # optional
+  source = "sysdiglabs/secure-for-cloud/aws//module/services/trust-relationship"
+  name    = "TEST-NAME-trust-relationship"  # optional
 }
 ```

@@ -39,7 +39,7 @@ variable "tags" {
 }
 
 #
-# cspm configuration
+# trust-relationship configuration
 #
 variable "deploy_cspm" {
   type        = bool
