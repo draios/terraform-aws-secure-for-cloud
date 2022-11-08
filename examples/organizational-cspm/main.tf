@@ -22,21 +22,6 @@ module "resource_group_secure_for_cloud_member" {
   tags   = var.tags
 }
 
-#-------------------------------------
-# secure-for-cloud member account workload
-#-------------------------------------
-module "ssm" {
-  providers = {
-    aws = aws.member
-  }
-  source                  = "../../modules/infrastructure/ssm"
-  name                    = var.name
-  sysdig_secure_api_token = data.sysdig_secure_connection.current.secure_api_token
-  tags                    = var.tags
-}
-
-
-
 module "cspm_org" {
   source    = "../../modules/services/trust-relationship"
   tags      = var.tags
