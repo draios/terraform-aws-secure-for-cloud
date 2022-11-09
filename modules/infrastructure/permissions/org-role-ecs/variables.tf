@@ -1,13 +1,3 @@
-variable "cloudconnector_ecs_task_role_name" {
-  type        = string
-  description = "cloudconnector ecs task role name"
-}
-
-variable "cloudtrail_s3_arn" {
-  type        = string
-  description = "Cloudtrail S3 bucket ARN"
-}
-
 #---------------------------------
 # optionals - with defaults
 #---------------------------------

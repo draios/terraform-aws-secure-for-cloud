@@ -71,14 +71,6 @@ data "aws_iam_policy_document" "sysdig_secure_for_cloud_role_trusted" {
   }
 }
 
-# enable ecs-task resource to assumeRole
-resource "aws_iam_role_policy" "enable_assume_secure_for_cloud_role" {
-  provider = aws.member
-  name     = "${var.name}-EnableSysdigSecureForCloudRole"
-
-  role   = var.cloudconnector_ecs_task_role_name
-  policy = data.aws_iam_policy_document.enable_assume_secure_for_cloud_role.json
-}
 data "aws_iam_policy_document" "enable_assume_secure_for_cloud_role" {
   statement {
     effect = "Allow"

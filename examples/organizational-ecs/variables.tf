@@ -3,12 +3,6 @@ variable "sysdig_secure_for_cloud_member_account_id" {
   description = "organizational member account where the secure-for-cloud workload is going to be deployed"
 }
 
-
-#---------------------------------
-# optionals - with defaults
-#---------------------------------
-
-
 #
 # organizational
 #
@@ -77,53 +71,6 @@ variable "existing_cloudtrail_config" {
   EOT
 }
 
-
-#
-# scanning configuration
-#
-
-variable "deploy_beta_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the beta image scanning on ECR pushed images (experimental and unsupported)"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECR pushed images"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecs" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECS running images"
-  default     = false
-}
-
-
-#
-# benchmark configuration
-#
-
-variable "deploy_benchmark" {
-  type        = bool
-  description = "Whether to deploy or not the cloud benchmarking"
-  default     = true
-}
-
-variable "deploy_benchmark_organizational" {
-  type        = bool
-  default     = true
-  description = "true/false whether benchmark module should be deployed on organizational or single-account mode (1 role per org accounts if true, 1 role in default aws provider account if false)</li></ul>"
-}
-
-variable "benchmark_regions" {
-  type        = list(string)
-  description = "List of regions in which to run the benchmark. If empty, the task will contain all aws regions by default."
-  default     = []
-}
-
-
 #---------------------------------
 # ecs, security group,  vpc
 #---------------------------------
@@ -165,9 +112,14 @@ variable "ecs_task_memory" {
   description = "Amount of memory (in megabytes) to reserve for cloud-connector task"
   default     = "512"
 }
-
-
-
+#
+# trust-relationship configuration
+#
+variable "role_name" {
+  type        = string
+  description = "Role name for cspm"
+  default     = "sfc-cspm-role"
+}
 #
 # general
 #

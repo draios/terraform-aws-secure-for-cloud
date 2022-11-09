@@ -36,23 +36,11 @@ module "ssm" {
   tags                    = var.tags
 }
 
-
-#-------------------------------------
-# cloud-connector
-#-------------------------------------
-module "codebuild" {
-  count = local.deploy_old_image_scanning_with_codebuild ? 1 : 0
-
-  providers = {
-    aws = aws.member
-  }
-  source                       = "../../modules/infrastructure/codebuild"
-  name                         = var.name
-  secure_api_token_secret_name = module.ssm.secure_api_token_secret_name
-
-  tags = var.tags
-  # note. this is required to avoid race conditions
-  depends_on = [module.ssm]
+module "cspm_org" {
+  source            = "../../modules/services/trust-relationship"
+  is_organizational = true
+  role_name         = var.role_name
+  tags              = var.tags
 }
 
 module "cloud_connector" {
@@ -64,10 +52,6 @@ module "cloud_connector" {
   name   = "${var.name}-cloudconnector"
 
   secure_api_token_secret_name = module.ssm.secure_api_token_secret_name
-
-  deploy_beta_image_scanning_ecr = var.deploy_beta_image_scanning_ecr
-  deploy_image_scanning_ecr      = var.deploy_image_scanning_ecr
-  deploy_image_scanning_ecs      = var.deploy_image_scanning_ecs
 
   #
   # note;
@@ -87,9 +71,6 @@ module "cloud_connector" {
     organizational_role_per_account  = var.organizational_member_default_admin_role
     connector_ecs_task_role_name     = aws_iam_role.connector_ecs_task.name
   }
-
-  build_project_arn  = length(module.codebuild) == 1 ? module.codebuild[0].project_arn : "na"
-  build_project_name = length(module.codebuild) == 1 ? module.codebuild[0].project_name : "na"
 
   existing_cloudtrail_config = {
     cloudtrail_sns_arn        = local.cloudtrail_sns_arn

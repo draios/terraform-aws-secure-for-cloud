@@ -3,9 +3,9 @@ variable "sysdig_secure_for_cloud_member_account_id" {
   description = "organizational member account where the secure-for-cloud workload is going to be deployed"
 }
 
-#---------------------------------
-# optionals - with defaults
-#---------------------------------
+#
+# organizational
+#
 
 variable "organizational_member_default_admin_role" {
   type        = string
@@ -18,9 +18,11 @@ variable "role_name" {
   description = "Role name for cspm"
   default     = "sfc-cspm-role"
 }
+
 #
 # general
 #
+
 variable "name" {
   type        = string
   description = "Name to be assigned to all child resources. A suffix may be added internally when required. Use default value unless you need to install multiple instances"
