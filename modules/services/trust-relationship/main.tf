@@ -8,34 +8,10 @@ data "aws_organizations_organization" "org" {
   count = var.is_organizational ? 1 : 0
 }
 
-data "sysdig_secure_trusted_cloud_identity" "trusted_identity" {
-  cloud_provider = "aws"
-}
-
 locals {
   caller_account        = data.aws_caller_identity.me.account_id
   member_account_ids    = var.is_organizational ? [for a in data.aws_organizations_organization.org[0].non_master_accounts : a.id] : []
   account_ids_to_deploy = var.is_organizational && var.provision_caller_account ? concat(local.member_account_ids, [data.aws_organizations_organization.org[0].master_account_id]) : local.member_account_ids
-}
-
-#----------------------------------------------------------
-# Configure Sysdig Backend
-#----------------------------------------------------------
-
-resource "sysdig_secure_cloud_account" "cloud_account" {
-  for_each = var.is_organizational ? toset(local.account_ids_to_deploy) : [local.caller_account]
-
-  account_id     = each.value
-  cloud_provider = "aws"
-  role_enabled   = "true"
-  role_name      = var.role_name
-}
-
-locals {
-  external_id = try(
-    sysdig_secure_cloud_account.cloud_account[local.account_ids_to_deploy[0]].external_id,
-    sysdig_secure_cloud_account.cloud_account[local.caller_account].external_id,
-  )
 }
 
 #----------------------------------------------------------
@@ -52,12 +28,12 @@ data "aws_iam_policy_document" "trust_relationship" {
     actions = ["sts:AssumeRole"]
     principals {
       type        = "AWS"
-      identifiers = [data.sysdig_secure_trusted_cloud_identity.trusted_identity.identity]
+      identifiers = [var.trusted_identity]
     }
     condition {
       test     = "StringEquals"
       variable = "sts:ExternalId"
-      values   = [local.external_id]
+      values   = [var.external_id]
     }
   }
 }
@@ -106,11 +82,11 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: [ ${data.sysdig_secure_trusted_cloud_identity.trusted_identity.identity} ]
+              AWS: [ ${var.trusted_identity} ]
             Action: [ 'sts:AssumeRole' ]
             Condition:
               StringEquals:
-                sts:ExternalId: ${local.external_id}
+                sts:ExternalId: ${var.external_id}
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/SecurityAudit"
 TEMPLATE

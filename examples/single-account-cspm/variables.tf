@@ -3,16 +3,6 @@
 #---------------------------------
 # optionals - with defaults
 #---------------------------------
-variable "sysdig_secure_api_token" {
-  description = "Api token for deployment"
-  default     = ""
-}
-
-variable "sysdig_secure_endpoint" {
-  description = "Backend url where results are sent"
-  default     = ""
-}
-
 variable "region" {
   description = "AWS region where resources are deployed"
   default     = ""
@@ -25,6 +15,16 @@ variable "role_name" {
   type        = string
   description = "Role name for cspm"
   default     = "sfc-cspm-role"
+}
+
+variable "trusted_identity" {
+  type        = string
+  description = "The name of sysdig trusted identity"
+}
+
+variable "external_id" {
+  type        = string
+  description = "Random string generated unique to a customer"
 }
 
 #
