@@ -1,22 +1,20 @@
-variable "sysdig_secure_for_cloud_member_account_id" {
-  type        = string
-  description = "organizational member account where the secure-for-cloud workload is going to be deployed"
-}
-
 #
 # organizational
 #
-
-variable "organizational_member_default_admin_role" {
-  type        = string
-  default     = "OrganizationAccountAccessRole"
-  description = "Default role created by AWS for management-account users to be able to admin member accounts.<br/>https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html"
-}
-
 variable "role_name" {
   type        = string
   description = "Role name for cspm"
   default     = "sfc-cspm-role"
+}
+
+variable "trusted_identity" {
+  type        = string
+  description = "The name of sysdig trusted identity"
+}
+
+variable "external_id" {
+  type        = string
+  description = "Random string generated unique to a customer"
 }
 
 #
