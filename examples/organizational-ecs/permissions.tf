@@ -4,21 +4,21 @@ locals {
   deploy_org_management_sysdig_role = var.existing_cloudtrail_config.cloudtrail_s3_sns_sqs_arn == null
 }
 
-//module "secure_for_cloud_role" {
-//  count  = local.deploy_org_management_sysdig_role ? 1 : 0
-//  source = "../../modules/infrastructure/permissions/org-role-ecs"
-//  providers = {
-//    aws.member = aws.member
-//  }
-//  name = var.name
-//
-//  cloudtrail_s3_arn                 = local.cloudtrail_s3_arn
-//  cloudconnector_ecs_task_role_name = aws_iam_role.connector_ecs_task.name
-//  organizational_role_per_account   = var.organizational_member_default_admin_role
-//
-//  tags       = var.tags
-//  depends_on = [aws_iam_role.connector_ecs_task]
-//}
+module "secure_for_cloud_role" {
+  count  = local.deploy_org_management_sysdig_role ? 1 : 0
+  source = "../../modules/infrastructure/permissions/org-role-ecs"
+  providers = {
+    aws.member = aws.member
+  }
+  name = var.name
+
+  cloudtrail_s3_arn                 = local.cloudtrail_s3_arn
+  cloudconnector_ecs_task_role_name = aws_iam_role.connector_ecs_task.name
+  organizational_role_per_account   = var.organizational_member_default_admin_role
+
+  tags       = var.tags
+  depends_on = [aws_iam_role.connector_ecs_task]
+}
 
 
 # -----------------------------------------------------------------

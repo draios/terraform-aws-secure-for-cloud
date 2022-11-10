@@ -4,7 +4,6 @@
 #-------------------------------------
 locals {
   deploy_same_account                      = data.aws_caller_identity.me.account_id == var.sysdig_secure_for_cloud_member_account_id
-  deploy_old_image_scanning_with_codebuild = (var.deploy_image_scanning_ecr && !var.deploy_beta_image_scanning_ecr) || var.deploy_image_scanning_ecs
 }
 
 module "resource_group" {
@@ -41,6 +40,8 @@ module "cspm_org" {
   is_organizational = true
   role_name         = var.role_name
   tags              = var.tags
+  trusted_identity = var.trusted_identity
+  external_id = var.external_id
 }
 
 module "cloud_connector" {
