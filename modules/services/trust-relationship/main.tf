@@ -8,8 +8,14 @@ data "aws_organizations_organization" "org" {
   count = var.is_organizational ? 1 : 0
 }
 
+data "sysdig_secure_trusted_cloud_identity" "trusted_identity" {
+  cloud_provider = "aws"
+}
+
 locals {
-  caller_account = data.aws_caller_identity.me.account_id
+  caller_account        = data.aws_caller_identity.me.account_id
+  org_ids = length(var.organization_units) == 0 ? [data.aws_organizations_organization.org[0].master_account_id] : toset(var.organization_units)
+
 }
 
 #----------------------------------------------------------
@@ -96,6 +102,6 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   region         = var.region
   stack_set_name = aws_cloudformation_stack_set.stackset[0].name
   deployment_targets {
-    organizational_unit_ids = [for root in data.aws_organizations_organization.org[0].roots : root.id]
+    organizational_unit_ids = [for root in local.org_ids : root.id]
   }
 }

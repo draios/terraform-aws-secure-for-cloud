@@ -41,12 +41,21 @@ variable "tags" {
 #
 # trust-relationship configuration
 #
-variable "deploy_cspm" {
-  type        = bool
-  description = "Whether to deploy or not the cloud benchmarking"
-  default     = true
+variable "role_name" {
+  type        = string
+  description = "Role name for cspm"
+  default     = "sfc-cspm-role"
 }
 
+variable "trusted_identity" {
+  type        = string
+  description = "The name of sysdig trusted identity"
+}
+
+variable "external_id" {
+  type        = string
+  description = "Random string generated unique to a customer"
+}
 
 #
 # aws iam user configuration

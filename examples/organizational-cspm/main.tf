@@ -16,4 +16,5 @@ module "cspm_org" {
   trusted_identity = var.trusted_identity
   external_id = var.external_id
   is_organizational = true
+  organization_units = var.organization_units
 }

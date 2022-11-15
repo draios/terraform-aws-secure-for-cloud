@@ -27,41 +27,26 @@ variable "cloudtrail_kms_enable" {
 }
 
 #
-# scanning configuration
-#
-
-variable "deploy_beta_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the beta image scanning on ECR pushed images (experimental and unsupported)"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECR pushed images"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecs" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECS running images"
-  default     = false
-}
-
-#
 # benchmark configuration
 #
 
-variable "deploy_benchmark" {
-  type        = bool
-  description = "Whether to deploy or not the cloud benchmarking"
-  default     = true
+#
+# trust-relationship configuration
+#
+variable "role_name" {
+  type        = string
+  description = "Role name for cspm"
+  default     = "sfc-cspm-role"
 }
 
-variable "benchmark_regions" {
-  type        = list(string)
-  description = "List of regions in which to run the benchmark. If empty, the task will contain all aws regions by default."
-  default     = []
+variable "trusted_identity" {
+  type        = string
+  description = "The name of sysdig trusted identity"
+}
+
+variable "external_id" {
+  type        = string
+  description = "Random string generated unique to a customer"
 }
 
 #

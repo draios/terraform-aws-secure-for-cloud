@@ -15,28 +15,6 @@ variable "cloudtrail_sns_arn" {
 }
 
 #
-# scanning configuration
-#
-
-variable "deploy_beta_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the beta image scanning on ECR pushed images (experimental and unsupported)"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecr" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECR pushed images"
-  default     = false
-}
-
-variable "deploy_image_scanning_ecs" {
-  type        = bool
-  description = "true/false whether to deploy the image scanning on ECS running images"
-  default     = false
-}
-
-#
 # general
 #
 
@@ -73,16 +51,6 @@ variable "cloudwatch_log_retention" {
   description = "Days to keep logs for CloudConnector"
 }
 
-variable "build_project_arn" {
-  type        = string
-  description = "Code Build project arn"
-}
-
-variable "build_project_name" {
-  type        = string
-  description = "Code Build project name"
-}
-
 variable "secure_api_token_secret_name" {
   type        = string
   description = "Secure API token secret name"
@@ -98,7 +66,7 @@ variable "verify_ssl" {
 
 variable "cloudconnector_ecr_image_uri" {
   type        = string
-  description = "URI to                                                                                                                                                     image on ECR"
+  description = "URI to image on ECR"
   default     = "public.ecr.aws/o5x4u2t4/cloud-connector:latest"
 }
 
