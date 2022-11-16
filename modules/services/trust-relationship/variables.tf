@@ -23,7 +23,7 @@ variable "is_organizational" {
   description = "true/false whether secure-for-cloud should be deployed in an organizational setup (all accounts of org) or not (only on default aws provider account)"
 }
 
-variable "organization_units" {
+variable "org_units" {
   description = "Org unit id to install cspm"
   type        = set(string)
   default     = []

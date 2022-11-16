@@ -7,14 +7,13 @@
 # with default provider
 #-------------------------------------
 module "cspm_org" {
-  providers = {
-    aws = aws.member
-  }
-  source    = "../../modules/services/trust-relationship"
-  tags      = var.tags
-  role_name = var.role_name
-  trusted_identity = var.trusted_identity
-  external_id = var.external_id
+  source            = "../../modules/services/trust-relationship"
+  tags              = var.tags
+  role_name         = var.role_name
+  trusted_identity  = var.trusted_identity
+  external_id       = var.external_id
   is_organizational = true
-  organization_units = var.organization_units
+  region            = data.aws_region.current.name
+  org_units         = var.org_units
+  account_ids       = var.account_ids
 }

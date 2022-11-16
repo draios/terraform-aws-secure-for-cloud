@@ -9,9 +9,10 @@ data "aws_organizations_organization" "org" {
 }
 
 locals {
-  caller_account        = data.aws_caller_identity.me.account_id
-//  org_ids = length(var.organization_units) == 0 ? [data.aws_organizations_organization.org[0].master_account_id] : toset(var.organization_units)
-
+  caller_account = data.aws_caller_identity.me.account_id
+  org_units_to_deploy   = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : var.org_units
+  member_account_ids    = var.is_organizational ? [for a in data.aws_organizations_organization.org[0].non_master_accounts : a.id] : []
+  account_ids_to_deploy = var.is_organizational && var.provision_caller_account && length(var.account_ids) == 0 ? concat(local.member_account_ids, [data.aws_organizations_organization.org[0].master_account_id]) : var.account_ids
 }
 
 #----------------------------------------------------------
@@ -98,7 +99,6 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   region         = var.region
   stack_set_name = aws_cloudformation_stack_set.stackset[0].name
   deployment_targets {
-//    organizational_unit_ids = [for root in local.org_ids : root.id]
-    organizational_unit_ids = [for root in data.aws_organizations_organization.org[0].roots : root.id]
+    organizational_unit_ids = local.org_units_to_deploy
   }
 }
