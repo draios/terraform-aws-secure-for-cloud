@@ -25,7 +25,13 @@ variable "is_organizational" {
 
 variable "organization_units" {
   description = "Org unit id to install cspm"
-  type        = list(string)
+  type        = set(string)
+  default     = []
+}
+
+variable "account_ids" {
+  description = "Account ids to install cspm"
+  type        = set(string)
   default     = []
 }
 
