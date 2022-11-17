@@ -49,6 +49,23 @@ module "secure_for_cloud_aws_single_account_ecs" {
    source = "sysdiglabs/secure-for-cloud/aws//examples/single-account-ecs"
 }
 ```
+To test it locally use this snippet
+
+```terraform
+provider "aws" {}
+
+module "secure-for-cloud_example_single-account" {
+  source           = "../../terraform-aws-secure-for-cloud/modules/services/trust-relationship"
+  role_name        = "sameer-role1"
+  trusted_identity = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
+  external_id      = "b26e5d571ba8f8646e06ff8a8963a84b"
+}
+
+output "role_arn" {
+  value       = module.secure-for-cloud_example_single-account.cspm_role_arn
+  description = "ARN of cspm role"
+}
+```
 
 See [inputs summary](#inputs) or module module [`variables.tf`](https://github.com/sysdiglabs/terraform-aws-secure-for-cloud/blob/master/examples/single-account/variables.tf) file for more optional configuration.
 

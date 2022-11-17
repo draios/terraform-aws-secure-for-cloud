@@ -123,6 +123,28 @@ module "secure_for_cloud_organizational" {
 }
 ```
 
+to test it locally
+
+```terraform
+provider "aws" {
+  region = "us-east-1"
+}
+
+module "secure-for-cloud_example_org-cspm" {
+  source           = "../../terraform-aws-secure-for-cloud/modules/services/trust-relationship"
+  trusted_identity = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
+  external_id      = "b26e5d571ba8f8646e06ff8a8963a84b"
+  role_name        = "sameer-org"
+  org_units        = ["r-op65"]
+  is_organizational = true
+}
+
+output "role_arn" {
+  value       = module.secure-for-cloud_example_org-cspm.cspm_role_arn
+  description = "ARN of cspm role"
+}
+```
+
 See [inputs summary](#inputs) or module [`variables.tf`](https://github.com/sysdiglabs/terraform-aws-secure-for-cloud/blob/master/examples/organizational/variables.tf) file for more optional configuration.
 
 To run this example you need have your [aws management-account profile configured in CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) and to execute:

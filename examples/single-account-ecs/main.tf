@@ -36,9 +36,6 @@ module "cloud_connector" {
   name   = "${var.name}-cloudconnector"
 
   secure_api_token_secret_name = module.ssm.secure_api_token_secret_name
-  // maybe need to add ecs scanning
-  // we are removing ecr scanning from here talk to evan
-
   is_organizational            = false
 
   existing_cloudtrail_config = {
