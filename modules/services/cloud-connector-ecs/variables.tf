@@ -3,6 +3,48 @@ variable "secure_api_token_secret_name" {
   description = "Sysdig Secure API token SSM parameter name"
 }
 
+variable "sysdig_secure_api_token" {
+  description = "Api token for deployment"
+  default     = ""
+}
+
+variable "sysdig_secure_endpoint" {
+  description = "Backend url where results are sent"
+  default     = ""
+}
+
+variable "region" {
+  description = "AWS region where resources are deployed"
+  default     = ""
+}
+
+#
+# cloudtrail configuration
+#
+variable "cloudtrail_sns_arn" {
+  type        = string
+  default     = "create"
+  description = "ARN of a pre-existing cloudtrail_sns. If defaulted, a new cloudtrail will be created. If specified, sysdig deployment account and region must match with the specified SNS"
+}
+
+variable "cloudtrail_is_multi_region_trail" {
+  type        = bool
+  default     = true
+  description = "true/false whether cloudtrail will ingest multiregional events"
+}
+
+variable "cloudtrail_kms_enable" {
+  type        = bool
+  default     = true
+  description = "true/false whether cloudtrail delivered events to S3 should persist encrypted"
+}
+
+variable "cloudtrail_s3_bucket_expiration_days" {
+  type        = number
+  default     = 5
+  description = "Number of days that the logs will persist in the bucket"
+}
+
 #
 # ecs, security group,  vpc
 #
@@ -10,16 +52,25 @@ variable "secure_api_token_secret_name" {
 variable "ecs_cluster_name" {
   type        = string
   description = "Name of a pre-existing ECS (elastic container service) cluster"
+  default = ""
 }
 
 variable "ecs_vpc_id" {
   type        = string
   description = "ID of the VPC where the workload is to be deployed."
+  default = ""
 }
 
 variable "ecs_vpc_subnets_private_ids" {
   type        = list(string)
   description = "List of VPC subnets where workload is to be deployed."
+  default = []
+}
+
+variable "ecs_vpc_region_azs" {
+  type        = list(string)
+  description = "List of Availability Zones for ECS VPC creation. e.g.: [\"apne1-az1\", \"apne1-az2\"]. If defaulted, two of the default 'aws_availability_zones' datasource will be taken"
+  default     = []
 }
 
 #
