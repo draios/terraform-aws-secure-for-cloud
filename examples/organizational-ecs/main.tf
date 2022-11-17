@@ -37,11 +37,13 @@ module "ssm" {
 
 module "cspm_org" {
   source            = "../../modules/services/trust-relationship"
-  is_organizational = true
-  role_name         = var.role_name
   tags              = var.tags
-  trusted_identity = var.trusted_identity
-  external_id = var.external_id
+  role_name         = var.role_name
+  trusted_identity  = var.trusted_identity
+  external_id       = var.external_id
+  is_organizational = true
+  region            = data.aws_region.current.name
+  org_units         = var.org_units
 }
 
 module "cloud_connector" {

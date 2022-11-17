@@ -12,7 +12,6 @@ locals {
   caller_account = data.aws_caller_identity.me.account_id
   org_units_to_deploy   = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : var.org_units
   member_account_ids    = var.is_organizational ? [for a in data.aws_organizations_organization.org[0].non_master_accounts : a.id] : []
-  account_ids_to_deploy = var.is_organizational && var.provision_caller_account && length(var.account_ids) == 0 ? concat(local.member_account_ids, [data.aws_organizations_organization.org[0].master_account_id]) : var.account_ids
 }
 
 #----------------------------------------------------------

@@ -15,5 +15,4 @@ module "cspm_org" {
   is_organizational = true
   region            = data.aws_region.current.name
   org_units         = var.org_units
-  account_ids       = var.account_ids
 }

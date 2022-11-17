@@ -29,12 +29,6 @@ variable "org_units" {
   default     = []
 }
 
-variable "account_ids" {
-  description = "Account ids to install cspm"
-  type        = set(string)
-  default     = []
-}
-
 variable "region" {
   type        = string
   default     = "eu-central-1"

@@ -23,12 +23,6 @@ variable "org_units" {
   default     = []
 }
 
-variable "account_ids" {
-  description = "Account ids to install cspm"
-  type        = set(string)
-  default     = []
-}
-
 #
 # general
 #

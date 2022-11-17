@@ -131,6 +131,11 @@ variable "external_id" {
   description = "Random string generated unique to a customer"
 }
 
+variable "org_units" {
+  description = "Org unit id to install cspm"
+  type        = set(string)
+  default     = []
+}
 #
 # general
 #
