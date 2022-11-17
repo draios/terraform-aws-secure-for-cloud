@@ -61,6 +61,45 @@ module "secure_for_cloud_aws_single_account_k8s" {
 }
 ```
 
+to test it locally
+
+```terraform
+terraform {
+  required_providers {
+    sysdig = {
+      source  = "sysdiglabs/sysdig"
+    }
+  }
+}
+
+provider "sysdig" {
+  sysdig_secure_url         = "https://secure-staging.sysdig.com"
+  sysdig_secure_api_token   = "4fc06da6-6406-401c-bdd1-6d258573e681"
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+    # optional: if you have multiple k8s contexts and desire specify your eks context
+    # config_context = "arn:aws:eks:us-east-1:<AWS-MANAGEMENT-ACCOUNT-ID>:cluster/<AWS-EKS-CLUSTER-NAME>"
+    config_context = "arn:aws:eks:us-east-1:064689838359:cluster/cluster-1"
+  }
+}
+
+module "secure_for_cloud_aws_single_account_k8s" {
+  source           = "../../terraform-aws-secure-for-cloud/examples/single-account-k8s"
+  role_name        = "sameer"
+  name             = "sameer-test"
+  trusted_identity = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
+  external_id      = "b26e5d571ba8f8646e06ff8a8963a84b"
+}
+
+```
+
 See [inputs summary](#inputs) or module module [`variables.tf`](https://github.com/sysdiglabs/terraform-aws-secure-for-cloud/blob/master/examples/single-account-k8s/variables.tf) file for more optional configuration.
 
 To run this example you need have your [aws account profile configured in CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) and to execute:

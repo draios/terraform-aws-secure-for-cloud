@@ -123,6 +123,49 @@ module "secure_for_cloud_organizational" {
 }
 ```
 
+to test it locally
+```terraform
+terraform {
+  required_providers {
+    sysdig = {
+      source = "sysdiglabs/sysdig"
+    }
+  }
+}
+
+provider "sysdig" {
+  sysdig_secure_url       = "https://secure-staging.sysdig.com"
+  sysdig_secure_api_token = "4fc06da6-6406-401c-bdd1-6d258573e681"
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+provider "aws" {
+  alias  = "member"
+  region = "us-east-1"
+  assume_role {
+    role_arn = "arn:aws:iam::047409624352:role/OrganizationAccountAccessRole"
+  }
+}
+
+module "secure-for-cloud_example_org-account" {
+  providers = {
+    aws.member = aws.member
+  }
+
+  source                                    = "../../terraform-aws-secure-for-cloud/examples/organizational-ecs"
+  role_name                                 = "sameer"
+  name                                      = "sameer-test"
+  sysdig_secure_for_cloud_member_account_id = "047409624352"
+  trusted_identity                          = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
+  external_id                               = "b26e5d571ba8f8646e06ff8a8963a84b"
+  org_units        = ["r-op65"]
+}
+
+```
+
 See [inputs summary](#inputs) or module [`variables.tf`](https://github.com/sysdiglabs/terraform-aws-secure-for-cloud/blob/master/examples/organizational/variables.tf) file for more optional configuration.
 
 To run this example you need have your [aws management-account profile configured in CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) and to execute:
