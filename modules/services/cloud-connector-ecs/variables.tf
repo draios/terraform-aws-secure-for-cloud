@@ -52,19 +52,19 @@ variable "cloudtrail_s3_bucket_expiration_days" {
 variable "ecs_cluster_name" {
   type        = string
   description = "Name of a pre-existing ECS (elastic container service) cluster"
-  default = ""
+  default     = ""
 }
 
 variable "ecs_vpc_id" {
   type        = string
   description = "ID of the VPC where the workload is to be deployed."
-  default = ""
+  default     = ""
 }
 
 variable "ecs_vpc_subnets_private_ids" {
   type        = list(string)
   description = "List of VPC subnets where workload is to be deployed."
-  default = []
+  default     = []
 }
 
 variable "ecs_vpc_region_azs" {

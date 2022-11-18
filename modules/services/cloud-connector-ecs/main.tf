@@ -1,9 +1,9 @@
 data "aws_region" "current" {}
 
 locals {
-  verify_ssl = var.verify_ssl == "auto" ? length(regexall("https://.*?\\.sysdig(cloud)?.com/?", data.sysdig_secure_connection.current.secure_url)) == 1 : var.verify_ssl == "true"
-  cloudtrail_deploy  = var.cloudtrail_sns_arn == "create"
-  cloudtrail_sns_arn = local.cloudtrail_deploy ? module.cloudtrail[0].cloudtrail_sns_arn : var.cloudtrail_sns_arn
+  verify_ssl                  = var.verify_ssl == "auto" ? length(regexall("https://.*?\\.sysdig(cloud)?.com/?", data.sysdig_secure_connection.current.secure_url)) == 1 : var.verify_ssl == "true"
+  cloudtrail_deploy           = var.cloudtrail_sns_arn == "create"
+  cloudtrail_sns_arn          = local.cloudtrail_deploy ? module.cloudtrail[0].cloudtrail_sns_arn : var.cloudtrail_sns_arn
   ecs_deploy                  = var.ecs_cluster_name == "create"
   ecs_cluster_name            = local.ecs_deploy ? module.ecs_vpc[0].ecs_cluster_name : var.ecs_cluster_name
   ecs_vpc_id                  = local.ecs_deploy ? module.ecs_vpc[0].ecs_vpc_id : var.ecs_vpc_id
@@ -43,11 +43,12 @@ module "cloudtrail" {
 module "ecs_vpc" {
   count = local.ecs_deploy ? 1 : 0
 
-  source             = "../../infrastructure/ecs-vpc"
-  name               = var.name
+  source = "../../infrastructure/ecs-vpc"
+  name   = var.name
 
   ecs_vpc_region_azs = var.ecs_vpc_region_azs
   tags               = var.tags
 }
+
 
 
