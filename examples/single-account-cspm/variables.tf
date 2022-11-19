@@ -3,10 +3,6 @@
 #---------------------------------
 # optionals - with defaults
 #---------------------------------
-variable "region" {
-  description = "AWS region where resources are deployed"
-  default     = ""
-}
 
 #
 # trust-relationship configuration

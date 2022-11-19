@@ -64,9 +64,9 @@ provider "sysdig" {
   sysdig_secure_api_token  = "00000000-1111-2222-3333-444444444444"
 }
 
-module "secure-for-cloud_example_single-account" {  
-  source = "sysdiglabs/secure-for-cloud/aws//examples/single-account" 
-  deploy_cloud_connector = false 
+module "secure-for-cloud_example_single-account" {
+  source = "sysdiglabs/secure-for-cloud/aws//examples/single-account"
+  deploy_cloud_connector = false
 }
 
 
