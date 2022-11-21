@@ -86,46 +86,6 @@ Role usage for this example comes as follows. Check [permissions](../../README.m
 For quick testing, use this snippet on your terraform files
 
 ```terraform
-terraform {
-  required_providers {
-    sysdig = {
-      source  = "sysdiglabs/sysdig"
-    }
-  }
-}
-
-provider "sysdig" {
-  sysdig_secure_url         = "<SYSDIG_SECURE_URL>"
-  sysdig_secure_api_token   = "<SYSDIG_SECURE_API_TOKEN>"
-}
-
-provider "aws" {
-  region = "<AWS_REGION>   # same region in both providers. ex. us-east-1"
-}
-
-provider "aws" {
-  alias  = "member"
-  region = "<AWS_REGION>  # same region in both providers. ex. us-east-1"
-  assume_role {
-    # ORG_MEMBER_SFC_ACCOUNT_ID is the organizational account where sysdig secure for cloud compute component is to be deployed
-    # 'OrganizationAccountAccessRole' is the default role created by AWS for managed-account users to be able to admin member accounts.
-    # <br/>https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html
-    role_arn = "arn:aws:iam::${ORG_MEMBER_SFC_ACCOUNT_ID}:role/OrganizationAccountAccessRole"
-  }
-}
-
-module "secure_for_cloud_organizational" {
-  providers = {
-    aws.member = aws.member
-  }
-  source = "sysdiglabs/secure-for-cloud/aws//examples/organizational"
-  sysdig_secure_for_cloud_member_account_id = "<ORG_MEMBER_SFC_ACCOUNT_ID>"
-}
-```
-
-to test it locally
-
-```terraform
 provider "aws" {
   region = "us-east-1"
 }

@@ -28,30 +28,6 @@ Minimum requirements:
 For quick testing, use this snippet on your terraform files
 
 ```terraform
-terraform {
-   required_providers {
-      sysdig = {
-         source  = "sysdiglabs/sysdig"
-      }
-   }
-}
-
-provider "sysdig" {
-   sysdig_secure_url        = "<SYSDIG_SECURE_URL>"
-   sysdig_secure_api_token  = "<SYSDIG_SECURE_API_TOKEN>"
-}
-
-provider "aws" {
-   region = "<AWS-REGION>; ex. us-east-1"
-}
-
-module "secure_for_cloud_aws_single_account_ecs" {
-   source = "sysdiglabs/secure-for-cloud/aws//examples/single-account-ecs"
-}
-```
-To test it locally use this snippet
-
-```terraform
 provider "aws" {}
 
 module "secure-for-cloud_example_single-account" {
