@@ -34,10 +34,8 @@ module "cloudvision_aws_organizational" {
   providers = {
     aws.member = aws.member
   }
-  source = "../../../examples/organizational"
+  source = "../../../examples/organizational-ecs"
   name   = var.name
 
   sysdig_secure_for_cloud_member_account_id = var.sysdig_secure_for_cloud_member_account_id
-  deploy_image_scanning_ecr                 = true
-  deploy_image_scanning_ecs                 = true
 }
