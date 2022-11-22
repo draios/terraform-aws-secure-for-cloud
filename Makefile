@@ -14,7 +14,7 @@ clean:
 # Adding this patch to fix organizational multi-provider terraform validate error
 # 'missing provider provider["registry.terraform.io/hashicorp/google"].multiproject'
 generate-terraform-providers:
-	./resources/scripts/generate_providers.sh ./modules/infrastructure/permissions/org-role-ecs ./examples/organizational
+	./resources/scripts/generate_providers.sh ./modules/infrastructure/permissions/org-role-ecs ./examples/organizational-ecs
 
 terraform-init: generate-terraform-providers
 	find -name "*.tf" | xargs dirname | uniq | xargs -I% -P0 sh -c 'cd %; terraform init --backend=false' 1>/dev/null
