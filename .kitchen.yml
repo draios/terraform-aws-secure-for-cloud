@@ -13,9 +13,9 @@ platforms:
   - name: "aws"
 
 suites:
-  - name: organizational
+  - name: organizational-ecs
     driver:
-      root_module_directory: test/fixtures/organizational
+      root_module_directory: test/fixtures/organizational-ecs
   - name: organizational-k8s
     driver:
       root_module_directory: test/fixtures/organizational-k8s

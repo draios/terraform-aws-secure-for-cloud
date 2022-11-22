@@ -30,7 +30,7 @@ provider "aws" {
   }
 }
 
-module "cloudvision_aws_organizational" {
+module "org-ecs" {
   providers = {
     aws.member = aws.member
   }
@@ -38,4 +38,18 @@ module "cloudvision_aws_organizational" {
   name   = var.name
 
   sysdig_secure_for_cloud_member_account_id = var.sysdig_secure_for_cloud_member_account_id
+  role_name                                 = "sameer"
+  trusted_identity                          = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
+  external_id                               = "b26e5d571ba8f8646e06ff8a8963a84b"
+  org_units                                 = ["r-op65"]
+}
+
+output "role_arn" {
+  value       = module.org-ecs.role_arn
+  description = "ARN of cspm role"
+}
+
+output "cloudtrail_sns_topic_arn" {
+  value       = module.org-ecs.cloudtrail_sns_topic_arn
+  description = "ARN of cloudtrail sns topic"
 }
