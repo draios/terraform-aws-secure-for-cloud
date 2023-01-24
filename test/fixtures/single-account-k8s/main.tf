@@ -24,7 +24,6 @@ provider "helm" {
 module "cloudvision_aws_single_account_k8s" {
   source = "../../../examples/single-account-k8s"
   name   = "${var.name}-singlek8s"
-
-  deploy_image_scanning_ecr = true
-  deploy_image_scanning_ecs = true
+  trusted_identity = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
+  external_id      = "b26e5d571ba8f8646e06ff8a8963a84b"
 }

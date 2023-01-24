@@ -32,5 +32,3 @@ It's recommended to use an .envrc file to keep environment variables under contr
 ## Release
 
 - push a new tag and the Github Action will draft a release (with notes)
-
-

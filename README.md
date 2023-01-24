@@ -5,7 +5,7 @@ Terraform module that deploys the [**Sysdig Secure for Cloud** stack in **AWS**]
 
 Provides unified threat-detection, compliance, forensics and analysis through these major components:
 
-* **[CSPM](https://docs.sysdig.com/en/docs/sysdig-secure/benchmarks/)**: It evaluates periodically your cloud configuration, using Cloud Custodian, against some benchmarks and returns the results and remediation you need to fix. Managed through `cspm` module. <br/>
+* **[CSPM](https://docs.sysdig.com/en/docs/sysdig-secure/benchmarks/)**: It evaluates periodically your cloud configuration, using Cloud Custodian, against some benchmarks and returns the results and remediation you need to fix. Managed through `trust-relationship` module. <br/>
 
 * **[CIEM](https://docs.sysdig.com/en/docs/sysdig-secure/posture/)**: Permissions and Entitlements management. Requires BOTH modules  `cloud-connector` and `cspm`. <br/>
 
@@ -23,7 +23,7 @@ There are several ways to deploy this in you AWS infrastructure:
 ### - Single-Account
 
 Sysdig workload will be deployed in the same account where user's resources will be watched.<br/>
-More info in [`./examples/single-account`](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/examples/single-account)
+More info in [`./examples/single-account-ecs`](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/examples/single-account-ecs)
 
 ![single-account diagram](https://raw.githubusercontent.com/draios/terraform-aws-secure-for-cloud/7d142829a701ce78f13691a4af4be373625e7ee2/examples/single-account/diagram-single.png)
 
@@ -36,7 +36,7 @@ More info in [`./examples/single-account-k8s`](https://github.com/draios/terrafo
 ### - Organizational
 
 Using an organizational configuration Cloudtrail.<br/>
-More info in [`./examples/organizational`](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/examples/organizational)
+More info in [`./examples/organizational-ecs`](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/examples/organizational-ecs)
 
 ![organizational diagram](https://raw.githubusercontent.com/draios/terraform-aws-secure-for-cloud/5b7cf5e8028b3177536c9c847020ad6319342b44/examples/organizational/diagram-org.png)
 
@@ -47,26 +47,18 @@ If no [examples](https://github.com/draios/terraform-aws-secure-for-cloud/tree/m
 In this use-case we will ONLY deploy cspm, into the target account, calling modules directly
 
 ```terraform
-terraform {
-  required_providers {
-    aws = {}
-    sysdig = {
-      source  = "draios/sysdig"
-    }
-  }
+provider "aws" {}
+
+module "secure-for-cloud_example_single-account" {
+  source           = "../../terraform-aws-secure-for-cloud/modules/services/trust-relationship"
+  role_name        = "sameer-role1"
+  trusted_identity = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
+  external_id      = "b26e5d571ba8f8646e06ff8a8963a84b"
 }
 
-provider "aws" {
-  region = "AWS-REGION"
-}
-
-provider "sysdig" {
-  sysdig_secure_api_token  = "00000000-1111-2222-3333-444444444444"
-}
-
-module "secure-for-cloud_example_single-account" {  
-  source = "sysdiglabs/secure-for-cloud/aws//examples/single-account" 
-  deploy_cloud_connector = false 
+output "role_arn" {
+  value       = module.secure-for-cloud_example_single-account.cspm_role_arn
+  description = "ARN of cspm role"
 }
 
 

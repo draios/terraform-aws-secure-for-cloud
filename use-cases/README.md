@@ -2,7 +2,7 @@
 
 
 
-Current examples were developed for simple use-case scenarios. 
+Current examples were developed for simple use-case scenarios.
 
 New use-cases are appearing and once we consolidate an standard scenario, we will create new examples to accommodate new requirements.
 

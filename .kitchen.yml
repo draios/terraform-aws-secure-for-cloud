@@ -1,0 +1,33 @@
+---
+driver:
+  name: terraform
+  root_module_directory: test/fixtures
+  parallelism: 4
+  verify_version: false
+  command_timeout: 1200
+
+provisioner:
+  name: terraform
+
+platforms:
+  - name: "aws"
+
+suites:
+  - name: organizational-ecs
+    driver:
+      root_module_directory: test/fixtures/organizational-ecs
+  - name: organizational-k8s
+    driver:
+      root_module_directory: test/fixtures/organizational-k8s
+  - name: organizational-cspm
+    driver:
+      root_module_directory: test/fixtures/organizational-cspm
+  - name: single-account-apprunner
+    driver:
+      root_module_directory: test/fixtures/single-account-apprunner
+  - name: single-account-ecs
+    driver:
+      root_module_directory: test/fixtures/single-account-ecs
+  - name: single-account-k8s
+    driver:
+      root_module_directory: test/fixtures/single-account-k8s
