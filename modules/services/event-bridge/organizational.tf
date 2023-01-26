@@ -9,7 +9,7 @@ data "aws_organizations_organization" "org" {
 }
 
 locals {
-  organizational_unit_ids = length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org.roots : root.id] : toset(var.organization_units)
+  organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org.roots : root.id] : toset(var.organization_units)
 }
 
 resource "aws_cloudformation_stack_set" "stackset" {
