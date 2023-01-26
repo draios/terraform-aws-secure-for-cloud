@@ -17,11 +17,11 @@ provider "aws" {
 }
 
 module "cloudvision_aws_single_account_ecs" {
-  source = "../../../examples/single-account-ecs"
-  name   = "${var.name}-single"
-  role_name = "test-role-single-ecs"
+  source           = "../../../examples/single-account-ecs"
+  name             = "${var.name}-single"
+  role_name        = "test-role-single-ecs"
   trusted_identity = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
-  external_id = "b26e5d571ba8f8646e06ff8a8963a84b"
+  external_id      = "b26e5d571ba8f8646e06ff8a8963a84b"
 }
 
 output "role_arn" {
