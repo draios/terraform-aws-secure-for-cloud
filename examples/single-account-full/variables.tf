@@ -44,6 +44,26 @@ variable "cloudtrail_s3_bucket_expiration_days" {
   default     = 5
   description = "Number of days that the logs will persist in the bucket"
 }
+
+#
+# trust-relationship configuration
+#
+variable "role_name" {
+  type        = string
+  description = "Role name for cspm"
+  default     = "sfc-cspm-role"
+}
+
+variable "trusted_identity" {
+  type        = string
+  description = "The name of sysdig trusted identity"
+}
+
+variable "external_id" {
+  type        = string
+  description = "Random string generated unique to a customer"
+}
+
 #
 # ecs, security group,  vpc
 #
