@@ -25,9 +25,6 @@ There are several ways to deploy this in you AWS infrastructure:
 Sysdig workload will be deployed in the same account where user's resources will be watched.<br/>
 More info in [`./examples/single-account-ecs`](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/examples/single-account-ecs)
 
-![single-account diagram](https://raw.githubusercontent.com/draios/terraform-aws-secure-for-cloud/7d142829a701ce78f13691a4af4be373625e7ee2/examples/single-account/diagram-single.png)
-
-
 ### - Single-Account with a pre-existing Kubernetes Cluster
 
 If you already own a Kubernetes Cluster on AWS, you can use it to deploy Sysdig Secure for Cloud, instead of default ECS cluster.<br/>
@@ -38,7 +35,6 @@ More info in [`./examples/single-account-k8s`](https://github.com/draios/terrafo
 Using an organizational configuration Cloudtrail.<br/>
 More info in [`./examples/organizational-ecs`](https://github.com/draios/terraform-aws-secure-for-cloud/tree/master/examples/organizational-ecs)
 
-![organizational diagram](https://raw.githubusercontent.com/draios/terraform-aws-secure-for-cloud/5b7cf5e8028b3177536c9c847020ad6319342b44/examples/organizational/diagram-org.png)
 
 ### - Self-Baked
 
@@ -50,10 +46,10 @@ In this use-case we will ONLY deploy cspm, into the target account, calling modu
 provider "aws" {}
 
 module "secure-for-cloud_example_single-account" {
-  source           = "../../terraform-aws-secure-for-cloud/modules/services/trust-relationship"
-  role_name        = "sameer-role1"
-  trusted_identity = "arn:aws:iam::064689838359:role/us-east-1-integration01-secure-assume-role"
-  external_id      = "b26e5d571ba8f8646e06ff8a8963a84b"
+  source           = "draios/terraform-aws-secure-for-cloud/modules/services/trust-relationship"
+  role_name        = "role_name"
+  trusted_identity = "trusted_identity"
+  external_id      = "id1"
 }
 
 output "role_arn" {
