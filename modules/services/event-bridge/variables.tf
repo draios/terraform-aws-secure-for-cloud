@@ -3,12 +3,6 @@ variable "target_event_bus_arn" {
   type        = string
 }
 
-variable "target_dead_letter_queue_arn" {
-  description = "(Optional) The ARN of Sysdig's SQS Queue that will act as a dead letter queue for events from your account"
-  type        = string
-  default     = ""
-}
-
 variable "is_organizational" {
   description = "(Optional) Set this field to 'true' to deploy EventBridge to an AWS Organization (Or specific OUs)"
   type        = bool

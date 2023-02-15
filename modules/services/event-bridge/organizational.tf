@@ -59,10 +59,6 @@ Resources:
           RoleArn: !GetAtt
             - EventBridgeRole
             - Arn
-%{if var.target_dead_letter_queue_arn != ""}
-          DeadLetterConfig:
-            Arn: ${var.target_dead_letter_queue_arn}
-%{endif}
 TEMPLATE
 }
 

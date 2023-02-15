@@ -37,9 +37,6 @@ resource "aws_cloudwatch_event_target" "sysdig" {
   arn      = var.target_event_bus_arn
   role_arn = aws_iam_role.event_bus_invoke_remote_event_bus[0].arn
 
-  dead_letter_config {
-    arn = var.target_dead_letter_queue_arn
-  }
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
