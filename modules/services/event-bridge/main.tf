@@ -12,6 +12,19 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Rule to capture all events from CloudTrail in the source account.
+
+data "aws_regions" "all" {}
+
+locals {
+  regions = toset([
+    "us-east-1",
+    "us-west-2",
+//    "eu-west-1",
+//    "ap-southeast-1",
+//    "ap-northeast-2",
+  ])
+}
+
 resource "aws_cloudwatch_event_rule" "sysdig" {
   count = var.is_organizational && !var.provision_management_account ? 0 : 1
 
@@ -95,4 +108,59 @@ resource "aws_iam_role_policy_attachment" "event_bus_invoke_remote_event_bus" {
 
   role       = aws_iam_role.event_bus_invoke_remote_event_bus[0].name
   policy_arn = aws_iam_policy.event_bus_invoke_remote_event_bus[0].arn
+}
+
+resource "aws_cloudformation_stack_set" "single-acc-stackset" {
+  name             = var.name
+  tags             = var.tags
+  permission_model = "SELF_MANAGED"
+  capabilities     = ["CAPABILITY_NAMED_IAM"]
+
+  template_body = <<TEMPLATE
+Resources:
+  EventBridgeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ${var.name}
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: ${var.name}
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'events:PutEvents'
+                Resource: ${var.target_event_bus_arn}
+  EventBridgeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: ${var.name}
+      Description: Capture all CloudTrail events
+      EventPattern:
+        detail-type:
+          - 'AWS API Call via CloudTrail'
+      Targets:
+        - Id: ${var.name}
+          Arn: ${var.target_event_bus_arn}
+          RoleArn: !GetAtt
+            - EventBridgeRole
+            - Arn
+TEMPLATE
+  administration_role_arn = "arn:aws:iam::237944556329:role/AWSCloudFormationStackSetExecutionRole"
+}
+
+resource "aws_cloudformation_stack_set_instance" "stackset_instance-single-acc" {
+//  for_each = toset(data.aws_regions.all.names)
+  for_each = toset(local.regions)
+  stack_set_name = aws_cloudformation_stack_set.single-acc-stackset.name
+  region = each.value
+  operation_preferences {
+    failure_tolerance_count = 5
+    max_concurrent_count    = 2
+  }
 }
