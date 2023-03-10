@@ -20,31 +20,13 @@ resource "aws_cloudformation_stack_set" "stackset" {
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
 
-  auto_deployment {
-    enabled                          = true
-    retain_stacks_on_account_removal = false
-  }
+//  auto_deployment {
+//    enabled                          = true
+//    retain_stacks_on_account_removal = false
+//  }
 
   template_body = <<TEMPLATE
 Resources:
-  EventBridgeRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: ${var.name}
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: events.amazonaws.com
-            Action: 'sts:AssumeRole'
-      Policies:
-        - PolicyName: ${var.name}
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: 'events:PutEvents'
-                Resource: ${var.target_event_bus_arn}
   EventBridgeRule:
     Type: AWS::Events::Rule
     Properties:
@@ -56,17 +38,20 @@ Resources:
       Targets:
         - Id: ${var.name}
           Arn: ${var.target_event_bus_arn}
-          RoleArn: !GetAtt
-            - EventBridgeRole
-            - Arn
+          RoleArn: ${aws_iam_role.event_bus_invoke_remote_event_bus[0].arn}
 TEMPLATE
+  administration_role_arn = "arn:aws:iam::411571310278:role/AWSCloudFormationStackSetExecutionRole"
 }
 
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   count = var.is_organizational ? 1 : 0
-
+//  for_each = toset(local.regions)
   stack_set_name = aws_cloudformation_stack_set.stackset[0].name
   deployment_targets {
     organizational_unit_ids = local.organizational_unit_ids
+  }
+  operation_preferences {
+    failure_tolerance_count = 5
+    max_concurrent_count    = 2
   }
 }

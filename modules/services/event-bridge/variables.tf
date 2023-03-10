@@ -9,6 +9,12 @@ variable "is_organizational" {
   default     = false
 }
 
+variable "deploy_global_resources" {
+  description = "(Optional) Set this field to 'true' to deploy EventBridge to an AWS Organization (Or specific OUs)"
+  type        = bool
+  default     = false
+}
+
 variable "provision_management_account" {
   type        = bool
   default     = true
@@ -33,4 +39,22 @@ variable "tags" {
   default = {
     "product" = "sysdig"
   }
+}
+
+variable "role_input_arn" {
+  description = "(Optional) IAM role"
+  type        = string
+  default     = ""
+}
+
+variable "policy_input_arn" {
+  description = "(Optional) IAM policy"
+  type        = string
+  default     = ""
+}
+
+variable "policy_document_input_json" {
+  description = "(Optional) IAM policy document"
+  type        = string
+  default     = ""
 }
