@@ -13,16 +13,6 @@
 
 # Rule to capture all events from CloudTrail in the source account.
 
-//data "aws_regions" "all" {}
-//
-//locals {
-//  regions = toset([
-//    "us-east-1",
-//    "us-west-2",
-//    "eu-west-1",
-//  ])
-//}
-
 locals {
   is_role_empty = length(var.role_input_arn) == 0
   is_policy_empty = length(var.policy_input_arn) == 0
