@@ -5,11 +5,11 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 data "aws_organizations_organization" "org" {
-  #  count = var.is_organizational ? 1 : 0
+   count = var.is_organizational ? 1 : 0
 }
 
 locals {
-  organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org.roots : root.id] : toset(var.organization_units)
+  organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.organization_units)
 }
 
 resource "aws_cloudformation_stack_set" "stackset" {
@@ -20,10 +20,10 @@ resource "aws_cloudformation_stack_set" "stackset" {
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
 
-//  auto_deployment {
-//    enabled                          = true
-//    retain_stacks_on_account_removal = false
-//  }
+  auto_deployment {
+    enabled                          = true
+    retain_stacks_on_account_removal = false
+  }
 
   template_body = <<TEMPLATE
 Resources:
@@ -40,7 +40,7 @@ Resources:
           Arn: ${var.target_event_bus_arn}
           RoleArn: ${aws_iam_role.event_bus_invoke_remote_event_bus[0].arn}
 TEMPLATE
-  administration_role_arn = "arn:aws:iam::411571310278:role/AWSCloudFormationStackSetExecutionRole"
+//  administration_role_arn = "arn:aws:iam::411571310278:role/AWSCloudFormationStackSetExecutionRole"
 }
 
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
