@@ -1,4 +1,20 @@
 #-----------------------------------------------------------------------------------------------------------------------
+# We have two types of resources. global and regional. Global resources are deployed only once.
+# we use deploy_global_resources boolean to determine that.
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
+# These locals indicate if global resources are already created or not. If they are created
+# their details are passed and used.
+#-----------------------------------------------------------------------------------------------------------------------
+
+# Rule to capture all events from CloudTrail in the source account.
+locals {
+  is_role_empty = length(var.role_input_arn) == 0
+  is_policy_empty = length(var.policy_input_arn) == 0
+  is_policy_doc_empty = length(var.policy_document_input_json) == 0
+}
+#-----------------------------------------------------------------------------------------------------------------------
 # Determine if this is an Organizational install, or a single account install. For Single Account installs, resources
 # are created directly using the AWS Terraform Provider (This is the default behaviour). For Organizational installs,
 # a CloudFormation StackSet is used (See organizational.tf), and the resources in this file are used to instrument the
@@ -12,12 +28,6 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Rule to capture all events from CloudTrail in the source account.
-
-locals {
-  is_role_empty = length(var.role_input_arn) == 0
-  is_policy_empty = length(var.policy_input_arn) == 0
-  is_policy_doc_empty = length(var.policy_document_input_json) == 0
-}
 
 resource "aws_cloudwatch_event_rule" "sysdig" {
   count = var.is_organizational && !var.provision_management_account ? 0 : 1
@@ -55,9 +65,7 @@ resource "aws_cloudwatch_event_target" "sysdig" {
 # Role that will be used by EventBridge when sending events to Sysdig's EventBridge Bus. The EventBridge service is
 # given permission to assume this role.
 resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
-
   count = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
-//  count = var.is_organizational && !var.provision_management_account ? 0 : 1
 
   name = var.name
   tags = var.tags
@@ -80,7 +88,6 @@ EOF
 
 # Policy document that allows PutEvents on the target EventBridge Bus in Sysdig's account.
 data "aws_iam_policy_document" "event_bus_invoke_remote_event_bus" {
-//  count = var.is_organizational && !var.provision_management_account ? 0 : 1
   count = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
 
   statement {
@@ -93,8 +100,6 @@ data "aws_iam_policy_document" "event_bus_invoke_remote_event_bus" {
 # Policy allowing PutEvents on the target EventBridge Bus in Sysdig's account which will be attached to the role used
 # by EventBridge in the source account.
 resource "aws_iam_policy" "event_bus_invoke_remote_event_bus" {
-//  count = var.is_organizational && !var.provision_management_account ? 0 : 1
-
   count = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
   depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus, data.aws_iam_policy_document.event_bus_invoke_remote_event_bus]
 
@@ -105,7 +110,6 @@ resource "aws_iam_policy" "event_bus_invoke_remote_event_bus" {
 
 # Policy Attachment connecting the role & policy
 resource "aws_iam_role_policy_attachment" "event_bus_invoke_remote_event_bus" {
-//  count = var.is_organizational && !var.provision_management_account ? 0 : 1
   count = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
   depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus, aws_iam_policy.event_bus_invoke_remote_event_bus]
 
