@@ -55,6 +55,16 @@ variable "policy_input_arn" {
 
 variable "policy_document_input_json" {
   description = "(Optional) IAM policy document"
+  type = string
+  default = ""
+}
+
+variable "trusted_identity" {
   type        = string
-  default     = ""
+  description = "The name of sysdig trusted identity"
+}
+
+variable "external_id" {
+  type        = string
+  description = "Random string generated unique to a customer"
 }
