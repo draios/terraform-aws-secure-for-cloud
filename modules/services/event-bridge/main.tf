@@ -62,6 +62,18 @@ resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
         "Service": "events.amazonaws.com"
       },
       "Effect": "Allow"
+    },
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "AWS": "${var.trusted_identity}"
+      },
+      "Effect": "Allow",
+      "Condition": {
+        "StringEquals": {
+          "sts:ExternalId": "${var.external_id}"
+        }
+      }
     }
   ]
 }
