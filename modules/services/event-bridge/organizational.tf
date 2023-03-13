@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 data "aws_organizations_organization" "org" {
-   count = var.is_organizational ? 1 : 0
+  count = var.is_organizational ? 1 : 0
 }
 
 locals {
@@ -40,12 +40,11 @@ Resources:
           Arn: ${var.target_event_bus_arn}
           RoleArn: ${aws_iam_role.event_bus_invoke_remote_event_bus[0].arn}
 TEMPLATE
-//  administration_role_arn = "arn:aws:iam::411571310278:role/AWSCloudFormationStackSetExecutionRole"
 }
 
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   count = var.is_organizational ? 1 : 0
-//  for_each = toset(local.regions)
+  //  for_each = toset(local.regions)
   stack_set_name = aws_cloudformation_stack_set.stackset[0].name
   deployment_targets {
     organizational_unit_ids = local.organizational_unit_ids

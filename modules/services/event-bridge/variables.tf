@@ -41,22 +41,22 @@ variable "tags" {
   }
 }
 
-variable "role_input_arn" {
-  description = "(Optional) IAM role"
+variable "role_arn" {
+  description = "(Optional) IAM role created for event-bridge. If already created value is needed to be passed"
   type        = string
   default     = ""
 }
 
-variable "policy_input_arn" {
-  description = "(Optional) IAM policy"
+variable "policy_arn" {
+  description = "(Optional) IAM policy created for event-bridge. If already created value is needed to be passed"
   type        = string
   default     = ""
 }
 
-variable "policy_document_input_json" {
-  description = "(Optional) IAM policy document"
-  type = string
-  default = ""
+variable "policy_document_json" {
+  description = "(Optional) IAM policy document created for event-bridge. If already created value is needed to be passed"
+  type        = string
+  default     = ""
 }
 
 variable "trusted_identity" {
