@@ -36,7 +36,7 @@ Resources:
         detail-type:
           - 'AWS API Call via CloudTrail'
           - 'AWS Console Sign In via CloudTrail'
-		  - 'AWS Service Event via CloudTrail'
+          - 'AWS Service Event via CloudTrail'
       Targets:
         - Id: ${var.name}
           Arn: ${var.target_event_bus_arn}
