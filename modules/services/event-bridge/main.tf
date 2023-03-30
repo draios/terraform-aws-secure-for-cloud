@@ -39,7 +39,9 @@ resource "aws_cloudwatch_event_rule" "sysdig" {
   event_pattern = <<EOF
 {
   "detail-type": [
-    "AWS API Call via CloudTrail"
+    "AWS API Call via CloudTrail",
+    "AWS Console Sign In via CloudTrail",
+    "AWS Service Event via CloudTrail"
   ]
 }
 EOF

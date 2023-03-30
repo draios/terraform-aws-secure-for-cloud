@@ -35,6 +35,8 @@ Resources:
       EventPattern:
         detail-type:
           - 'AWS API Call via CloudTrail'
+          - 'AWS Console Sign In via CloudTrail'
+          - 'AWS Service Event via CloudTrail'
       Targets:
         - Id: ${var.name}
           Arn: ${var.target_event_bus_arn}
@@ -44,7 +46,7 @@ TEMPLATE
 
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   count = var.is_organizational ? 1 : 0
-  //  for_each = toset(local.regions)
+
   stack_set_name = aws_cloudformation_stack_set.stackset[0].name
   deployment_targets {
     organizational_unit_ids = local.organizational_unit_ids
