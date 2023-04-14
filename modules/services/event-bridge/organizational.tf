@@ -8,8 +8,12 @@ data "aws_organizations_organization" "org" {
   count = var.is_organizational ? 1 : 0
 }
 
+data "aws_region" "current" {}
+
 locals {
   organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.organization_units)
+  excluded_region         = data.aws_region.current.name
+  updated_regions         = setsubtract(var.regions, [local.excluded_region])
 }
 
 resource "aws_cloudformation_stack_set" "stackset" {
@@ -44,6 +48,7 @@ Resources:
 TEMPLATE
 }
 
+// stackset instance to deploy rule in all organization units
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   count = var.is_organizational ? 1 : 0
 
@@ -51,6 +56,18 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   deployment_targets {
     organizational_unit_ids = local.organizational_unit_ids
   }
+  operation_preferences {
+    failure_tolerance_count = 5
+    max_concurrent_count    = 2
+  }
+}
+
+// stackset instance to deploy rule in all regions of management account
+resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
+  for_each       = toset(local.updated_regions)
+  region         = each.key
+  stack_set_name = aws_cloudformation_stack_set.stackset[0].name
+
   operation_preferences {
     failure_tolerance_count = 5
     max_concurrent_count    = 2
