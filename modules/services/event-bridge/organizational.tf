@@ -12,10 +12,9 @@ data "aws_region" "current" {}
 
 locals {
   organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.organization_units)
-  excluded_region         = data.aws_region.current.name
-  updated_regions         = setsubtract(var.regions, [local.excluded_region])
 }
 
+# permission policy for stackset admin role
 resource "aws_iam_policy" "admin_role_policy" {
   name   = "stackset-admin-role-policy"
   policy = <<EOF
@@ -36,11 +35,13 @@ resource "aws_iam_policy" "admin_role_policy" {
 EOF
 }
 
+# policy attachment for stackset admin role
 resource "aws_iam_role_policy_attachment" "admin_role_attachment" {
   policy_arn = aws_iam_policy.admin_role_policy.arn
   role       = aws_iam_role.mgmt_stackset_admin_role[0].name
 }
 
+# admin role needed to deploy resources in management account via stackset
 resource "aws_iam_role" "mgmt_stackset_admin_role" {
   count = var.is_organizational ? 1 : 0
 
@@ -63,6 +64,7 @@ resource "aws_iam_role" "mgmt_stackset_admin_role" {
 EOF
 }
 
+# execution role needed to deploy resources in management account via stackset
 resource "aws_iam_role" "mgmt_stackset_execution_role" {
   count = var.is_organizational ? 1 : 0
 
@@ -86,10 +88,11 @@ EOF
   managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
 }
 
+# stackset to deploy eventbridge rule in organization unit
 resource "aws_cloudformation_stack_set" "stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name             = var.name
+  name             = join("-",[var.name, "EBRuleOrg"])
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
@@ -118,10 +121,11 @@ Resources:
 TEMPLATE
 }
 
+# stackset to deploy eventbridge rule in management account
 resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name                    = var.name
+  name                    = join("-",[var.name , "EBRuleMgmtAcc"])
   tags                    = var.tags
   permission_model        = "SELF_MANAGED"
   capabilities            = ["CAPABILITY_NAMED_IAM"]
@@ -162,7 +166,7 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
 
 // stackset instance to deploy rule in all regions of management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
-  for_each       = toset(local.updated_regions)
+  for_each       = toset(var.regions)
   region         = each.key
   stack_set_name = aws_cloudformation_stack_set.mgmt-stackset[0].name
 

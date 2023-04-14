@@ -30,6 +30,7 @@ locals {
 # Rule to capture all events from CloudTrail in the source account.
 
 resource "aws_cloudwatch_event_rule" "sysdig" {
+  count       = var.is_organizational ? 0 : 1
   name        = var.name
   description = "Capture all CloudTrail events"
   tags        = var.tags
@@ -48,10 +49,11 @@ EOF
 # Target to forward all CloudTrail events to Sysdig's EventBridge Bus.
 # See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target#cross-account-event-bus-target
 resource "aws_cloudwatch_event_target" "sysdig" {
+  count      = var.is_organizational ? 0 : 1
   depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus]
 
-  //  rule     = aws_cloudwatch_event_rule.sysdig[0].name
-  rule     = aws_cloudwatch_event_rule.sysdig.name
+  //    rule     = aws_cloudwatch_event_rule.sysdig.name
+  rule     = aws_cloudwatch_event_rule.sysdig[0].name
   arn      = var.target_event_bus_arn
   role_arn = local.is_role_empty ? aws_iam_role.event_bus_invoke_remote_event_bus[0].arn : var.role_arn
 
