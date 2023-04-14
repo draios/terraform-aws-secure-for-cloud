@@ -17,6 +17,7 @@ locals {
 
 # permission policy for stackset admin role
 resource "aws_iam_policy" "admin_role_policy" {
+  count  = var.is_organizational ? 1 : 0
   name   = "stackset-admin-role-policy"
   policy = <<EOF
 {
@@ -38,7 +39,8 @@ EOF
 
 # policy attachment for stackset admin role
 resource "aws_iam_role_policy_attachment" "admin_role_attachment" {
-  policy_arn = aws_iam_policy.admin_role_policy.arn
+  count      = var.is_organizational ? 1 : 0
+  policy_arn = aws_iam_policy.admin_role_policy[0].arn
   role       = aws_iam_role.mgmt_stackset_admin_role[0].name
 }
 
