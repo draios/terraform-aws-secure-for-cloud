@@ -16,68 +16,51 @@ locals {
   updated_regions         = setsubtract(var.regions, [local.excluded_region])
 }
 
+resource "aws_iam_policy" "admin_role_policy" {
+  name   = "stackset-admin-role-policy"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": [
+                "arn:*:iam::*:role/AWSCloudFormationStackSetExecutionRole"
+            ],
+            "Effect": "Allow"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "admin_role_attachment" {
+  policy_arn = aws_iam_policy.admin_role_policy.arn
+  role       = aws_iam_role.mgmt_stackset_admin_role[0].name
+}
+
 resource "aws_iam_role" "mgmt_stackset_admin_role" {
   count = var.is_organizational ? 1 : 0
 
   name = "AWSCloudFormationStackSetAdministrationRole"
   tags = var.tags
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "cloudformation.amazonaws.com"
+  assume_role_policy = <<EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudformation.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
         }
-        Resource = "arn:*:iam::*:role/AWSCloudFormationStackSetExecutionRole"
-      },
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = var.trusted_identity
-        }
-        Resource = "arn:*:iam::*:role/AWSCloudFormationStackSetExecutionRole"
-        Condition = {
-          StringEquals = {
-            "sts:ExternalId" = var.external_id
-          }
-        }
-      }
     ]
-  })
-
-  //  assume_role_policy = <<EOF
-  //{
-  //  "Version": "2012-10-17",
-  //  "Statement": [
-  //    {
-  //      "Action": "sts:AssumeRole",
-  //      "Principal": {
-  //        "Service": "cloudformation.amazonaws.com"
-  //      },
-  //      "Resource": {
-  //        "arn:*:iam::*:role/AWSCloudFormationStackSetExecutionRole"
-  //      },
-  //      "Effect": "Allow"
-  //    },
-  //    {
-  //      "Action": "sts:AssumeRole",
-  //      "Principal": {
-  //        "AWS": "${var.trusted_identity}"
-  //      },
-  //      "Effect": "Allow",
-  //      "Condition": {
-  //        "StringEquals": {
-  //          "sts:ExternalId": "${var.external_id}"
-  //        }
-  //      }
-  //    }
-  //  ]
-  //}
-  //EOF
+}
+EOF
 }
 
 resource "aws_iam_role" "mgmt_stackset_execution_role" {
@@ -86,18 +69,20 @@ resource "aws_iam_role" "mgmt_stackset_execution_role" {
   name = "AWSCloudFormationStackSetExecutionRole"
   tags = var.tags
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = aws_iam_role.mgmt_stackset_admin_role[0].arn
+  assume_role_policy  = <<EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "${aws_iam_role.mgmt_stackset_admin_role[0].arn}"
+            },
+            "Action": "sts:AssumeRole"
         }
-      }
     ]
-  })
+}
+EOF
   managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
 }
 
@@ -141,11 +126,6 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   permission_model        = "SELF_MANAGED"
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = aws_iam_role.mgmt_stackset_admin_role[0].arn
-
-  //  auto_deployment {
-  //    enabled                          = true
-  //    retain_stacks_on_account_removal = false
-  //  }
 
   template_body = <<TEMPLATE
 Resources:
