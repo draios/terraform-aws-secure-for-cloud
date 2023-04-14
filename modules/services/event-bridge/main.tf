@@ -31,7 +31,7 @@ locals {
 
 resource "aws_cloudwatch_event_rule" "sysdig" {
   count       = var.is_organizational ? 0 : 1
-  name        = join("-", [var.name, "Rule"])
+  name        = var.name
   description = "Capture all CloudTrail events"
   tags        = var.tags
 
@@ -69,7 +69,7 @@ resource "aws_cloudwatch_event_target" "sysdig" {
 resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
   count = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
 
-  name = join("-", [var.name, "Role"])
+  name = var.name
   tags = var.tags
 
   assume_role_policy = <<EOF
