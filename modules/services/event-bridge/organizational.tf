@@ -93,7 +93,7 @@ resource "aws_iam_role" "mgmt_stackset_execution_role" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = "cloudformation.amazonaws.com"
+          AWS = aws_iam_role.mgmt_stackset_admin_role[0].arn
         }
       }
     ]
