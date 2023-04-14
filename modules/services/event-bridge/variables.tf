@@ -22,7 +22,7 @@ variable "organization_units" {
 }
 
 variable "regions" {
-  description = "(Optional) List of regions in which to setup EventBridge. Required "
+  description = "(Optional) List of regions in which to setup EventBridge. By default, current region is selected"
   type        = set(string)
   default     = []
 }

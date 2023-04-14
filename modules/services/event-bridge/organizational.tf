@@ -12,6 +12,7 @@ data "aws_region" "current" {}
 
 locals {
   organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.organization_units)
+  region_set              = length(var.regions) == 0 ? [data.aws_region.current.name] : toset(var.regions)
 }
 
 # permission policy for stackset admin role
@@ -166,7 +167,7 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
 
 // stackset instance to deploy rule in all regions of management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
-  for_each       = toset(var.regions)
+  for_each       = local.region_set
   region         = each.key
   stack_set_name = aws_cloudformation_stack_set.mgmt-stackset[0].name
 
