@@ -92,7 +92,7 @@ EOF
 resource "aws_cloudformation_stack_set" "stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name             = join("-",[var.name, "EBRuleOrg"])
+  name             = join("-", [var.name, "EBRuleOrg"])
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
@@ -125,7 +125,7 @@ TEMPLATE
 resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name                    = join("-",[var.name , "EBRuleMgmtAcc"])
+  name                    = join("-", [var.name, "EBRuleMgmtAcc"])
   tags                    = var.tags
   permission_model        = "SELF_MANAGED"
   capabilities            = ["CAPABILITY_NAMED_IAM"]
