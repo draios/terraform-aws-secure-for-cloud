@@ -99,6 +99,7 @@ resource "aws_cloudformation_stack_set" "stackset" {
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
+  //  depends_on = [aws_iam_role.mgmt_stackset_admin_role,aws_iam_role.mgmt_stackset_execution_role]
 
   auto_deployment {
     enabled                          = true
@@ -133,6 +134,7 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   permission_model        = "SELF_MANAGED"
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = aws_iam_role.mgmt_stackset_admin_role[0].arn
+  //  depends_on = [aws_iam_role.mgmt_stackset_admin_role,aws_iam_role.mgmt_stackset_execution_role]
 
   template_body = <<TEMPLATE
 Resources:
@@ -150,6 +152,51 @@ Resources:
         - Id: ${var.name}
           Arn: ${var.target_event_bus_arn}
           RoleArn: ${aws_iam_role.event_bus_invoke_remote_event_bus[0].arn}
+TEMPLATE
+}
+
+# stackset to deploy eventbridge role in organization unit
+resource "aws_cloudformation_stack_set" "eb-role-stackset" {
+  count = var.is_organizational ? 1 : 0
+
+  name             = join("-", [var.name, "EBRoleOrg"])
+  tags             = var.tags
+  permission_model = "SERVICE_MANAGED"
+  capabilities     = ["CAPABILITY_NAMED_IAM"]
+  //  depends_on = [aws_iam_role.mgmt_stackset_admin_role,aws_iam_role.mgmt_stackset_execution_role]
+  auto_deployment {
+    enabled                          = true
+    retain_stacks_on_account_removal = false
+  }
+
+  template_body = <<TEMPLATE
+Resources:
+  EventBridgeRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${var.name}
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: events.amazonaws.com
+              Action: 'sts:AssumeRole'
+            - Effect: "Allow"
+              Principal:
+                AWS: "${var.trusted_identity}"
+              Action: "sts:AssumeRole"
+              Condition:
+                StringEquals:
+                  sts:ExternalId: "${var.external_id}"
+        Policies:
+          - PolicyName: ${var.name}
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action: 'events:PutEvents'
+                  Resource: ${var.target_event_bus_arn}
 TEMPLATE
 }
 
