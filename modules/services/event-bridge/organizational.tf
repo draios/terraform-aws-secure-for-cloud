@@ -38,10 +38,11 @@ EOF
 }
 
 # policy attachment for stackset admin role
-resource "aws_iam_role_policy_attachment" "admin_role_attachment" {
+resource "aws_iam_policy_attachment" "admin_role_attachment" {
   count      = var.is_organizational ? 1 : 0
   policy_arn = aws_iam_policy.admin_role_policy[0].arn
-  role       = aws_iam_role.mgmt_stackset_admin_role[0].name
+  roles      = [aws_iam_role.mgmt_stackset_admin_role[0].name]
+  name       = "stackset-admin-role-policy-attachment"
 }
 
 # admin role needed to deploy resources in management account via stackset
@@ -81,7 +82,7 @@ resource "aws_iam_role" "mgmt_stackset_execution_role" {
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "${aws_iam_role.mgmt_stackset_admin_role[0].arn}"
+                "AWS": "${aws_iam_role.mgmt_stackset_admin_role[0].unique_id}"
             },
             "Action": "sts:AssumeRole"
         }
@@ -92,14 +93,13 @@ EOF
 }
 
 # stackset to deploy eventbridge rule in organization unit
-resource "aws_cloudformation_stack_set" "stackset" {
+resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
   count = var.is_organizational ? 1 : 0
 
   name             = join("-", [var.name, "EBRuleOrg"])
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
-  //  depends_on = [aws_iam_role.mgmt_stackset_admin_role,aws_iam_role.mgmt_stackset_execution_role]
 
   auto_deployment {
     enabled                          = true
@@ -121,7 +121,7 @@ Resources:
       Targets:
         - Id: ${var.name}
           Arn: ${var.target_event_bus_arn}
-          RoleArn: ${aws_iam_role.event_bus_invoke_remote_event_bus[0].arn}
+          RoleArn: !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"
 TEMPLATE
 }
 
@@ -134,7 +134,7 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   permission_model        = "SELF_MANAGED"
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = aws_iam_role.mgmt_stackset_admin_role[0].arn
-  //  depends_on = [aws_iam_role.mgmt_stackset_admin_role,aws_iam_role.mgmt_stackset_execution_role]
+  depends_on              = [aws_iam_role.mgmt_stackset_execution_role[0]]
 
   template_body = <<TEMPLATE
 Resources:
@@ -163,7 +163,7 @@ resource "aws_cloudformation_stack_set" "eb-role-stackset" {
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
-  //  depends_on = [aws_iam_role.mgmt_stackset_admin_role,aws_iam_role.mgmt_stackset_execution_role]
+
   auto_deployment {
     enabled                          = true
     retain_stacks_on_account_removal = false
@@ -204,7 +204,7 @@ TEMPLATE
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   count = var.is_organizational ? 1 : 0
 
-  stack_set_name = aws_cloudformation_stack_set.stackset[0].name
+  stack_set_name = aws_cloudformation_stack_set.eb-rule-stackset[0].name
   deployment_targets {
     organizational_unit_ids = local.organizational_unit_ids
   }
@@ -221,6 +221,21 @@ resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
   region         = each.key
   stack_set_name = aws_cloudformation_stack_set.mgmt-stackset[0].name
 
+  operation_preferences {
+    failure_tolerance_count = 10
+    max_concurrent_count    = 10
+    region_concurrency_type = "PARALLEL"
+  }
+}
+
+// stackset instance to deploy role in all organization units
+resource "aws_cloudformation_stack_set_instance" "eb_role_stackset_instance" {
+  count = var.is_organizational ? 1 : 0
+
+  stack_set_name = aws_cloudformation_stack_set.eb-role-stackset[0].name
+  deployment_targets {
+    organizational_unit_ids = local.organizational_unit_ids
+  }
   operation_preferences {
     failure_tolerance_count = 10
     max_concurrent_count    = 10
