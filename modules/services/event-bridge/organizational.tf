@@ -18,7 +18,7 @@ locals {
 # permission policy for stackset admin role
 resource "aws_iam_policy" "admin_role_policy" {
   count  = var.is_organizational ? 1 : 0
-  name   = "stackset-admin-role-policy"
+  name   = "AssumeRole-AWSCloudFormationStackSetExecutionRole"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -42,7 +42,7 @@ resource "aws_iam_policy_attachment" "admin_role_attachment" {
   count      = var.is_organizational ? 1 : 0
   policy_arn = aws_iam_policy.admin_role_policy[0].arn
   roles      = [aws_iam_role.mgmt_stackset_admin_role[0].name]
-  name       = "stackset-admin-role-policy-attachment"
+  name       = "admin-role-policy-attachment"
 }
 
 # admin role needed to deploy resources in management account via stackset
@@ -202,7 +202,8 @@ TEMPLATE
 
 // stackset instance to deploy rule in all organization units
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
-  count = var.is_organizational ? 1 : 0
+  for_each = local.region_set
+  region   = each.key
 
   stack_set_name = aws_cloudformation_stack_set.eb-rule-stackset[0].name
   deployment_targets {
