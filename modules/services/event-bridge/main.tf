@@ -50,7 +50,7 @@ EOF
 # See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target#cross-account-event-bus-target
 resource "aws_cloudwatch_event_target" "sysdig" {
   count      = var.is_organizational ? 0 : 1
-  depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus]
+  depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus, aws_cloudwatch_event_rule.sysdig]
 
   rule     = aws_cloudwatch_event_rule.sysdig[0].name
   arn      = var.target_event_bus_arn
@@ -97,36 +97,23 @@ resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
   ]
 }
 EOF
+  inline_policy {
+    name   = var.name
+    policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "events:PutEvents"
+            ],
+            "Resource": [
+                "${var.target_event_bus_arn}"
+            ],
+            "Effect": "Allow"
+        }
+    ]
 }
-
-# Policy document that allows PutEvents on the target EventBridge Bus in Sysdig's account.
-data "aws_iam_policy_document" "event_bus_invoke_remote_event_bus" {
-  count = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
-
-  statement {
-    effect    = "Allow"
-    actions   = ["events:PutEvents"]
-    resources = [var.target_event_bus_arn]
+EOF
   }
-}
-
-# Policy allowing PutEvents on the target EventBridge Bus in Sysdig's account which will be attached to the role used
-# by EventBridge in the source account.
-resource "aws_iam_policy" "event_bus_invoke_remote_event_bus" {
-  count      = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
-  depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus, data.aws_iam_policy_document.event_bus_invoke_remote_event_bus]
-
-  name   = var.name
-  tags   = var.tags
-  policy = local.is_policy_doc_empty ? data.aws_iam_policy_document.event_bus_invoke_remote_event_bus[0].json : var.policy_document_json
-}
-
-# Policy Attachment connecting the role & policy
-resource "aws_iam_role_policy_attachment" "event_bus_invoke_remote_event_bus" {
-  count      = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
-  depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus, aws_iam_policy.event_bus_invoke_remote_event_bus]
-
-
-  role       = local.is_role_empty ? aws_iam_role.event_bus_invoke_remote_event_bus[0].name : var.role_arn
-  policy_arn = local.is_policy_empty ? aws_iam_policy.event_bus_invoke_remote_event_bus[0].arn : var.policy_arn
 }
