@@ -37,10 +37,7 @@ No modules.
 | [aws_cloudformation_stack_set_instance.stackset_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack_set_instance) | resource |
 | [aws_cloudwatch_event_rule.sysdig](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.sysdig](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
-| [aws_iam_policy.event_bus_invoke_remote_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.event_bus_invoke_remote_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy_attachment.event_bus_invoke_remote_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_policy_document.event_bus_invoke_remote_event_bus](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_organizations_organization.org](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
 
 ## Inputs
@@ -54,8 +51,6 @@ No modules.
 | <a name="input_is_organizational"></a> [is\_organizational](#input\_is\_organizational) | (Optional) Set this field to 'true' to deploy EventBridge to an AWS Organization (Or specific OUs) | `bool` | `false` | no |
 | <a name="input_name"></a> [name](#input\_name) | (Optional) Name to be assigned to all child resources. A suffix may be added internally when required. Use default value unless you need to install multiple instances | `string` | `"sysdig"` | no |
 | <a name="input_organization_units"></a> [organization\_units](#input\_organization\_units) | (Optional) List of Organization Unit IDs in which to setup EventBridge. By default, EventBridge will be setup in all accounts within the Organization. This field is ignored if `is_organizational = false` | `set(string)` | `[]` | no |
-| <a name="input_policy_arn"></a> [policy\_arn](#input\_policy\_arn) | (Optional) IAM policy created for event-bridge. If already created value is needed to be passed | `string` | `""` | no |
-| <a name="input_policy_document_json"></a> [policy\_document\_json](#input\_policy\_document\_json) | (Optional) IAM policy document created for event-bridge. If already created value is needed to be passed | `string` | `""` | no |
 | <a name="input_provision_management_account"></a> [provision\_management\_account](#input\_provision\_management\_account) | (Optional) Set this field to `true` to deploy EventBridge to the management account. By default, the management account will be instrumented. This field is ignored if `is_organizational = false` | `bool` | `true` | no |
 | <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | (Optional) IAM role created for event-bridge. If already created value is needed to be passed | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Tags to be attached to all Sysdig resources. | `map(string)` | <pre>{<br>  "product": "sysdig"<br>}</pre> | no |
@@ -64,8 +59,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_policy_arn"></a> [policy\_arn](#output\_policy\_arn) | ARN of cspm role |
-| <a name="output_policy_document_json"></a> [policy\_document\_json](#output\_policy\_document\_json) | ARN of cspm role |
 | <a name="output_role_arn"></a> [role\_arn](#output\_role\_arn) | ARN of cspm role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
