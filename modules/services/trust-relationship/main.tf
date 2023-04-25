@@ -39,8 +39,6 @@ data "aws_iam_policy_document" "trust_relationship" {
 }
 
 resource "aws_iam_role" "cspm_role" {
-  count = var.is_organizational && !var.provision_caller_account ? 0 : 1
-
   name               = var.role_name
   assume_role_policy = data.aws_iam_policy_document.trust_relationship.json
   tags               = var.tags
@@ -48,9 +46,7 @@ resource "aws_iam_role" "cspm_role" {
 
 
 resource "aws_iam_role_policy_attachment" "cspm_security_audit" {
-  count = var.is_organizational && !var.provision_caller_account ? 0 : 1
-
-  role       = aws_iam_role.cspm_role[0].id
+  role       = aws_iam_role.cspm_role.id
   policy_arn = data.aws_iam_policy.security_audit.arn
 }
 

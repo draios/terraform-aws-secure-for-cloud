@@ -30,8 +30,7 @@ locals {
 # Rule to capture all events from CloudTrail in the source account.
 
 resource "aws_cloudwatch_event_rule" "sysdig" {
-  count = var.is_organizational && !var.provision_management_account ? 0 : 1
-
+  count       = var.is_organizational ? 0 : 1
   name        = var.name
   description = "Capture all CloudTrail events"
   tags        = var.tags
@@ -50,7 +49,7 @@ EOF
 # Target to forward all CloudTrail events to Sysdig's EventBridge Bus.
 # See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target#cross-account-event-bus-target
 resource "aws_cloudwatch_event_target" "sysdig" {
-  count      = var.is_organizational && !var.provision_management_account ? 0 : 1
+  count      = var.is_organizational ? 0 : 1
   depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus]
 
   rule     = aws_cloudwatch_event_rule.sysdig[0].name
@@ -67,9 +66,9 @@ resource "aws_cloudwatch_event_target" "sysdig" {
 # Role that will be used by EventBridge when sending events to Sysdig's EventBridge Bus. The EventBridge service is
 # given permission to assume this role.
 resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
-  count = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
+  count = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
 
-  name = var.name
+  name = join("-", [var.name, "MgmtEBRole"])
   tags = var.tags
 
   assume_role_policy = <<EOF
@@ -102,7 +101,7 @@ EOF
 
 # Policy document that allows PutEvents on the target EventBridge Bus in Sysdig's account.
 data "aws_iam_policy_document" "event_bus_invoke_remote_event_bus" {
-  count = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
+  count = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
 
   statement {
     effect    = "Allow"
@@ -114,7 +113,7 @@ data "aws_iam_policy_document" "event_bus_invoke_remote_event_bus" {
 # Policy allowing PutEvents on the target EventBridge Bus in Sysdig's account which will be attached to the role used
 # by EventBridge in the source account.
 resource "aws_iam_policy" "event_bus_invoke_remote_event_bus" {
-  count      = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
+  count      = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
   depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus, data.aws_iam_policy_document.event_bus_invoke_remote_event_bus]
 
   name   = var.name
@@ -124,7 +123,7 @@ resource "aws_iam_policy" "event_bus_invoke_remote_event_bus" {
 
 # Policy Attachment connecting the role & policy
 resource "aws_iam_role_policy_attachment" "event_bus_invoke_remote_event_bus" {
-  count      = var.is_organizational ? var.provision_management_account ? 0 : 1 : var.deploy_global_resources ? 1 : 0
+  count      = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
   depends_on = [aws_iam_role.event_bus_invoke_remote_event_bus, aws_iam_policy.event_bus_invoke_remote_event_bus]
 
 

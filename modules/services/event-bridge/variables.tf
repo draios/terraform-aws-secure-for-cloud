@@ -15,14 +15,14 @@ variable "deploy_global_resources" {
   default     = false
 }
 
-variable "provision_management_account" {
-  type        = bool
-  default     = true
-  description = "(Optional) Set this field to `true` to deploy EventBridge to the management account. By default, the management account will be instrumented. This field is ignored if `is_organizational = false`"
-}
-
 variable "organization_units" {
   description = "(Optional) List of Organization Unit IDs in which to setup EventBridge. By default, EventBridge will be setup in all accounts within the Organization. This field is ignored if `is_organizational = false`"
+  type        = set(string)
+  default     = []
+}
+
+variable "regions" {
+  description = "(Optional) List of regions in which to setup EventBridge. By default, current region is selected"
   type        = set(string)
   default     = []
 }
