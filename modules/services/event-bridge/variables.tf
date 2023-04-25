@@ -47,18 +47,6 @@ variable "role_arn" {
   default     = ""
 }
 
-variable "policy_arn" {
-  description = "(Optional) IAM policy created for event-bridge. If already created value is needed to be passed"
-  type        = string
-  default     = ""
-}
-
-variable "policy_document_json" {
-  description = "(Optional) IAM policy document created for event-bridge. If already created value is needed to be passed"
-  type        = string
-  default     = ""
-}
-
 variable "trusted_identity" {
   type        = string
   description = "The name of sysdig trusted identity"
