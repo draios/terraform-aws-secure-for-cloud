@@ -11,8 +11,6 @@
 # Rule to capture all events from CloudTrail in the source account.
 locals {
   is_role_empty       = length(var.role_arn) == 0
-  is_policy_empty     = length(var.policy_arn) == 0
-  is_policy_doc_empty = length(var.policy_document_json) == 0
 }
 #-----------------------------------------------------------------------------------------------------------------------
 # Determine if this is an Organizational install, or a single account install. For Single Account installs, resources
