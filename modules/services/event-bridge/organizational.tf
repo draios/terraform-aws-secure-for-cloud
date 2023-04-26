@@ -11,21 +11,13 @@ data "aws_organizations_organization" "org" {
 data "aws_region" "current" {}
 
 locals {
-  organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.organization_units)
+  organizational_unit_ids = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
   region_set              = length(var.regions) == 0 ? [data.aws_region.current.name] : toset(var.regions)
 }
 
 //# admin role needed to deploy resources in management account via stackset
 resource "aws_iam_role" "mgmt_stackset_admin_role" {
   count = var.is_organizational ? 1 : 0
-
-  # need to add local-exec block as role propagation is not instant. AWS needs some time to propagate role
-  # in every region inspiet of being a global resource. so we add a delay to make sure this role
-  # is available before creation of stackset
-  # https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency
-  provisioner "local-exec" {
-    command = "sleep 3;"
-  }
 
   name = "AWSCloudFormationStackSetAdministrationRole"
   tags = var.tags
@@ -68,14 +60,6 @@ EOF
 //# execution role needed to deploy resources in management account via stackset
 resource "aws_iam_role" "mgmt_stackset_execution_role" {
   count = var.is_organizational ? 1 : 0
-
-  # need to add local-exec block as role propagation is not instant. AWS needs some time to propagate role
-  # in every region inspiet of being a global resource. so we add a delay to make sure this role
-  # is available before creation of stackset
-  # https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency
-  provisioner "local-exec" {
-    command = "sleep 3;"
-  }
 
   name = "AWSCloudFormationStackSetExecutionRole"
   tags = var.tags
