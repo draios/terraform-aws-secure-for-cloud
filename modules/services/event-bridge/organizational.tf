@@ -12,7 +12,7 @@ data "aws_region" "current" {}
 
 locals {
   organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.organization_units)
-  region_set              = length(var.regions) == 0 ? [data.aws_region.current.name] : toset(var.regions)
+  region_set              = toset(var.regions)
 }
 
 //# admin role needed to deploy resources in management account via stackset
