@@ -10,7 +10,7 @@
 
 # Rule to capture all events from CloudTrail in the source account.
 locals {
-  is_role_empty       = length(var.role_arn) == 0
+  is_role_empty = length(var.role_arn) == 0
 }
 #-----------------------------------------------------------------------------------------------------------------------
 # Determine if this is an Organizational install, or a single account install. For Single Account installs, resources
