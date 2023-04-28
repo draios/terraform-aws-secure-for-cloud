@@ -15,88 +15,6 @@ locals {
   region_set              = toset(var.regions)
 }
 
-//# admin role needed to deploy resources in management account via stackset
-resource "aws_iam_role" "mgmt_stackset_admin_role" {
-  count = var.is_organizational ? 1 : 0
-
-  # need to add local-exec block as role propagation is not instant. AWS needs some time to propagate role
-  # in every region inspiet of being a global resource. so we add a delay to make sure this role
-  # is available before creation of stackset
-  # https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency
-  provisioner "local-exec" {
-    command = "sleep 3;"
-  }
-
-  name = "AWSCloudFormationStackSetAdministrationRole"
-  tags = var.tags
-
-  assume_role_policy = <<EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "cloudformation.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
-}
-EOF
-  inline_policy {
-    name   = "AssumeRole-AWSCloudFormationStackSetExecutionRole"
-    policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "sts:AssumeRole"
-            ],
-            "Resource": [
-                "arn:*:iam::*:role/AWSCloudFormationStackSetExecutionRole"
-            ],
-            "Effect": "Allow"
-        }
-    ]
-}
-EOF
-  }
-}
-
-//# execution role needed to deploy resources in management account via stackset
-resource "aws_iam_role" "mgmt_stackset_execution_role" {
-  count = var.is_organizational ? 1 : 0
-
-  # need to add local-exec block as role propagation is not instant. AWS needs some time to propagate role
-  # in every region inspiet of being a global resource. so we add a delay to make sure this role
-  # is available before creation of stackset
-  # https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency
-  provisioner "local-exec" {
-    command = "sleep 3;"
-  }
-
-  name = "AWSCloudFormationStackSetExecutionRole"
-  tags = var.tags
-
-  assume_role_policy  = <<EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "${aws_iam_role.mgmt_stackset_admin_role[0].arn}"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
-}
-EOF
-  managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
-}
-
 # stackset to deploy eventbridge rule in organization unit
 resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
   count = var.is_organizational ? 1 : 0
@@ -138,8 +56,7 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   tags                    = var.tags
   permission_model        = "SELF_MANAGED"
   capabilities            = ["CAPABILITY_NAMED_IAM"]
-  administration_role_arn = aws_iam_role.mgmt_stackset_admin_role[0].arn
-  depends_on              = [aws_iam_role.mgmt_stackset_admin_role, aws_iam_role.mgmt_stackset_execution_role]
+  administration_role_arn = var.stackset_admin_role_arn
 
   template_body = <<TEMPLATE
 Resources:
