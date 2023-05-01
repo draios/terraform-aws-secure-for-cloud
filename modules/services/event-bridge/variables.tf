@@ -15,7 +15,7 @@ variable "deploy_global_resources" {
   default     = false
 }
 
-variable "organization_units" {
+variable "org_units" {
   description = "(Optional) List of Organization Unit IDs in which to setup EventBridge. By default, EventBridge will be setup in all accounts within the Organization. This field is ignored if `is_organizational = false`"
   type        = set(string)
   default     = []

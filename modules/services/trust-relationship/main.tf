@@ -17,39 +17,31 @@ locals {
 #----------------------------------------------------------
 # If this is not an Organizational deploy, create role/polices directly
 #----------------------------------------------------------
-
-data "aws_iam_policy" "security_audit" {
-  arn = "arn:aws:iam::aws:policy/SecurityAudit"
-}
-
-data "aws_iam_policy_document" "trust_relationship" {
-  statement {
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "AWS"
-      identifiers = [var.trusted_identity]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "sts:ExternalId"
-      values   = [var.external_id]
-    }
-  }
-}
-
 resource "aws_iam_role" "cspm_role" {
-  name               = var.role_name
-  assume_role_policy = data.aws_iam_policy_document.trust_relationship.json
-  tags               = var.tags
+  name                = var.role_name
+  tags                = var.tags
+  assume_role_policy  = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "${var.trusted_identity}"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "${var.external_id}"
+                }
+            }
+        }
+    ]
 }
-
-
-resource "aws_iam_role_policy_attachment" "cspm_security_audit" {
-  role       = aws_iam_role.cspm_role.id
-  policy_arn = data.aws_iam_policy.security_audit.arn
+EOF
+  managed_policy_arns = ["arn:aws:iam::aws:policy/SecurityAudit"]
 }
-
 
 #----------------------------------------------------------
 # If this is an Organizational deploy, use a CloudFormation StackSet

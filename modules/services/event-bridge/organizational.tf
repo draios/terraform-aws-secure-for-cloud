@@ -11,7 +11,7 @@ data "aws_organizations_organization" "org" {
 data "aws_region" "current" {}
 
 locals {
-  organizational_unit_ids = var.is_organizational && length(var.organization_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.organization_units)
+  organizational_unit_ids = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
   region_set              = toset(var.regions)
 }
 
