@@ -27,6 +27,12 @@ variable "regions" {
   default     = []
 }
 
+variable "stackset_admin_role_arn" {
+  description = "(Optional) stackset admin role to run SELF_MANAGED stackset"
+  type        = string
+  default     = ""
+}
+
 variable "name" {
   description = "(Optional) Name to be assigned to all child resources. A suffix may be added internally when required. Use default value unless you need to install multiple instances"
   type        = string
@@ -43,18 +49,6 @@ variable "tags" {
 
 variable "role_arn" {
   description = "(Optional) IAM role created for event-bridge. If already created value is needed to be passed"
-  type        = string
-  default     = ""
-}
-
-variable "policy_arn" {
-  description = "(Optional) IAM policy created for event-bridge. If already created value is needed to be passed"
-  type        = string
-  default     = ""
-}
-
-variable "policy_document_json" {
-  description = "(Optional) IAM policy document created for event-bridge. If already created value is needed to be passed"
   type        = string
   default     = ""
 }
