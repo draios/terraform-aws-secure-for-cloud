@@ -66,7 +66,7 @@ resource "aws_cloudwatch_event_target" "sysdig" {
 resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
   count = (var.is_organizational || var.deploy_global_resources) ? 1 : 0
 
-  name = join("-", [var.name, "MgmtEBRole"])
+  name = var.name
   tags = var.tags
 
   assume_role_policy = <<EOF

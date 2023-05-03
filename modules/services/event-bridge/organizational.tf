@@ -19,7 +19,7 @@ locals {
 resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name             = join("-", [var.name, "EBRuleOrg"])
+  name             = var.name
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
@@ -52,7 +52,7 @@ TEMPLATE
 resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name                    = join("-", [var.name, "EBRuleMgmtAcc"])
+  name                    = var.name
   tags                    = var.tags
   permission_model        = "SELF_MANAGED"
   capabilities            = ["CAPABILITY_NAMED_IAM"]
@@ -81,7 +81,7 @@ TEMPLATE
 resource "aws_cloudformation_stack_set" "eb-role-stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name             = join("-", [var.name, "EBRoleOrg"])
+  name             = var.name
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
