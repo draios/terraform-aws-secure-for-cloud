@@ -13,5 +13,5 @@ output "kms_key" {
 
 output "kms_key_alias" {
   description = "Multi-region KMS key alias"
-  value = aws_kms_alias.agentless
+  value       = aws_kms_alias.agentless
 }

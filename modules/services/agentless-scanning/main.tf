@@ -157,7 +157,7 @@ data "aws_iam_policy_document" "agentless_assume_role_policy" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${var.sysdig_be_account_id}:root",
+        var.trusted_identity,
       ]
     }
 
@@ -170,8 +170,8 @@ data "aws_iam_policy_document" "agentless_assume_role_policy" {
 }
 
 resource "aws_iam_role" "agentless" {
-  name               = "sysdig-secure-agentless-role"
-  path               = "/sysdig/secure/agentless/"
+  name               = var.name
+  tags               = var.tags
   assume_role_policy = data.aws_iam_policy_document.agentless_assume_role_policy.json
 }
 
@@ -189,7 +189,7 @@ data "aws_iam_policy_document" "key_policy" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${local.agentless_account_id}:root",
-        "arn:aws:iam::${var.sysdig_be_account_id}:root",
+        var.trusted_identity,
         aws_iam_role.agentless.arn,
       ]
     }
@@ -236,9 +236,10 @@ resource "aws_kms_key" "agentless" {
   key_usage               = "ENCRYPT_DECRYPT"
   policy                  = data.aws_iam_policy_document.key_policy.json
   multi_region            = true
+  tags                  = var.tags
 }
 
 resource "aws_kms_alias" "agentless" {
-  name          = "alias/sysdig-kms-key"
+  name          = "alias/${var.name}"
   target_key_id = aws_kms_key.agentless.key_id
 }
