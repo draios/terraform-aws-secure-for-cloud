@@ -8,19 +8,6 @@
 
 
 repos:
-  # create a custom terraform validate for the examples, as launching the validation in the root dir won't work and give
-  # "Error: Provider configuration not present" error
-  # https://github.com/hashicorp/terraform/issues/21416
-  # https://discuss.hashicorp.com/t/how-to-run-terraform-validate-on-a-module-that-is-supplied-the-providers-via-an-alias/34664/2
-#  - repo: local
-#    hooks:
-#        - id: terraform_validate
-#          name: Terraform validate
-#          entry: resources/scripts/terraform_validate.sh
-#          pass_filenames: false
-#          language: script
-#          verbose: true
-
   # https://github.com/antonbabenko/pre-commit-terraform/blob/master/README.md#terraform_validate (point 4)
   - repo: local
     hooks:
@@ -38,7 +25,7 @@ repos:
         args:
           - '--args=--sort-by required'
       - id: terraform_tflint
-        exclude: (test)|(examples-internal)\/.*$
+        exclude: (test)|(examples)\/.*$
         args:
           - '--args=--only=terraform_comment_syntax'
           - '--args=--only=terraform_deprecated_index'
@@ -57,7 +44,7 @@ repos:
           - '--args=--only=terraform_workspace_remote'
       # https://github.com/antonbabenko/pre-commit-terraform#terraform_validate
       - id: terraform_validate
-        exclude: (test)|(examples-internal)\/.*$
+        exclude: (test)|(examples)\/.*$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.1.0
     hooks:
