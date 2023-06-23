@@ -236,7 +236,7 @@ resource "aws_kms_key" "agentless" {
   key_usage               = "ENCRYPT_DECRYPT"
   policy                  = data.aws_iam_policy_document.key_policy.json
   multi_region            = true
-  tags                  = var.tags
+  tags                    = var.tags
 }
 
 resource "aws_kms_alias" "agentless" {
