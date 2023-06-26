@@ -32,18 +32,3 @@ override.tf.json
 
 # MacOS
 .DS_Store
-
-## Ruby
-## Environment normalization:
-/.bundle/
-/vendor/bundle
-/lib/bundler/man/
-
-
-# test
-.kitchen/*
-test/fixtures/**/.kitchen/
-test/snippets/*
-
-# pre-commit workarounds
-**/aliased-providers.tf.json
