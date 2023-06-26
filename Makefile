@@ -5,7 +5,7 @@ TFLINT := $(GO_BIN)/tflint
 
 SHELL := /bin/bash
 
-$(TFLINT): TMPDIR = $(shell mktemp -d)
+$(TFLINT): export TMPDIR = $(shell mktemp -d)
 $(TFLINT):
 	curl -sL https://github.com/terraform-linters/tflint/releases/latest/download/tflint_$(shell go env GOHOSTOS)_$(shell go env GOHOSTARCH).zip -o $${TMPDIR}/tflint.zip
 	unzip $${TMPDIR}/tflint.zip -d $(GO_BIN) tflint
@@ -19,7 +19,7 @@ lint: $(TFLINT)
 	tflint --recursive --module
 
 fmt:
-	terraform fmt -recursive modules
+	terraform fmt -check -recursive modules
 
 clean:
 	find -name ".terraform" -type d | xargs rm -rf
