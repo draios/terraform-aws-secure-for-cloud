@@ -21,5 +21,6 @@ for example in ${EXAMPLES} ; do
     terraform init
     terraform validate
     terraform apply --auto-approve
+    terraform apply --auto-approve --destroy 
   popd
 done
