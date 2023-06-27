@@ -36,12 +36,6 @@ variable "region" {
   description = "Default region for resource creation in organization mode"
 }
 
-variable "provision_caller_account" {
-  type        = bool
-  default     = true
-  description = "true/false whether to provision the aws provider account (if is_organizational=true management account, if is_organizational=false it will depend on the provider setup on the caller module"
-}
-
 variable "tags" {
   type        = map(string)
   description = "sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning"
