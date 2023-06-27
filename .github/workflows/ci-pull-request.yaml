@@ -33,8 +33,19 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example:
+          - "secure_threat_detection/organization/main.tf"
+          - "secure_threat_detection/single/main.tf"
+          - "secure_agentless_scanning/organization/main.tf"
+          - "secure_agentless_scanning/single/main.tf"
+          - "secure_config_posture/organization/main.tf"
+          - "secure_config_posture/single/main.tf"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Test
+        env:
+          EXAMPLES: examples/${{ matrix.example }}
         run: make test
