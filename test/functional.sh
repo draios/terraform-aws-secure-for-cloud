@@ -2,11 +2,12 @@
 
 set -e
 
-MOTO_VERSION=4.1.7
+MOTO_VERSION=4.1.12
 MOTO_CONTAINER=motoserver
 test -n "${EXAMPLES}" || EXAMPLES=$(find examples -type f -name main.tf)
 
 function cleanup() {
+  printf "removing container: "
   docker rm -f ${MOTO_CONTAINER}
 }
 trap cleanup EXIT

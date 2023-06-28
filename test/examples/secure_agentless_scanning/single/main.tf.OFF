@@ -6,12 +6,13 @@ provider "aws" {
   endpoints {
     iam     = "http://127.0.0.1:5000/"
     sts     = "http://127.0.0.1:5000/"
+    kms     = "http://127.0.0.1:5000/"
   }
 }
 
-module "single-cspm" {
-  source            = "../../../..//modules/services/trust-relationship"
+module "single-agentless-scanning" {
+  source            = "../../../..//modules/services/agentless-scanning"
   trusted_identity  = "arn:aws:iam::123456789012:role/secure-assume-role"
   external_id       = "external_id"
-  role_name         = "sysdig-secure-single"
+  name              = "sysdig"
 }
