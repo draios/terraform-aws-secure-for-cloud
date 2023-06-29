@@ -2,6 +2,8 @@
 PROJECT := terraform-aws-secure-for-cloud
 GO_BIN := $(shell go env GOPATH)/bin
 TFLINT := $(GO_BIN)/tflint
+DOCKER ?= docker
+MOTO_VERSION := 4.1.7
 
 SHELL := /bin/bash
 
@@ -16,7 +18,7 @@ deps: $(TFLINT)
 	go install github.com/hashicorp/terraform-config-inspect@latest
 
 lint: $(TFLINT)
-	tflint --recursive --module
+	$(MAKE) -C modules lint
 
 fmt:
 	terraform fmt -check -recursive modules
@@ -24,3 +26,7 @@ fmt:
 clean:
 	find -name ".terraform" -type d | xargs rm -rf
 	find -name ".terraform.lock.hcl" -type f | xargs rm -f
+
+.PHONY: test
+test:
+	$(MAKE) -C test test
