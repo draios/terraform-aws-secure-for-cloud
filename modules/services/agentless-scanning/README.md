@@ -1,22 +1,24 @@
-# Sysdig Secure Agentless Scanning AWS Module
+# AWS Agentless Scanning Module
 
-This Module creates the resources required to perform agentless scanning.
+This Module creates the resources required to perform agentless EC2 host scanning.
 
-This module will provision the following resources in the source AWS account:
-
+The following resources will be created in each instrumented account:
 - A KMS key use to transcript volume snapshots
 - An IAM Role and associated policies that allows Sysdig to perform tasks necessary for agentless scaninng.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.39.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.39.0 |
 
 ## Modules
 
@@ -41,10 +43,10 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_external_id"></a> [external\_id](#input\_external\_id) | Random string generated unique to a customer | `string` | n/a | yes |
-| <a name="input_kms_key_deletion_window"></a> [kms\_key\_deletion\_window](#input\_kms\_key\_deletion\_window) | Deletion window for shared KMS key | `number` | `7` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the installation. Assigned to most child resource(s) | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
 | <a name="input_trusted_identity"></a> [trusted\_identity](#input\_trusted\_identity) | The name of sysdig trusted identity | `string` | n/a | yes |
+| <a name="input_kms_key_deletion_window"></a> [kms\_key\_deletion\_window](#input\_kms\_key\_deletion\_window) | Deletion window for shared KMS key | `number` | `7` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
 
 ## Outputs
 

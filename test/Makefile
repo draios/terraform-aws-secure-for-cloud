@@ -1,3 +1,2 @@
 test:
 	./functional.sh
-	
