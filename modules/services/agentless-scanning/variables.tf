@@ -26,3 +26,13 @@ variable "tags" {
     "product" = "sysdig-secure-for-cloud"
   }
 }
+variable "deploy_global_resources" {
+  description = "(Optional) Set this field to 'true' to deploy EventBridge to an AWS Organization (Or specific OUs)"
+  type        = bool
+  default     = false
+}
+
+variable "kms_key_alias" {
+  description = "The alias of the KMS key used to encrypt the data plane secrets"
+  type        = string
+}

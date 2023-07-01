@@ -170,6 +170,8 @@ data "aws_iam_policy_document" "agentless_assume_role_policy" {
 }
 
 resource "aws_iam_role" "agentless" {
+  count = var.deploy_global_resources ? 1 : 0
+
   name               = var.name
   tags               = var.tags
   assume_role_policy = data.aws_iam_policy_document.agentless_assume_role_policy.json
@@ -240,6 +242,6 @@ resource "aws_kms_key" "agentless" {
 }
 
 resource "aws_kms_alias" "agentless" {
-  name          = "alias/${var.name}"
+  name          = "alias/${var.kms_key_alias}"
   target_key_id = aws_kms_key.agentless.key_id
 }
