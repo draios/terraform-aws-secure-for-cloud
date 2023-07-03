@@ -39,12 +39,12 @@ variable "kms_key_alias" {
 
 variable "primary_key" {
   description = "The primary KMS key deployed in global region"
-  type        = object({
-    id = string
+  type = object({
+    id  = string
     arn = string
   })
   default = {
-    id = ""
+    id  = ""
     arn = ""
   }
 }
