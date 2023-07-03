@@ -256,7 +256,7 @@ resource "aws_kms_key" "agentless" {
 resource "aws_kms_replica_key" "agentless_replica" {
   count = var.deploy_global_resources ? 0 : 1
 
-  description             = "Multi-Region replica key"
+  description             = "Sysdig Agentless multi-region replica key"
   deletion_window_in_days = 7
   primary_key_arn         = var.primary_key.arn
 }
