@@ -3,6 +3,8 @@
 ##################################
 
 data "aws_iam_policy_document" "agentless" {
+  count = var.deploy_global_resources ? 1 : 0
+
   # General read permission, necessary for the discovery phase.
   statement {
     sid = "Read"
@@ -140,13 +142,17 @@ data "aws_iam_policy_document" "agentless" {
 }
 
 resource "aws_iam_policy" "agentless" {
+  count = var.deploy_global_resources ? 1 : 0
+
   name        = "sysdig-secure-agentless-assume-role"
   path        = "/sysdig/secure/agentless/"
   description = "Grants Sysdig Secure access to volumes and snapshots"
-  policy      = data.aws_iam_policy_document.agentless.json
+  policy      = data.aws_iam_policy_document.agentless[0].json
 }
 
 data "aws_iam_policy_document" "agentless_assume_role_policy" {
+  count = var.deploy_global_resources ? 1 : 0
+
   statement {
     sid = "SysdigSecureAgentless"
 
@@ -170,18 +176,24 @@ data "aws_iam_policy_document" "agentless_assume_role_policy" {
 }
 
 resource "aws_iam_role" "agentless" {
+  count = var.deploy_global_resources ? 1 : 0
+
   name               = var.name
   tags               = var.tags
-  assume_role_policy = data.aws_iam_policy_document.agentless_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.agentless_assume_role_policy[0].json
 }
 
 resource "aws_iam_policy_attachment" "agentless" {
+  count = var.deploy_global_resources ? 1 : 0
+
   name       = "sysdig-agentless-host-scanning"
-  roles      = [aws_iam_role.agentless.name]
-  policy_arn = aws_iam_policy.agentless.arn
+  roles      = [aws_iam_role.agentless[0].name]
+  policy_arn = aws_iam_policy.agentless[0].arn
 }
 
 data "aws_iam_policy_document" "key_policy" {
+  count = var.deploy_global_resources ? 1 : 0
+
   statement {
     sid = "SysdigAllowKms"
 
@@ -190,7 +202,7 @@ data "aws_iam_policy_document" "key_policy" {
       identifiers = [
         "arn:aws:iam::${local.agentless_account_id}:root",
         var.trusted_identity,
-        aws_iam_role.agentless.arn,
+        aws_iam_role.agentless[0].arn,
       ]
     }
 
@@ -231,15 +243,25 @@ data "aws_iam_policy_document" "key_policy" {
 }
 
 resource "aws_kms_key" "agentless" {
+  count = var.deploy_global_resources ? 1 : 0
+
   description             = "Sysdig Agentless encryption key"
   deletion_window_in_days = var.kms_key_deletion_window
   key_usage               = "ENCRYPT_DECRYPT"
-  policy                  = data.aws_iam_policy_document.key_policy.json
+  policy                  = data.aws_iam_policy_document.key_policy[0].json
   multi_region            = true
   tags                    = var.tags
 }
 
+resource "aws_kms_replica_key" "agentless_replica" {
+  count = var.deploy_global_resources ? 0 : 1
+
+  description             = "Sysdig Agentless multi-region replica key"
+  deletion_window_in_days = 7
+  primary_key_arn         = var.primary_key.arn
+}
+
 resource "aws_kms_alias" "agentless" {
-  name          = "alias/${var.name}"
-  target_key_id = aws_kms_key.agentless.key_id
+  name          = "alias/${var.kms_key_alias}"
+  target_key_id = var.deploy_global_resources ? aws_kms_key.agentless[0].key_id : var.primary_key.id
 }

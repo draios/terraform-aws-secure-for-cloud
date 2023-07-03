@@ -1,13 +1,13 @@
 output "agentless_role_arn" {
   description = "Role used by Sysdig BE for Secure Agentless"
-  value       = aws_iam_role.agentless.arn
+  value       = var.deploy_global_resources ? aws_iam_role.agentless[0].arn : ""
 }
 
 output "kms_key" {
   description = "Multi-region KMS key ID and ARN"
   value = {
-    id  = aws_kms_key.agentless.key_id
-    arn = aws_kms_key.agentless.arn
+    id  = var.deploy_global_resources ? aws_kms_key.agentless[0].key_id : ""
+    arn = var.deploy_global_resources ? aws_kms_key.agentless[0].arn : ""
   }
 }
 

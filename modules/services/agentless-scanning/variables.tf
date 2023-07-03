@@ -26,3 +26,25 @@ variable "tags" {
     "product" = "sysdig-secure-for-cloud"
   }
 }
+variable "deploy_global_resources" {
+  description = "(Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs)"
+  type        = bool
+  default     = false
+}
+
+variable "kms_key_alias" {
+  description = "The alias of the KMS key used to encrypt the data plane secrets"
+  type        = string
+}
+
+variable "primary_key" {
+  description = "The primary KMS key deployed in global region"
+  type = object({
+    id  = string
+    arn = string
+  })
+  default = {
+    id  = ""
+    arn = ""
+  }
+}
