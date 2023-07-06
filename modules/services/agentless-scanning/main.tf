@@ -144,7 +144,7 @@ data "aws_iam_policy_document" "agentless" {
 resource "aws_iam_policy" "agentless" {
   count = var.deploy_global_resources ? 1 : 0
 
-  name        = "sysdig-secure-agentless-assume-role"
+  name        = var.name
   path        = "/sysdig/secure/agentless/"
   description = "Grants Sysdig Secure access to volumes and snapshots"
   policy      = data.aws_iam_policy_document.agentless[0].json
@@ -186,7 +186,7 @@ resource "aws_iam_role" "agentless" {
 resource "aws_iam_policy_attachment" "agentless" {
   count = var.deploy_global_resources ? 1 : 0
 
-  name       = "sysdig-agentless-host-scanning"
+  name       = var.name
   roles      = [aws_iam_role.agentless[0].name]
   policy_arn = aws_iam_policy.agentless[0].arn
 }

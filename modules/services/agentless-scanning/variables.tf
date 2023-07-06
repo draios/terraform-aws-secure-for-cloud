@@ -17,6 +17,7 @@ variable "kms_key_deletion_window" {
 variable "name" {
   description = "The name of the installation. Assigned to most child resource(s)"
   type        = string
+  default     = "sysdig-secure-scanning"
 }
 
 variable "tags" {
@@ -35,6 +36,7 @@ variable "deploy_global_resources" {
 variable "kms_key_alias" {
   description = "The alias of the KMS key used to encrypt the data plane secrets"
   type        = string
+  default     = "sysdig-secure-scanning"
 }
 
 variable "primary_key" {
