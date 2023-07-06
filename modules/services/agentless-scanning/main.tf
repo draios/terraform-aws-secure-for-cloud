@@ -144,10 +144,11 @@ data "aws_iam_policy_document" "agentless" {
 resource "aws_iam_policy" "agentless" {
   count = var.deploy_global_resources ? 1 : 0
 
-  name        = "sysdig-secure-agentless-assume-role"
+  name        = var.name
   path        = "/sysdig/secure/agentless/"
   description = "Grants Sysdig Secure access to volumes and snapshots"
   policy      = data.aws_iam_policy_document.agentless[0].json
+  tags        = var.tags
 }
 
 data "aws_iam_policy_document" "agentless_assume_role_policy" {
