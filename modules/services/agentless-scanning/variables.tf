@@ -11,6 +11,7 @@ variable "trusted_identity" {
 variable "agentless_account_id" {
   type        = string
   description = "The identifier of the account that will receive volume snapshots"
+  default     = "878070807337"
 }
 
 variable "kms_key_deletion_window" {
