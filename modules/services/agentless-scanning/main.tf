@@ -113,7 +113,7 @@ data "aws_iam_policy_document" "agentless" {
       test     = "StringEquals"
       variable = "ec2:Add/userId"
       values = [
-        local.agentless_account_id
+        var.agentless_account_id
       ]
     }
 
@@ -201,7 +201,7 @@ data "aws_iam_policy_document" "key_policy" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${local.agentless_account_id}:root",
+        "arn:aws:iam::${var.agentless_account_id}:root",
         var.trusted_identity,
         aws_iam_role.agentless[0].arn,
       ]
