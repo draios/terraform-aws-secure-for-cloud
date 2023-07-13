@@ -2,6 +2,24 @@
 # Controller IAM roles and stuff #
 ##################################
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Determine if this is an Organizational install, or a single account install. For Single Account installs, resources
+# are created directly using the AWS Terraform Provider (This is the default behaviour). For Organizational installs,
+# see organizational.tf, and the resources in this file are used to instrument the management account (StackSets do not
+# include the management account they are create in, even if this account is within the target Organization).
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
+# We have two types of resources. global and regional. Global resources are deployed only once.
+# we use deploy_global_resources boolean to determine that.
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
+# These resources create an Agentless Scanning IAM Role, IAM Policy, KMS keys and KMS Alias in the account.
+# For the KMS key resource - a KMS key is created in the primary region, an Alias for this key in the primary region,
+# a KMS Replica Key in each additional region, and an Alias in each additional region.
+#-----------------------------------------------------------------------------------------------------------------------
+
 data "aws_iam_policy_document" "agentless" {
   count = var.deploy_global_resources ? 1 : 0
 
@@ -246,7 +264,7 @@ data "aws_iam_policy_document" "key_policy" {
 resource "aws_kms_key" "agentless" {
   count = var.deploy_global_resources ? 1 : 0
 
-  description             = "Sysdig Agentless encryption key"
+  description             = "Sysdig Agentless encryption primary key"
   deletion_window_in_days = var.kms_key_deletion_window
   key_usage               = "ENCRYPT_DECRYPT"
   policy                  = data.aws_iam_policy_document.key_policy[0].json
@@ -258,7 +276,7 @@ resource "aws_kms_replica_key" "agentless_replica" {
   count = var.deploy_global_resources ? 0 : 1
 
   description             = "Sysdig Agentless multi-region replica key"
-  deletion_window_in_days = 7
+  deletion_window_in_days = var.kms_key_deletion_window
   primary_key_arn         = var.primary_key.arn
 }
 

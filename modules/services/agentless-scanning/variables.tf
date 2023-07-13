@@ -56,3 +56,15 @@ variable "primary_key" {
     arn = ""
   }
 }
+
+variable "is_organizational" {
+  description = "(Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs)"
+  type        = bool
+  default     = false
+}
+
+variable "org_units" {
+  description = "(Optional) List of Organization Unit IDs in which to setup Agentless Scanning. By default, Agentless Scanning will be setup in all accounts within the Organization. This field is ignored if `is_organizational = false`"
+  type        = set(string)
+  default     = []
+}
