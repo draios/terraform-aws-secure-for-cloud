@@ -6,18 +6,18 @@
 # Determine if this is an Organizational install, or a single account install. For Single Account installs, resources
 # are created directly using the AWS Terraform Provider (This is the default behaviour). For Organizational installs,
 # see organizational.tf, and the resources in this file are used to instrument the management account (StackSets do not
-# include the management account they are create in, even if this account is within the target Organization).
+# include the management account they are created in, even if this account is within the target Organization).
 #-----------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------
-# We have two types of resources. global and regional. Global resources are deployed only once.
-# we use deploy_global_resources boolean to determine that.
+# We have two types of resources. global and regional. Global resources are deployed only once (mostly in the primary
+# region). We use deploy_global_resources boolean to determine that.
 #-----------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------
-# These resources create an Agentless Scanning IAM Role, IAM Policy, KMS keys and KMS Alias in the account.
-# For the KMS key resource - a KMS key is created in the primary region, an Alias for this key in the primary region,
-# a KMS Replica Key in each additional region, and an Alias in each additional region.
+# These resources create an Agentless Scanning IAM Role, IAM Policy, KMS keys and KMS Aliases in the account.
+# For the KMS key resource - a KMS Primary key is created in the primary region, an Alias for this key in the primary
+# region, a KMS Replica Key in each additional region, and an Alias in each additional region.
 #-----------------------------------------------------------------------------------------------------------------------
 
 data "aws_iam_policy_document" "agentless" {
@@ -261,8 +261,9 @@ data "aws_iam_policy_document" "key_policy" {
   }
 }
 
+# KMS primary key resource only if singleton account and deploy_global_resources is true
 resource "aws_kms_key" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (!var.is_organizational && var.deploy_global_resources) ? 1 : 0
 
   description             = "Sysdig Agentless encryption primary key"
   deletion_window_in_days = var.kms_key_deletion_window
@@ -272,15 +273,19 @@ resource "aws_kms_key" "agentless" {
   tags                    = var.tags
 }
 
+# KMS replica key resource only if singleton account and deploy_global_resources is false
 resource "aws_kms_replica_key" "agentless_replica" {
-  count = var.deploy_global_resources ? 0 : 1
+  count = (!var.is_organizational && !var.deploy_global_resources) ? 1 : 0
 
   description             = "Sysdig Agentless multi-region replica key"
   deletion_window_in_days = var.kms_key_deletion_window
   primary_key_arn         = var.primary_key.arn
 }
 
+# KMS alias (in primary and additional replica regions) resource only if singleton account
 resource "aws_kms_alias" "agentless" {
+  count = !var.is_organizational ? 1 : 0
+
   name          = "alias/${var.kms_key_alias}"
   target_key_id = var.deploy_global_resources ? aws_kms_key.agentless[0].key_id : var.primary_key.id
 }

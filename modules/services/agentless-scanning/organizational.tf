@@ -4,8 +4,8 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------------------
-# We have two types of resources. global and regional. Global resources are deployed only once.
-# we use deploy_global_resources boolean to determine that.
+# We have two types of resources. global and regional. Global resources are deployed only once. (mostly in the primary
+# region). We use deploy_global_resources boolean to determine that.
 #-----------------------------------------------------------------------------------------------------------------------
 
 data "aws_organizations_organization" "org" {
@@ -14,12 +14,13 @@ data "aws_organizations_organization" "org" {
 
 locals {
   organizational_unit_ids = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
+  region_set              = toset(var.instrumented_regions)
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
-# The resources in this file set up an Agentless Scanning IAM Role, Policies, KMS keys and KMS Alias in all accounts in
-# an AWS Organization via a CloudFormation StackSet. For the KMS key resource -
-# a KMS key is created in the primary region, an Alias for this key in the primary region,
+# The resources in this file set up an Agentless Scanning IAM Role, Policies, KMS keys and KMS Aliases in all accounts
+# in an AWS Organization via a CloudFormation StackSet. For the KMS key resource -
+# a KMS Primary key is created in the primary region, an Alias for this key in the primary region,
 # a KMS Replica Key in each additional region, and an Alias in each additional region.
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -123,7 +124,7 @@ Resources:
 TEMPLATE
 }
 
-// stackset instance to deploy role in all organization units
+# stackset instance to deploy agentless scanning role in all organization units
 resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instance" {
   count = (var.is_organizational && var.deploy_global_resources) ? 1 : 0
 
@@ -134,19 +135,141 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
   operation_preferences {
     failure_tolerance_count = 10
     max_concurrent_count    = 10
+  }
+}
+
+#-----------------------------------------------------------------------------------------------------------------------
+# stackset and stackset instance for management account - global resources (deployed only once, in primary region)
+#-----------------------------------------------------------------------------------------------------------------------
+
+# stackset to deploy global resources for agentless scanning in management account
+resource "aws_cloudformation_stack_set" "mgmt_global_resources_stackset" {
+  count = (var.is_organizational && var.deploy_global_resources) ? 1 : 0
+
+  name                    = join("-", [var.name, "ScanningMgmtAccGlobal"])
+  tags                    = var.tags
+  permission_model        = "SELF_MANAGED"
+  capabilities            = ["CAPABILITY_NAMED_IAM"]
+  administration_role_arn = var.stackset_admin_role_arn
+
+  template_body = <<TEMPLATE
+Resources:
+  AgentlessScanningKmsPrimaryKey:
+      Type: AWS::KMS::Key
+      Properties:
+        Description: "Sysdig Agentless encryption primary key"
+        DeletionWindowInDays: "${var.kms_key_deletion_window}"
+        KeyUsage: "ENCRYPT_DECRYPT"
+        MultiRegion: true
+        Tags: var.tags
+        Policies:
+          - PolicyName: ${var.name}
+            PolicyDocument:
+              Statement:
+                - Sid: SysdigAllowKms
+                  Principal:
+                    AWS: ["arn:aws:iam::${var.agentless_account_id}:root", "${var.trusted_identity}", !Ref 'aws_cloudformation_stack_set.scanning_role_stackset[0].arn']
+                  Action:
+                    - "kms:Encrypt"
+                    - "kms:Decrypt"
+                    - "kms:ReEncrypt*"
+                    - "kms:GenerateDataKey*"
+                    - "kms:DescribeKey"
+                    - "kms:CreateGrant"
+                    - "kms:ListGrants"
+                  Resource:
+                    - "*"
+                - Sid: AllowCustomerManagement
+                  Principal:
+                    AWS: ["arn:aws:iam::${local.account_id}:root", "${local.caller_arn}"]
+                  Action:
+                    - "kms:*"
+                  Resource:
+                    - "*"
+  AgentlessScanningKmsPrimaryAlias:
+      Type: AWS::KMS::Alias
+      Properties:
+        AliasName: "alias/${var.kms_key_alias}"
+        TargetKeyId: {
+          "Value" : {"Fn::GetAtt": [ "AgentlessScanningKmsPrimaryKey", "key_id" ]}
+        }
+Outputs: {
+  KmsPrimaryKeyId: {
+    "Value" : {"Fn::GetAtt": [ "AgentlessScanningKmsPrimaryKey", "key_id" ]}
+  },
+  KmsPrimaryKeyArn: {
+    "Value" : {"Fn::GetAtt": [ "AgentlessScanningKmsPrimaryKey", "arn" ]}
+  }
+}
+
+TEMPLATE
+}
+
+# stackset instance to deploy global resources (in primary region) for agentless scanning in management account
+resource "aws_cloudformation_stack_set_instance" "mgmt_acc_global_stackset_instance" {
+  count = (var.is_organizational && var.deploy_global_resources) ? 1 : 0
+
+  stack_set_name = aws_cloudformation_stack_set.mgmt_global_resources_stackset[0].name
+  operation_preferences {
+    failure_tolerance_count = 10
+    max_concurrent_count    = 10
+  }
+}
+
+#-----------------------------------------------------------------------------------------------------------------------
+# stackset and stackset instance for management account - non-global resources
+#-----------------------------------------------------------------------------------------------------------------------
+
+# stackset to deploy non-global resources for agentless scanning in management account
+resource "aws_cloudformation_stack_set" "mgmt_nonglobal_resources_stackset" {
+  count = (var.is_organizational && !var.deploy_global_resources) ? 1 : 0
+
+  name                    = join("-", [var.name, "ScanningMgmtAccNonGlobal"])
+  tags                    = var.tags
+  permission_model        = "SELF_MANAGED"
+  capabilities            = ["CAPABILITY_NAMED_IAM"]
+  administration_role_arn = var.stackset_admin_role_arn
+
+  template_body = <<TEMPLATE
+Resources:
+  AgentlessScanningKmsReplicaKey:
+      Type: AWS::KMS::ReplicaKey
+      Properties:
+        Description: "Sysdig Agentless multi-region replica key"
+        DeletionWindowInDays: "${var.kms_key_deletion_window}"
+        PrimaryKeyArn: !Ref 'aws_cloudformation_stack_set.mgmt_global_resources_stackset[0].KmsPrimaryKeyArn'
+  AgentlessScanningKmsReplicaAlias:
+      Type: AWS::KMS::Alias
+      Properties:
+        AliasName: "alias/${var.kms_key_alias}"
+        TargetKeyId: !Ref 'aws_cloudformation_stack_set.mgmt_global_resources_stackset[0].KmsPrimaryKeyId'
+
+TEMPLATE
+}
+
+# stackset instance to deploy nonglobal resources (in all other regions) for agentless scanning in management account
+resource "aws_cloudformation_stack_set_instance" "mgmt_acc_nonglobal_stackset_instance" {
+  for_each = local.region_set
+  region   = each.key
+
+  stack_set_name = aws_cloudformation_stack_set.mgmt_nonglobal_resources_stackset[0].name
+  operation_preferences {
+    failure_tolerance_count = 10
+    max_concurrent_count    = 10
     region_concurrency_type = "PARALLEL"
   }
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
-# stackset and stackset instance deployed in organization unit for KMS Primary Key
+# stackset and stackset instance deployed in organization units - global resources
+# (deployed once per account, in primary region)
 #-----------------------------------------------------------------------------------------------------------------------
 
-# stackset to deploy multi-region KMS primary key in organization unit for agentless scanning
-resource "aws_cloudformation_stack_set" "kms_primary_key_stackset" {
+# stackset to deploy global resources for agentless scanning in organization unit
+resource "aws_cloudformation_stack_set" "ou_global_resources_stackset" {
   count = (var.is_organizational && var.deploy_global_resources) ? 1 : 0
 
-  name             = join("-", [var.name, "ScanningKmsPrimaryKeyOrg"])
+  name             = join("-", [var.name, "ScanningOrgGlobal"])
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
@@ -190,15 +313,30 @@ Resources:
                     - "kms:*"
                   Resource:
                     - "*"
+  AgentlessScanningKmsPrimaryAlias:
+      Type: AWS::KMS::Alias
+      Properties:
+        AliasName: "alias/${var.kms_key_alias}"
+        TargetKeyId: {
+          "Value" : {"Fn::GetAtt": [ "AgentlessScanningKmsPrimaryKey", "key_id" ]}
+        }
+Outputs: {
+  KmsPrimaryKeyId: {
+    "Value" : {"Fn::GetAtt": [ "AgentlessScanningKmsPrimaryKey", "key_id" ]}
+  },
+  KmsPrimaryKeyArn: {
+    "Value" : {"Fn::GetAtt": [ "AgentlessScanningKmsPrimaryKey", "arn" ]}
+  }
+}
 
 TEMPLATE
 }
 
-// stackset instance to deploy KMS primary key in primary region of all organization units
-resource "aws_cloudformation_stack_set_instance" "kms_primary_key_stackset_instance" {
+# stackset instance to deploy global resources (in primary region) for agentless scanning in all organization units
+resource "aws_cloudformation_stack_set_instance" "ou_global_stackset_instance" {
   count = (var.is_organizational && var.deploy_global_resources) ? 1 : 0
 
-  stack_set_name = aws_cloudformation_stack_set.kms_primary_key_stackset[0].name
+  stack_set_name = aws_cloudformation_stack_set.ou_global_resources_stackset[0].name
   deployment_targets {
     organizational_unit_ids = local.organizational_unit_ids
   }
@@ -209,14 +347,14 @@ resource "aws_cloudformation_stack_set_instance" "kms_primary_key_stackset_insta
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
-# stackset and stackset instance deployed in organization unit for KMS Replica Key
+# stackset and stackset instance deployed in organization units - non-global resources
 #-----------------------------------------------------------------------------------------------------------------------
 
-# stackset to deploy multi-region KMS replica key in organization unit for agentless scanning
-resource "aws_cloudformation_stack_set" "kms_replica_key_stackset" {
+# stackset to deploy non-global resources for agentless scanning in organization unit
+resource "aws_cloudformation_stack_set" "ou_nonglobal_resources_stackset" {
   count = (var.is_organizational && !var.deploy_global_resources) ? 1 : 0
 
-  name             = join("-", [var.name, "ScanningKmsReplicaKeyOrg"])
+  name             = join("-", [var.name, "ScanningOrgNonGlobal"])
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
@@ -233,65 +371,22 @@ Resources:
       Properties:
         Description: "Sysdig Agentless multi-region replica key"
         DeletionWindowInDays: "${var.kms_key_deletion_window}"
-        PrimaryKeyArn: "${var.primary_key.arn}"
-
-TEMPLATE
-}
-
-// stackset instance to deploy KMS replica key in additional regions of all organization units
-resource "aws_cloudformation_stack_set_instance" "kms_replica_key_stackset_instance" {
-  count = (var.is_organizational && !var.deploy_global_resources) ? 1 : 0
-
-  stack_set_name = aws_cloudformation_stack_set.kms_replica_key_stackset[0].name
-  deployment_targets {
-    organizational_unit_ids = local.organizational_unit_ids
-  }
-  operation_preferences {
-    failure_tolerance_count = 10
-    max_concurrent_count    = 10
-    region_concurrency_type = "PARALLEL"
-  }
-}
-
-#-----------------------------------------------------------------------------------------------------------------------
-# stackset and stackset instance deployed in organization unit for KMS Key Alias for primary and additional regions
-#-----------------------------------------------------------------------------------------------------------------------
-
-# stackset to deploy multi-region KMS key Alias in organization unit for agentless scanning
-resource "aws_cloudformation_stack_set" "kms_key_alias_stackset" {
-  count = var.is_organizational ? 1 : 0
-
-  name             = join("-", [var.name, "ScanningKmsKeyAliasOrg"])
-  tags             = var.tags
-  permission_model = "SERVICE_MANAGED"
-  capabilities     = ["CAPABILITY_NAMED_IAM"]
-
-  auto_deployment {
-    enabled                          = true
-    retain_stacks_on_account_removal = false
-  }
-
-  template_body = <<TEMPLATE
-Conditions:
-  IsGlobalResource: !Equals
-    - "${var.deploy_global_resources}"
-    - "true"
-
-Resources:
-  AgentlessScanningKmsKeyAlias:
+        PrimaryKeyArn: !Ref 'aws_cloudformation_stack_set.ou_global_resources_stackset[0].KmsPrimaryKeyArn'
+  AgentlessScanningKmsReplicaAlias:
       Type: AWS::KMS::Alias
       Properties:
         AliasName: "alias/${var.kms_key_alias}"
-        TargetKeyId: !If [IsGlobalResource, !Ref 'aws_cloudformation_stack_set.kms_primary_key_stackset[0].key_id', "${var.primary_key.id}"]
+        TargetKeyId: !Ref 'aws_cloudformation_stack_set.ou_global_resources_stackset[0].KmsPrimaryKeyId'
 
 TEMPLATE
 }
 
-// stackset instance to deploy KMS Key Alias in all organization units
-resource "aws_cloudformation_stack_set_instance" "kms_key_alias_stackset_instance" {
-  count = var.is_organizational ? 1 : 0
+# stackset instance to deploy nonglobal resources (in all other regions) for agentless scanning in all organization units
+resource "aws_cloudformation_stack_set_instance" "ou_nonglobal_stackset_instance" {
+  for_each = local.region_set
+  region   = each.key
 
-  stack_set_name = aws_cloudformation_stack_set.kms_key_alias_stackset[0].name
+  stack_set_name = aws_cloudformation_stack_set.ou_nonglobal_resources_stackset[0].name
   deployment_targets {
     organizational_unit_ids = local.organizational_unit_ids
   }

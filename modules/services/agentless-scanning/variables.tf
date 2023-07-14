@@ -68,3 +68,15 @@ variable "org_units" {
   type        = set(string)
   default     = []
 }
+
+variable "instrumented_regions" {
+  description = "(Optional) List of additional instrumented regions in which to setup Agentless Scanning."
+  type        = set(string)
+  default     = []
+}
+
+variable "stackset_admin_role_arn" {
+  description = "(Optional) stackset admin role to run SELF_MANAGED stackset"
+  type        = string
+  default     = ""
+}

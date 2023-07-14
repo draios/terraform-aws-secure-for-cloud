@@ -56,6 +56,8 @@ No modules.
 | <a name="input_primary_key"></a> [primary\_key](#input\_primary\_key) | The primary KMS key (key ID and ARN) deployed in global region | `object({string, string})` | `"", ""` | yes |
 | <a name="input_is_organizational"></a> [is\_organizational](#input\_is\_organizational) | (Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs) | `bool` | `false` | no |
 | <a name="input_org_units"></a> [org\_units](#input\_org\_units) | (Optional) List of Organization Unit IDs in which to setup Agentless Scanning. By default, Agentless Scanning will be setup in all accounts within the Organization. This field is ignored if `is_organizational = false` | `set(string)` | `[]` | no |
+| <a name="input_instrumented_regions"></a> [instrumented\_regions](#input\_instrumented\_regions) | (Optional) List of additional instrumented regions in which to setup Agentless Scanning. | `set(string)` | `[]` | no |
+| <a name="input_stackset_admin_role_arn"></a> [stackset\_admin\_role\_arn](#input\_stackset\_admin\_role\_arn) | (Optional) stackset admin role to run SELF\_MANAGED stackset | `string` | `""` | no |
 
 ## Outputs
 

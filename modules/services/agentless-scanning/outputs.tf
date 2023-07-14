@@ -6,8 +6,8 @@ output "agentless_role_arn" {
 output "kms_key" {
   description = "Multi-region KMS key ID and ARN"
   value = {
-    id  = var.deploy_global_resources ? aws_kms_key.agentless[0].key_id : ""
-    arn = var.deploy_global_resources ? aws_kms_key.agentless[0].arn : ""
+    id  = (var.deploy_global_resources && !var.is_organizational) ? aws_kms_key.agentless[0].key_id : ""
+    arn = (var.deploy_global_resources && !var.is_organizational) ? aws_kms_key.agentless[0].arn : ""
   }
 }
 
