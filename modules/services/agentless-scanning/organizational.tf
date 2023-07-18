@@ -138,7 +138,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
 
 # stackset to deploy global resources for agentless scanning in management account
 resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
-  count      = var.is_organizational ? 1 : 0
+  count = var.is_organizational ? 1 : 0
 
   name                    = var.deploy_global_resources ? join("-", [var.name, "ScanningKmsMgmtAccGlobal"]) : join("-", [var.name, "ScanningKmsMgmtAccNonGlobal"])
   tags                    = var.tags
