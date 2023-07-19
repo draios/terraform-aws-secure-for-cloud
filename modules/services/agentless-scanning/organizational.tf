@@ -66,8 +66,7 @@ Resources:
               Statement:
                 - Sid: "Read"
                   Effect: "Allow"
-                  Action:
-                    - "ec2:Describe*"
+                  Action: "ec2:Describe*"
                   Resource: "*"
                 - Sid: "AllowKMSKeysListing"
                   Effect: "Allow"
@@ -78,42 +77,36 @@ Resources:
                   Resource: "*"
                 - Sid: "CreateTaggedSnapshotFromVolume"
                   Effect: "Allow"
-                  Action:
-                    - "ec2:CreateSnapshot"
+                  Action: "ec2:CreateSnapshot"
                   Resource: "*"
                 - Sid: "CopySnapshots"
                   Effect: "Allow"
-                  Action:
-                    - "ec2:CopySnapshot"
+                  Action: "ec2:CopySnapshot"
                   Resource: "*"
                 - Sid: "SnapshotTags"
                   Effect: "Allow"
-                  Action:
-                    - "ec2:CreateTags"
+                  Action: "ec2:CreateTags"
                   Resource: "*"
                   Condition:
-                    - StringEquals:
-                        ec2:CreateAction: ["CreateSnapshot", "CopySnapshot"]
-                    - StringEquals:
-                        aws:RequestTag/CreatedBy: "Sysdig"
+                    StringEquals:
+                      ec2:CreateAction: ["CreateSnapshot", "CopySnapshot"]
+                      aws:RequestTag/CreatedBy: "Sysdig"
                 - Sid: "ec2SnapshotShare"
                   Effect: "Allow"
-                  Action:
-                    - "ec2:ModifySnapshotAttribute"
+                  Action: "ec2:ModifySnapshotAttribute"
                   Resource: "*"
                   Condition:
-                    - StringEqualsIgnoreCase:
-                        aws:ResourceTag/CreatedBy: "Sysdig"
-                    - StringEquals:
-                        ec2:Add/userId: "${var.agentless_account_id}"
+                    StringEqualsIgnoreCase:
+                      aws:ResourceTag/CreatedBy: "Sysdig"
+                    StringEquals:
+                      ec2:Add/userId: "${var.agentless_account_id}"
                 - Sid: "ec2SnapshotDelete"
                   Effect: "Allow"
-                  Action:
-                    - "ec2:DeleteSnapshot"
+                  Action: "ec2:DeleteSnapshot"
                   Resource: "*"
                   Condition:
-                    - StringEqualsIgnoreCase:
-                        aws:ResourceTag/CreatedBy: "Sysdig"
+                    StringEqualsIgnoreCase:
+                      aws:ResourceTag/CreatedBy: "Sysdig"
 
 TEMPLATE
 }
@@ -133,12 +126,15 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
-# stackset and stackset instance for management account - global resources (deployed only once, in primary region)
+# stackset and stackset instance for management account
+#   - global resources (deployed only once, in primary region), and
+#   - non-global resources (in all other regions)
 #-----------------------------------------------------------------------------------------------------------------------
 
-# stackset to deploy global resources for agentless scanning in management account
+# stackset to deploy resources for agentless scanning in management account
 resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
-  count = var.is_organizational ? 1 : 0
+  count      = var.is_organizational ? 1 : 0
+  depends_on = [aws_iam_role.agentless]
 
   name                    = var.deploy_global_resources ? join("-", [var.name, "ScanningKmsMgmtAccGlobal"]) : join("-", [var.name, "ScanningKmsMgmtAccNonGlobal"])
   tags                    = var.tags
@@ -183,22 +179,42 @@ Resources:
               Effect: "Allow"
               Principal:
                 AWS: ["arn:aws:iam::${local.account_id}:root", "${local.caller_arn}"]
-              Action:
-                - "kms:*"
+              Action: "kms:*"
               Resource: "*"
   AgentlessScanningKmsPrimaryAlias:
       Condition: IsGlobal
       Type: AWS::KMS::Alias
       Properties:
         AliasName: "alias/${var.kms_key_alias}"
-        TargetKeyId: !GetAtt AgentlessScanningKmsPrimaryKey.KeyId
+        TargetKeyId: !Ref AgentlessScanningKmsPrimaryKey
   AgentlessScanningKmsReplicaKey:
       Condition: IsNotGlobal
       Type: AWS::KMS::ReplicaKey
       Properties:
         Description: "Sysdig Agentless multi-region replica key"
         PendingWindowInDays: ${var.kms_key_deletion_window}
-        KeyPolicy: ""
+        KeyPolicy:
+          Id: ${var.name}
+          Statement:
+            - Sid: "SysdigAllowKms"
+              Effect: "Allow"
+              Principal:
+                AWS: ["arn:aws:iam::${var.agentless_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+              Action:
+                - "kms:Encrypt"
+                - "kms:Decrypt"
+                - "kms:ReEncrypt*"
+                - "kms:GenerateDataKey*"
+                - "kms:DescribeKey"
+                - "kms:CreateGrant"
+                - "kms:ListGrants"
+              Resource: "*"
+            - Sid: "AllowCustomerManagement"
+              Effect: "Allow"
+              Principal:
+                AWS: ["arn:aws:iam::${local.account_id}:root", "${local.caller_arn}"]
+              Action: "kms:*"
+              Resource: "*"
         PrimaryKeyArn: !GetAtt AgentlessScanningKmsPrimaryKey.Arn
   AgentlessScanningKmsReplicaAlias:
       Condition: IsNotGlobal
@@ -221,7 +237,7 @@ resource "aws_cloudformation_stack_set_instance" "mgmt_acc_global_stackset_insta
   }
 }
 
-# stackset instance to deploy global resources (in primary region) for agentless scanning in management account
+# stackset instance to deploy non-global resources (in all other regions) for agentless scanning in management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_nonglobal_stackset_instance" {
   for_each = local.region_set
   region   = !var.deploy_global_resources ? each.key : ""
@@ -235,11 +251,12 @@ resource "aws_cloudformation_stack_set_instance" "mgmt_acc_nonglobal_stackset_in
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
-# stackset and stackset instance deployed in organization units - global resources
-# (deployed once per account, in primary region)
+# stackset and stackset instance deployed in organization units
+#   - global resources (deployed only once for each child account, in primary region), and
+#   - non-global resources (in all other regions of each child account)
 #-----------------------------------------------------------------------------------------------------------------------
 
-# stackset to deploy global resources for agentless scanning in organization unit
+# stackset to deploy resources for agentless scanning in organization unit
 resource "aws_cloudformation_stack_set" "ou_resources_stackset" {
   count = var.is_organizational ? 1 : 0
 
@@ -298,14 +315,35 @@ Resources:
       Type: AWS::KMS::Alias
       Properties:
         AliasName: "alias/${var.kms_key_alias}"
-        TargetKeyId: !GetAtt AgentlessScanningKmsPrimaryKey.KeyId
+        TargetKeyId: !Ref AgentlessScanningKmsPrimaryKey
   AgentlessScanningKmsReplicaKey:
       Condition: IsNotGlobal
       Type: AWS::KMS::ReplicaKey
       Properties:
         Description: "Sysdig Agentless multi-region replica key"
         PendingWindowInDays: ${var.kms_key_deletion_window}
-        KeyPolicy: ""
+        KeyPolicy:
+          Id: ${var.name}
+          Statement:
+            - Sid: "SysdigAllowKms"
+              Effect: "Allow"
+              Principal:
+                AWS: ["arn:aws:iam::${var.agentless_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+              Action:
+                - "kms:Encrypt"
+                - "kms:Decrypt"
+                - "kms:ReEncrypt*"
+                - "kms:GenerateDataKey*"
+                - "kms:DescribeKey"
+                - "kms:CreateGrant"
+                - "kms:ListGrants"
+              Resource: "*"
+            - Sid: "AllowCustomerManagement"
+              Effect: "Allow"
+              Principal:
+                AWS: ["arn:aws:iam::${local.account_id}:root", "${local.caller_arn}"]
+              Action: "kms:*"
+              Resource: "*"
         PrimaryKeyArn: !GetAtt AgentlessScanningKmsPrimaryKey.Arn
   AgentlessScanningKmsReplicaAlias:
       Condition: IsNotGlobal
@@ -331,7 +369,7 @@ resource "aws_cloudformation_stack_set_instance" "ou_global_stackset_instance" {
   }
 }
 
-# stackset instance to deploy global resources (in primary region) for agentless scanning in all organization units
+# stackset instance to deploy non-global resources (in all other regions) for agentless scanning in all organization units
 resource "aws_cloudformation_stack_set_instance" "ou_nonglobal_stackset_instance" {
   for_each = local.region_set
   region   = !var.deploy_global_resources ? each.key : ""
