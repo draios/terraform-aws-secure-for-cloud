@@ -21,7 +21,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 data "aws_iam_policy_document" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   # General read permission, necessary for the discovery phase.
   statement {
@@ -160,7 +160,7 @@ data "aws_iam_policy_document" "agentless" {
 }
 
 resource "aws_iam_policy" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name        = var.name
   path        = "/sysdig/secure/agentless/"
@@ -170,7 +170,7 @@ resource "aws_iam_policy" "agentless" {
 }
 
 data "aws_iam_policy_document" "agentless_assume_role_policy" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   statement {
     sid = "SysdigSecureAgentless"
@@ -195,7 +195,7 @@ data "aws_iam_policy_document" "agentless_assume_role_policy" {
 }
 
 resource "aws_iam_role" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name               = var.name
   tags               = var.tags
@@ -203,15 +203,16 @@ resource "aws_iam_role" "agentless" {
 }
 
 resource "aws_iam_policy_attachment" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name       = var.name
   roles      = [aws_iam_role.agentless[0].name]
   policy_arn = aws_iam_policy.agentless[0].arn
 }
 
+# Fetch KMS key policy data only if singleton account and deploy_global_resources is true
 data "aws_iam_policy_document" "key_policy" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (!var.is_organizational && var.deploy_global_resources) ? 1 : 0
 
   statement {
     sid = "SysdigAllowKms"
