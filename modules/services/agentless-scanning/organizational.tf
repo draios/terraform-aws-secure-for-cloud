@@ -145,7 +145,6 @@ Resources:
       Type: AWS::KMS::Key
       Properties:
         Description: "Sysdig Agentless encryption primary key"
-        MultiRegion: true
         PendingWindowInDays: ${var.kms_key_deletion_window}
         KeyUsage: "ENCRYPT_DECRYPT"
         KeyPolicy:
@@ -218,7 +217,6 @@ Resources:
       Type: AWS::KMS::Key
       Properties:
         Description: "Sysdig Agentless encryption primary key"
-        MultiRegion: true
         PendingWindowInDays: ${var.kms_key_deletion_window}
         KeyUsage: "ENCRYPT_DECRYPT"
         KeyPolicy:
