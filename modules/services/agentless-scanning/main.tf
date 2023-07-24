@@ -16,8 +16,7 @@
 
 #-----------------------------------------------------------------------------------------------------------------------
 # These resources create an Agentless Scanning IAM Role, IAM Policy, KMS keys and KMS Aliases in the account.
-# For the KMS key resource - a KMS Primary key is created in the primary region, an Alias for this key in the primary
-# region, a KMS Replica Key in each additional region, and an Alias in each additional region.
+# For the KMS key resource - a KMS Primary key is created in the primary region, an Alias for this key in that region.
 #-----------------------------------------------------------------------------------------------------------------------
 
 data "aws_iam_policy_document" "agentless" {
