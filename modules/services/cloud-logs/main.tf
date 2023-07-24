@@ -18,49 +18,53 @@ provider "aws" {
 #-----------------------------------------------------------------------------------------------------------------------
 
 # AWS IAM Role that will be used by CloudIngestion to access the CloudTrail-associated s3 bucket
-resource "aws_iam_role" "cloudlogs_access" {
-  name               = var.role_name
-  tags               = var.tags
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AssumeRoleFromSysdig",
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "${var.trusted_identity}"
-            },
-            "Action": "sts:AssumeRole",
-            "Condition": {
-                "StringEquals": {
-                    "sts:ExternalId": "${var.external_id}"
-                }
-            }
-        }
-    ]
-}
-EOF
+resource "aws_iam_role" "cloudlogs_s3_access" {
+  name = var.role_name
+  tags = var.tags
 
+  assume_role_policy = data.aws_iam_policy_document.assume_cloudlogs_s3_access_role.json
   inline_policy {
-    name = "cloudlogs_s3_access_policy"
+    name   = "cloudlogs_s3_access_policy"
+    policy = data.aws_iam_policy_document.cloudlogs_s3_access_policy.json
+  }
+}
 
-    policy = jsonencode({
-      "Version" : "2012-10-17",
-      "Statement" : [
-        {
-          "Sid" : "CloudlogsS3Access",
-          "Effect" : "Allow",
-          "Action" : [
-            "s3:Get*",
-            "s3:List*",
-          ],
-          "Resource" : [
-            "arn:aws:s3:::${var.bucket_name}",
-            "arn:aws:s3:::${var.bucket_name}/*"
-          ]
-        }
-      ]
-    })
+# IAM Policy Document used for the assume role policy
+data "aws_iam_policy_document" "assume_cloudlogs_s3_access_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["${var.trusted_identity}"]
+    }
+
+    actions = ["sts:AssumeRole"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "sts:ExternalId"
+      values   = ["${var.external_id}"]
+    }
+  }
+}
+
+# IAM Policy Document used for the bucket access policy
+data "aws_iam_policy_document" "cloudlogs_s3_access_policy" {
+
+  statement {
+    sid = "CloudlogsS3Access"
+
+    effect = "Allow"
+
+    actions = [
+      "s3:Get*",
+      "s3:List*"
+    ]
+
+    resources = [
+      "arn:aws:s3:::${var.bucket_name}",
+      "arn:aws:s3:::${var.bucket_name}/*"
+    ]
   }
 }
