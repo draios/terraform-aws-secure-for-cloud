@@ -262,31 +262,21 @@ data "aws_iam_policy_document" "key_policy" {
   }
 }
 
-# KMS primary key resource only if singleton account and deploy_global_resources is true
+# KMS primary key resource only if singleton account
 resource "aws_kms_key" "agentless" {
-  count = (!var.is_organizational && var.deploy_global_resources) ? 1 : 0
+  count = var.is_organizational ? 0 : 1
 
   description             = "Sysdig Agentless encryption primary key"
   deletion_window_in_days = var.kms_key_deletion_window
   key_usage               = "ENCRYPT_DECRYPT"
   policy                  = data.aws_iam_policy_document.key_policy[0].json
-  multi_region            = true
   tags                    = var.tags
 }
 
-# KMS replica key resource only if singleton account and deploy_global_resources is false
-resource "aws_kms_replica_key" "agentless_replica" {
-  count = (!var.is_organizational && !var.deploy_global_resources) ? 1 : 0
-
-  description             = "Sysdig Agentless multi-region replica key"
-  deletion_window_in_days = var.kms_key_deletion_window
-  primary_key_arn         = var.primary_key.arn
-}
-
-# KMS alias (in primary and additional replica regions) resource only if singleton account
+# KMS alias resource only if singleton account
 resource "aws_kms_alias" "agentless" {
-  count = !var.is_organizational ? 1 : 0
+  count = var.is_organizational ? 0 : 1
 
   name          = "alias/${var.kms_key_alias}"
-  target_key_id = var.deploy_global_resources ? aws_kms_key.agentless[0].key_id : var.primary_key.id
+  target_key_id = aws_kms_key.agentless[0].key_id
 }

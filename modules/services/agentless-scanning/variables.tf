@@ -45,18 +45,6 @@ variable "kms_key_alias" {
   default     = "sysdig-secure-scanning"
 }
 
-variable "primary_key" {
-  description = "The primary KMS key deployed in global region"
-  type = object({
-    id  = string
-    arn = string
-  })
-  default = {
-    id  = ""
-    arn = ""
-  }
-}
-
 variable "is_organizational" {
   description = "(Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs)"
   type        = bool
