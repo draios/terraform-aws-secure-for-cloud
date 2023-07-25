@@ -180,7 +180,7 @@ Resources:
   AgentlessScanningKmsPrimaryAlias:
       Type: AWS::KMS::Alias
       Properties:
-        AliasName: "alias/${var.kms_key_alias}"
+        AliasName: "alias/${var.name}"
         TargetKeyId: !Ref AgentlessScanningKmsPrimaryKey
 
 TEMPLATE
@@ -257,7 +257,7 @@ Resources:
   AgentlessScanningKmsPrimaryAlias:
       Type: AWS::KMS::Alias
       Properties:
-        AliasName: "alias/${var.kms_key_alias}"
+        AliasName: "alias/${var.name}"
         TargetKeyId: !Ref AgentlessScanningKmsPrimaryKey
 
 TEMPLATE

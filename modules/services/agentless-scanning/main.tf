@@ -275,6 +275,6 @@ resource "aws_kms_key" "scanning" {
 resource "aws_kms_alias" "scanning" {
   count = var.is_organizational ? 0 : 1
 
-  name          = "alias/${var.kms_key_alias}"
+  name          = "alias/${var.name}"
   target_key_id = aws_kms_key.scanning[0].key_id
 }

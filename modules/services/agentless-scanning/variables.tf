@@ -39,12 +39,6 @@ variable "deploy_global_resources" {
   default     = false
 }
 
-variable "kms_key_alias" {
-  description = "The alias of the KMS key used to encrypt the data plane secrets"
-  type        = string
-  default     = "sysdig-secure-scanning"
-}
-
 variable "is_organizational" {
   description = "(Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs)"
   type        = bool
