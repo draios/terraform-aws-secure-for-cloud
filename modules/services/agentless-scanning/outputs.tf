@@ -1,6 +1,6 @@
-output "agentless_role_arn" {
-  description = "Role used by Sysdig Platform for Secure Agentless"
-  value       = var.is_organizational ? null : var.deploy_global_resources ? aws_iam_role.agentless[0].arn : var.main_region_agentless_role_arn
+output "role_arn" {
+  description = "Role used by Sysdig Platform for Secure Agentless Scanning"
+  value       = var.is_organizational ? null : var.deploy_global_resources ? aws_iam_role.agentless[0].arn : var.role_arn
 }
 
 output "kms_key" {

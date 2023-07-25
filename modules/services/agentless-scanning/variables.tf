@@ -57,8 +57,8 @@ variable "org_units" {
   default     = []
 }
 
-variable "instrumented_regions" {
-  description = "(Optional) List of additional instrumented regions in which to setup Agentless Scanning."
+variable "regions" {
+  description = "(Optional) List of regions in which to install Agentless Scanning"
   type        = set(string)
   default     = []
 }
@@ -69,8 +69,8 @@ variable "stackset_admin_role_arn" {
   default     = ""
 }
 
-variable "main_region_agentless_role_arn" {
-  description = "(Optional) Set this field to the output of the main region (output.agentless_role_arn) when deploying to all secondary regions (Non Organization Setup)"
+variable "role_arn" {
+  description = "(Optional) The ARN of the role to be associated with the with regional resources"
   type        = string
   default     = ""
 }

@@ -9,7 +9,7 @@ data "aws_organizations_organization" "org" {
 
 locals {
   organizational_unit_ids = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
-  region_set              = toset(var.instrumented_regions)
+  region_set              = toset(var.regions)
 }
 
 #-----------------------------------------------------------------------------------------------------------------------

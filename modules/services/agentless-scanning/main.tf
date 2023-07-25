@@ -220,7 +220,7 @@ data "aws_iam_policy_document" "key_policy" {
       identifiers = [
         "arn:aws:iam::${var.agentless_account_id}:root",
         var.trusted_identity,
-        (var.deploy_global_resources) ? aws_iam_role.agentless[0].arn : var.main_region_agentless_role_arn,
+        (var.deploy_global_resources) ? aws_iam_role.agentless[0].arn : var.role_arn,
       ]
     }
 
