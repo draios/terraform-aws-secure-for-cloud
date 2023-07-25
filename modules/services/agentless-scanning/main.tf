@@ -210,7 +210,7 @@ resource "aws_iam_policy_attachment" "agentless" {
 
 # Fetch KMS key policy data only if singleton account and deploy_global_resources is true
 data "aws_iam_policy_document" "key_policy" {
-  count = (!var.is_organizational && var.deploy_global_resources) ? 1 : 0
+  count = (var.is_organizational) ? 0 : 1
 
   statement {
     sid = "SysdigAllowKms"
@@ -220,7 +220,7 @@ data "aws_iam_policy_document" "key_policy" {
       identifiers = [
         "arn:aws:iam::${var.agentless_account_id}:root",
         var.trusted_identity,
-        aws_iam_role.agentless[0].arn,
+        (var.deploy_global_resources) ? aws_iam_role.agentless[0].arn : var.main_region_agentless_role_arn,
       ]
     }
 

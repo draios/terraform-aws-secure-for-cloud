@@ -34,7 +34,7 @@ variable "tags" {
   }
 }
 variable "deploy_global_resources" {
-  description = "(Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs)"
+  description = "(Optional) Set this field to 'true' to deploy Agentless Scanning when deploying to the main region (Non Organization Setup)"
   type        = bool
   default     = false
 }
@@ -65,6 +65,12 @@ variable "instrumented_regions" {
 
 variable "stackset_admin_role_arn" {
   description = "(Optional) stackset admin role to run SELF_MANAGED stackset"
+  type        = string
+  default     = ""
+}
+
+variable "main_region_agentless_role_arn" {
+  description = "(Optional) Set this field to the output of the main region (output.agentless_role_arn) when deploying to all secondary regions (Non Organization Setup)"
   type        = string
   default     = ""
 }
