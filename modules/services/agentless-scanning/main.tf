@@ -19,7 +19,7 @@
 # For the KMS key resource - a KMS Primary key is created in the primary region, an Alias for this key in that region.
 #-----------------------------------------------------------------------------------------------------------------------
 
-data "aws_iam_policy_document" "agentless" {
+data "aws_iam_policy_document" "scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   # General read permission, necessary for the discovery phase.
@@ -130,7 +130,7 @@ data "aws_iam_policy_document" "agentless" {
       test     = "StringEquals"
       variable = "ec2:Add/userId"
       values = [
-        var.agentless_account_id
+        var.scanning_account_id
       ]
     }
 
@@ -158,20 +158,20 @@ data "aws_iam_policy_document" "agentless" {
   }
 }
 
-resource "aws_iam_policy" "agentless" {
+resource "aws_iam_policy" "scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name        = var.name
   description = "Grants Sysdig Secure access to volumes and snapshots"
-  policy      = data.aws_iam_policy_document.agentless[0].json
+  policy      = data.aws_iam_policy_document.scanning[0].json
   tags        = var.tags
 }
 
-data "aws_iam_policy_document" "agentless_assume_role_policy" {
+data "aws_iam_policy_document" "scanning_assume_role_policy" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   statement {
-    sid = "SysdigSecureAgentless"
+    sid = "SysdigSecureScanning"
 
     actions = [
       "sts:AssumeRole"
@@ -192,20 +192,20 @@ data "aws_iam_policy_document" "agentless_assume_role_policy" {
   }
 }
 
-resource "aws_iam_role" "agentless" {
+resource "aws_iam_role" "scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name               = var.name
   tags               = var.tags
-  assume_role_policy = data.aws_iam_policy_document.agentless_assume_role_policy[0].json
+  assume_role_policy = data.aws_iam_policy_document.scanning_assume_role_policy[0].json
 }
 
-resource "aws_iam_policy_attachment" "agentless" {
+resource "aws_iam_policy_attachment" "scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name       = var.name
-  roles      = [aws_iam_role.agentless[0].name]
-  policy_arn = aws_iam_policy.agentless[0].arn
+  roles      = [aws_iam_role.scanning[0].name]
+  policy_arn = aws_iam_policy.scanning[0].arn
 }
 
 # Fetch KMS key policy data only if singleton account and deploy_global_resources is true
@@ -218,9 +218,9 @@ data "aws_iam_policy_document" "key_policy" {
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${var.agentless_account_id}:root",
+        "arn:aws:iam::${var.scanning_account_id}:root",
         var.trusted_identity,
-        (var.deploy_global_resources) ? aws_iam_role.agentless[0].arn : var.role_arn,
+        (var.deploy_global_resources) ? aws_iam_role.scanning[0].arn : var.role_arn,
       ]
     }
 
@@ -261,10 +261,10 @@ data "aws_iam_policy_document" "key_policy" {
 }
 
 # KMS primary key resource only if singleton account
-resource "aws_kms_key" "agentless" {
+resource "aws_kms_key" "scanning" {
   count = var.is_organizational ? 0 : 1
 
-  description             = "Sysdig Agentless encryption primary key"
+  description             = "Sysdig Agentless Scanning encryption key"
   deletion_window_in_days = var.kms_key_deletion_window
   key_usage               = "ENCRYPT_DECRYPT"
   policy                  = data.aws_iam_policy_document.key_policy[0].json
@@ -272,9 +272,9 @@ resource "aws_kms_key" "agentless" {
 }
 
 # KMS alias resource only if singleton account
-resource "aws_kms_alias" "agentless" {
+resource "aws_kms_alias" "scanning" {
   count = var.is_organizational ? 0 : 1
 
   name          = "alias/${var.kms_key_alias}"
-  target_key_id = aws_kms_key.agentless[0].key_id
+  target_key_id = aws_kms_key.scanning[0].key_id
 }

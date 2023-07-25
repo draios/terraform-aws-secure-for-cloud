@@ -8,7 +8,7 @@ variable "trusted_identity" {
   description = "The name of sysdig trusted identity"
 }
 
-variable "agentless_account_id" {
+variable "scanning_account_id" {
   type        = string
   description = "The identifier of the account that will receive volume snapshots"
   default     = "878070807337"

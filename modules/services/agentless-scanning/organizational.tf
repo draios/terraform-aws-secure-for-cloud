@@ -52,7 +52,7 @@ Resources:
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
-            - Sid: "SysdigSecureAgentless"
+            - Sid: "SysdigSecureScanning"
               Effect: "Allow"
               Action: "sts:AssumeRole"
               Principal:
@@ -100,7 +100,7 @@ Resources:
                     StringEqualsIgnoreCase:
                       aws:ResourceTag/CreatedBy: "Sysdig"
                     StringEquals:
-                      ec2:Add/userId: "${var.agentless_account_id}"
+                      ec2:Add/userId: "${var.scanning_account_id}"
                 - Sid: "ec2SnapshotDelete"
                   Effect: "Allow"
                   Action: "ec2:DeleteSnapshot"
@@ -135,7 +135,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
 # stackset to deploy resources for agentless scanning in management account
 resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
   count      = var.is_organizational ? 1 : 0
-  depends_on = [aws_iam_role.agentless]
+  depends_on = [aws_iam_role.scanning]
 
   name                    = join("-", [var.name, "ScanningKmsMgmtAcc"])
   tags                    = var.tags
@@ -161,7 +161,7 @@ Resources:
             - Sid: "SysdigAllowKms"
               Effect: "Allow"
               Principal:
-                AWS: ["arn:aws:iam::${var.agentless_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
               Action:
                 - "kms:Encrypt"
                 - "kms:Decrypt"
@@ -228,7 +228,7 @@ Resources:
   AgentlessScanningKmsPrimaryKey:
       Type: AWS::KMS::Key
       Properties:
-        Description: "Sysdig Agentless encryption primary key"
+        Description: "Sysdig Agentless Scanning encryption key"
         PendingWindowInDays: ${var.kms_key_deletion_window}
         KeyUsage: "ENCRYPT_DECRYPT"
         KeyPolicy:
@@ -237,7 +237,7 @@ Resources:
             - Sid: "SysdigAllowKms"
               Effect: "Allow"
               Principal:
-                AWS: ["arn:aws:iam::${var.agentless_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
               Action:
                 - "kms:Encrypt"
                 - "kms:Decrypt"
