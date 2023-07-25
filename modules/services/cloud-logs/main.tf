@@ -12,8 +12,8 @@ provider "aws" {
 # created Role in the Client's account, CloudIngestion will be able to perform all the required actions in order to
 # list and fetch the log files that are automatically published in the target s3 bucket.
 #
-# Note: this setup assumes that the Client has already properly set up an AWS CloudTrail Trail and the associated bucket.
-# It is responsibility of Sysdig's Secure UI to provide the necessary information to make the Client perform the
+# Note: this setup assumes that the Customer has already properly set up an AWS CloudTrail Trail and the associated bucket.
+# It is responsibility of Sysdig's Secure UI to provide the necessary information to make the Customer perform the
 # necessary operations before applying the Terraform module.
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "assume_cloudlogs_s3_access_role" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${var.trusted_identity}"]
+      identifiers = [var.trusted_identity]
     }
 
     actions = ["sts:AssumeRole"]
@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "assume_cloudlogs_s3_access_role" {
     condition {
       test     = "StringEquals"
       variable = "sts:ExternalId"
-      values   = ["${var.external_id}"]
+      values   = [var.external_id]
     }
   }
 }
