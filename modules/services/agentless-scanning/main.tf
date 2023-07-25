@@ -2,8 +2,25 @@
 # Controller IAM roles and stuff #
 ##################################
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Determine if this is an Organizational install, or a single account install. For Single Account installs, resources
+# are created directly using the AWS Terraform Provider (This is the default behaviour). For Organizational installs,
+# see organizational.tf, and the resources in this file are used to instrument the management account (StackSets do not
+# include the management account they are created in, even if this account is within the target Organization).
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
+# We have two types of resources. global and regional. Global resources are deployed only once (mostly in the primary
+# region). We use deploy_global_resources boolean to determine that.
+#-----------------------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------------------
+# These resources create an Agentless Scanning IAM Role, IAM Policy, KMS keys and KMS Aliases in the account.
+# For the KMS key resource - a KMS Primary key is created in the primary region, an Alias for this key in that region.
+#-----------------------------------------------------------------------------------------------------------------------
+
 data "aws_iam_policy_document" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   # General read permission, necessary for the discovery phase.
   statement {
@@ -142,7 +159,7 @@ data "aws_iam_policy_document" "agentless" {
 }
 
 resource "aws_iam_policy" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name        = var.name
   path        = "/sysdig/secure/agentless/"
@@ -152,7 +169,7 @@ resource "aws_iam_policy" "agentless" {
 }
 
 data "aws_iam_policy_document" "agentless_assume_role_policy" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   statement {
     sid = "SysdigSecureAgentless"
@@ -177,7 +194,7 @@ data "aws_iam_policy_document" "agentless_assume_role_policy" {
 }
 
 resource "aws_iam_role" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name               = var.name
   tags               = var.tags
@@ -185,15 +202,16 @@ resource "aws_iam_role" "agentless" {
 }
 
 resource "aws_iam_policy_attachment" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name       = var.name
   roles      = [aws_iam_role.agentless[0].name]
   policy_arn = aws_iam_policy.agentless[0].arn
 }
 
+# Fetch KMS key policy data only if singleton account and deploy_global_resources is true
 data "aws_iam_policy_document" "key_policy" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = (!var.is_organizational && var.deploy_global_resources) ? 1 : 0
 
   statement {
     sid = "SysdigAllowKms"
@@ -243,26 +261,21 @@ data "aws_iam_policy_document" "key_policy" {
   }
 }
 
+# KMS primary key resource only if singleton account
 resource "aws_kms_key" "agentless" {
-  count = var.deploy_global_resources ? 1 : 0
+  count = var.is_organizational ? 0 : 1
 
-  description             = "Sysdig Agentless encryption key"
+  description             = "Sysdig Agentless encryption primary key"
   deletion_window_in_days = var.kms_key_deletion_window
   key_usage               = "ENCRYPT_DECRYPT"
   policy                  = data.aws_iam_policy_document.key_policy[0].json
-  multi_region            = true
   tags                    = var.tags
 }
 
-resource "aws_kms_replica_key" "agentless_replica" {
-  count = var.deploy_global_resources ? 0 : 1
-
-  description             = "Sysdig Agentless multi-region replica key"
-  deletion_window_in_days = 7
-  primary_key_arn         = var.primary_key.arn
-}
-
+# KMS alias resource only if singleton account
 resource "aws_kms_alias" "agentless" {
+  count = var.is_organizational ? 0 : 1
+
   name          = "alias/${var.kms_key_alias}"
-  target_key_id = var.deploy_global_resources ? aws_kms_key.agentless[0].key_id : var.primary_key.id
+  target_key_id = aws_kms_key.agentless[0].key_id
 }

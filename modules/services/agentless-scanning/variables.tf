@@ -45,14 +45,26 @@ variable "kms_key_alias" {
   default     = "sysdig-secure-scanning"
 }
 
-variable "primary_key" {
-  description = "The primary KMS key deployed in global region"
-  type = object({
-    id  = string
-    arn = string
-  })
-  default = {
-    id  = ""
-    arn = ""
-  }
+variable "is_organizational" {
+  description = "(Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs)"
+  type        = bool
+  default     = false
+}
+
+variable "org_units" {
+  description = "(Optional) List of Organization Unit IDs in which to setup Agentless Scanning. By default, Agentless Scanning will be setup in all accounts within the Organization. This field is ignored if `is_organizational = false`"
+  type        = set(string)
+  default     = []
+}
+
+variable "instrumented_regions" {
+  description = "(Optional) List of additional instrumented regions in which to setup Agentless Scanning."
+  type        = set(string)
+  default     = []
+}
+
+variable "stackset_admin_role_arn" {
+  description = "(Optional) stackset admin role to run SELF_MANAGED stackset"
+  type        = string
+  default     = ""
 }
