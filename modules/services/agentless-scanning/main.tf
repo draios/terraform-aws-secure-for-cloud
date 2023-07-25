@@ -162,7 +162,6 @@ resource "aws_iam_policy" "agentless" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name        = var.name
-  path        = "/sysdig/secure/agentless/"
   description = "Grants Sysdig Secure access to volumes and snapshots"
   policy      = data.aws_iam_policy_document.agentless[0].json
   tags        = var.tags
