@@ -8,7 +8,7 @@ variable "trusted_identity" {
   description = "The name of sysdig trusted identity"
 }
 
-variable "agentless_account_id" {
+variable "scanning_account_id" {
   type        = string
   description = "The identifier of the account that will receive volume snapshots"
   default     = "878070807337"
@@ -34,15 +34,9 @@ variable "tags" {
   }
 }
 variable "deploy_global_resources" {
-  description = "(Optional) Set this field to 'true' to deploy Agentless Scanning to an AWS Organization (Or specific OUs)"
+  description = "(Optional) Set this field to 'true' to deploy Agentless Scanning when deploying to the main region (Non Organization Setup)"
   type        = bool
   default     = false
-}
-
-variable "kms_key_alias" {
-  description = "The alias of the KMS key used to encrypt the data plane secrets"
-  type        = string
-  default     = "sysdig-secure-scanning"
 }
 
 variable "is_organizational" {
@@ -57,14 +51,20 @@ variable "org_units" {
   default     = []
 }
 
-variable "instrumented_regions" {
-  description = "(Optional) List of additional instrumented regions in which to setup Agentless Scanning."
+variable "regions" {
+  description = "(Optional) List of regions in which to install Agentless Scanning"
   type        = set(string)
   default     = []
 }
 
 variable "stackset_admin_role_arn" {
   description = "(Optional) stackset admin role to run SELF_MANAGED stackset"
+  type        = string
+  default     = ""
+}
+
+variable "role_arn" {
+  description = "(Optional) The ARN of the role to be associated with the with regional resources"
   type        = string
   default     = ""
 }

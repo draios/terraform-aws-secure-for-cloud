@@ -9,7 +9,7 @@ data "aws_organizations_organization" "org" {
 
 locals {
   organizational_unit_ids = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
-  region_set              = toset(var.instrumented_regions)
+  region_set              = toset(var.regions)
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -39,6 +39,10 @@ resource "aws_cloudformation_stack_set" "scanning_role_stackset" {
     retain_stacks_on_account_removal = false
   }
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = <<TEMPLATE
 Resources:
   AgentlessScanningRole:
@@ -48,7 +52,7 @@ Resources:
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
-            - Sid: "SysdigSecureAgentless"
+            - Sid: "SysdigSecureScanning"
               Effect: "Allow"
               Action: "sts:AssumeRole"
               Principal:
@@ -96,7 +100,7 @@ Resources:
                     StringEqualsIgnoreCase:
                       aws:ResourceTag/CreatedBy: "Sysdig"
                     StringEquals:
-                      ec2:Add/userId: "${var.agentless_account_id}"
+                      ec2:Add/userId: "${var.scanning_account_id}"
                 - Sid: "ec2SnapshotDelete"
                   Effect: "Allow"
                   Action: "ec2:DeleteSnapshot"
@@ -131,7 +135,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
 # stackset to deploy resources for agentless scanning in management account
 resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
   count      = var.is_organizational ? 1 : 0
-  depends_on = [aws_iam_role.agentless]
+  depends_on = [aws_iam_role.scanning]
 
   name                    = join("-", [var.name, "ScanningKmsMgmtAcc"])
   tags                    = var.tags
@@ -139,12 +143,16 @@ resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = var.stackset_admin_role_arn
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = <<TEMPLATE
 Resources:
   AgentlessScanningKmsPrimaryKey:
       Type: AWS::KMS::Key
       Properties:
-        Description: "Sysdig Agentless encryption primary key"
+        Description: "Sysdig Agentless Scanning encryption key"
         PendingWindowInDays: ${var.kms_key_deletion_window}
         KeyUsage: "ENCRYPT_DECRYPT"
         KeyPolicy:
@@ -153,7 +161,7 @@ Resources:
             - Sid: "SysdigAllowKms"
               Effect: "Allow"
               Principal:
-                AWS: ["arn:aws:iam::${var.agentless_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
               Action:
                 - "kms:Encrypt"
                 - "kms:Decrypt"
@@ -172,7 +180,7 @@ Resources:
   AgentlessScanningKmsPrimaryAlias:
       Type: AWS::KMS::Alias
       Properties:
-        AliasName: "alias/${var.kms_key_alias}"
+        AliasName: "alias/${var.name}"
         TargetKeyId: !Ref AgentlessScanningKmsPrimaryKey
 
 TEMPLATE
@@ -211,12 +219,16 @@ resource "aws_cloudformation_stack_set" "ou_resources_stackset" {
     retain_stacks_on_account_removal = false
   }
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = <<TEMPLATE
 Resources:
   AgentlessScanningKmsPrimaryKey:
       Type: AWS::KMS::Key
       Properties:
-        Description: "Sysdig Agentless encryption primary key"
+        Description: "Sysdig Agentless Scanning encryption key"
         PendingWindowInDays: ${var.kms_key_deletion_window}
         KeyUsage: "ENCRYPT_DECRYPT"
         KeyPolicy:
@@ -225,7 +237,7 @@ Resources:
             - Sid: "SysdigAllowKms"
               Effect: "Allow"
               Principal:
-                AWS: ["arn:aws:iam::${var.agentless_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
               Action:
                 - "kms:Encrypt"
                 - "kms:Decrypt"
@@ -245,7 +257,7 @@ Resources:
   AgentlessScanningKmsPrimaryAlias:
       Type: AWS::KMS::Alias
       Properties:
-        AliasName: "alias/${var.kms_key_alias}"
+        AliasName: "alias/${var.name}"
         TargetKeyId: !Ref AgentlessScanningKmsPrimaryKey
 
 TEMPLATE
