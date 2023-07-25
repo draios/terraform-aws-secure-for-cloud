@@ -152,7 +152,7 @@ Resources:
   AgentlessScanningKmsPrimaryKey:
       Type: AWS::KMS::Key
       Properties:
-        Description: "Sysdig Agentless encryption primary key"
+        Description: "Sysdig Agentless Scanning encryption key"
         PendingWindowInDays: ${var.kms_key_deletion_window}
         KeyUsage: "ENCRYPT_DECRYPT"
         KeyPolicy:
