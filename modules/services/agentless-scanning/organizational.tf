@@ -39,6 +39,10 @@ resource "aws_cloudformation_stack_set" "scanning_role_stackset" {
     retain_stacks_on_account_removal = false
   }
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = <<TEMPLATE
 Resources:
   AgentlessScanningRole:
@@ -139,6 +143,10 @@ resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = var.stackset_admin_role_arn
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = <<TEMPLATE
 Resources:
   AgentlessScanningKmsPrimaryKey:
@@ -209,6 +217,10 @@ resource "aws_cloudformation_stack_set" "ou_resources_stackset" {
   auto_deployment {
     enabled                          = true
     retain_stacks_on_account_removal = false
+  }
+
+  lifecycle {
+    ignore_changes = [administration_role_arn]
   }
 
   template_body = <<TEMPLATE
