@@ -1,11 +1,4 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# Provider setup, the region is provided through a Terraform variable and has a default value.
-#-----------------------------------------------------------------------------------------------------------------------
-provider "aws" {
-  region = var.region
-}
-
-#-----------------------------------------------------------------------------------------------------------------------
 # The only resource needed to make cloudingestion start to fetch data from the CloudTrail associated s3 bucket is a
 # properly set AWS IAM Role. Sysdig's trusted identity act as the Principal in the assume role Policy, namely the role
 # that CloudIngestion will use to assume the Client's role. At that point, given the permission set granted to the newly

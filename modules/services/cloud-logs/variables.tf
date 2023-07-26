@@ -1,17 +1,11 @@
 variable "bucket_name" {
-  description = "(Required) The name of your s3 bucket associated with your Clloudtrail trail"
+  description = "(Required) The name of your s3 bucket associated with your Cloudtrail trail"
   type        = string
 }
 
 variable "external_id" {
   type        = string
   description = "(Required) Random string generated unique to a customer"
-}
-
-variable "region" {
-  description = "(Optional) Default region for resource creation"
-  type        = string
-  default     = "eu-central-1"
 }
 
 variable "role_name" {
