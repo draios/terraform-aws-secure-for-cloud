@@ -64,7 +64,7 @@ variable "stackset_admin_role_arn" {
 }
 
 variable "role_arn" {
-  description = "(Optional) The ARN of the role to be associated with the with regional resources"
+  description = "(Optional) The ARN of the role to be associated with the with regional resources. Must be set if deploy_global_resources is false"
   type        = string
   default     = ""
 }
