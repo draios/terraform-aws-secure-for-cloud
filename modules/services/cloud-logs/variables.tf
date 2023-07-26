@@ -11,9 +11,7 @@ variable "external_id" {
 variable "region" {
   description = "(Optional) Default region for resource creation"
   type        = string
-  # This default was inherited from the previous trust-relationship config and related to
-  # organization mode. Does this still hold?
-  default = "eu-central-1"
+  default     = "eu-central-1"
 }
 
 variable "role_name" {
