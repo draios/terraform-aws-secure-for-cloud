@@ -56,8 +56,8 @@ data "aws_iam_policy_document" "cloudlogs_s3_access_policy" {
     ]
 
     resources = [
-      "arn:aws:s3:::${var.bucket_name}",
-      "arn:aws:s3:::${var.bucket_name}/*"
+      var.bucket_arn,
+      "${var.bucket_arn}/*"
     ]
   }
 }

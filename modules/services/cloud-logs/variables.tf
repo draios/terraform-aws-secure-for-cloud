@@ -1,5 +1,5 @@
-variable "bucket_name" {
-  description = "(Required) The name of your s3 bucket associated with your Cloudtrail trail"
+variable "bucket_arn" {
+  description = "(Required) The ARN of your s3 bucket associated with your Cloudtrail trail"
   type        = string
 }
 
