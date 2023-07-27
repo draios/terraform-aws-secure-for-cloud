@@ -18,7 +18,7 @@ resource "aws_iam_role" "cloudlogs_s3_access" {
   assume_role_policy = data.aws_iam_policy_document.assume_cloudlogs_s3_access_role.json
   inline_policy {
     name   = "cloudlogs_s3_access_policy"
-    policy = data.aws_iam_policy_document.cloudlogs_s3_access_policy.json
+    policy = data.aws_iam_policy_document.cloudlogs_s3_access.json
   }
 }
 
@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "assume_cloudlogs_s3_access_role" {
 }
 
 # IAM Policy Document used for the bucket access policy
-data "aws_iam_policy_document" "cloudlogs_s3_access_policy" {
+data "aws_iam_policy_document" "cloudlogs_s3_access" {
 
   statement {
     sid = "CloudlogsS3Access"
