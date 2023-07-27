@@ -212,6 +212,12 @@ resource "aws_iam_policy_attachment" "scanning" {
 data "aws_iam_policy_document" "key_policy" {
   count = (var.is_organizational) ? 0 : 1
 
+  lifecycle {
+    precondition {
+      condition     = var.deploy_global_resources || length(var.role_arn) > 0
+      error_message = "role_arn must be set unless deploy_global_resources"
+    }
+  }
   statement {
     sid = "SysdigAllowKms"
 
