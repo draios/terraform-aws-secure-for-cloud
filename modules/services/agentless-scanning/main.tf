@@ -59,12 +59,12 @@ data "aws_iam_policy_document" "scanning" {
       "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:CreateGrant"
-    ],
+      "kms:CreateGrant",
+    ]
 
     resource = [
       "*"
-    ],
+    ]
 
     condition {
       test     = "StringLike"
