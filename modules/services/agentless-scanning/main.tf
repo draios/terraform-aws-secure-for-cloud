@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "scanning" {
   }
 
   statement {
-    sid = "AllowKMSEncryptDecrypt",
+    sid = "AllowKMSEncryptDecrypt"
 
     action = [
       "kms:DescribeKey",
