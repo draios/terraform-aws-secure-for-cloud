@@ -53,7 +53,7 @@ data "aws_iam_policy_document" "scanning" {
   statement {
     sid = "AllowKMSEncryptDecrypt"
 
-    action = [
+    actions = [
       "kms:DescribeKey",
       "kms:Encrypt",
       "kms:Decrypt",
@@ -62,7 +62,7 @@ data "aws_iam_policy_document" "scanning" {
       "kms:CreateGrant",
     ]
 
-    resource = [
+    resources = [
       "*"
     ]
 
