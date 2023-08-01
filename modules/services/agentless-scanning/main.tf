@@ -70,7 +70,7 @@ data "aws_iam_policy_document" "scanning" {
       test     = "StringLike"
       variable = "kms:ViaService"
       values = [
-	"ec2.*.amazonaws.com",
+        "ec2.*.amazonaws.com",
       ]
     }
   }
