@@ -76,6 +76,19 @@ Resources:
                     - "kms:ListAliases"
                     - "kms:ListResourceTags"
                   Resource: "*"
+                - Sid: "AllowKMSEncryptDecrypt"
+                  Effect: "Allow"
+                  Action:
+                    - "kms:DescribeKey"
+                    - "kms:Encrypt"
+                    - "kms:Decrypt"
+                    - "kms:ReEncrypt*"
+                    - "kms:GenerateDataKey*"
+                    - "kms:CreateGrant"
+                  Resource: "*"
+                  Condition:
+                    StringLike:
+                      kms:ViaService: ["ec2.*.amazonaws.com"]
                 - Sid: "CreateTaggedSnapshotFromVolume"
                   Effect: "Allow"
                   Action: "ec2:CreateSnapshot"

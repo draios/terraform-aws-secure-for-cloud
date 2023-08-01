@@ -50,6 +50,31 @@ data "aws_iam_policy_document" "scanning" {
     ]
   }
 
+  statement {
+    sid = "AllowKMSEncryptDecrypt"
+
+    actions = [
+      "kms:DescribeKey",
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:CreateGrant",
+    ]
+
+    resources = [
+      "*"
+    ]
+
+    condition {
+      test     = "StringLike"
+      variable = "kms:ViaService"
+      values = [
+        "ec2.*.amazonaws.com",
+      ]
+    }
+  }
+
   # Allows the creation of snapshots.
   statement {
     sid = "CreateTaggedSnapshotFromVolume"
