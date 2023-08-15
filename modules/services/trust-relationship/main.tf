@@ -79,7 +79,7 @@ TEMPLATE
 resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   count = var.is_organizational ? 1 : 0
 
-  region         = var.region
+  region         = var.region == "" ? null : var.region
   stack_set_name = aws_cloudformation_stack_set.stackset[0].name
   deployment_targets {
     organizational_unit_ids = local.org_units_to_deploy

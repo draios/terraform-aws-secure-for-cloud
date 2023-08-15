@@ -32,7 +32,7 @@ variable "org_units" {
 
 variable "region" {
   type        = string
-  default     = "eu-central-1"
+  default     = ""
   description = "Default region for resource creation in organization mode"
 }
 
