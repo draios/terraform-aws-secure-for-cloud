@@ -56,6 +56,10 @@ resource "aws_cloudformation_stack_set" "stackset" {
     retain_stacks_on_account_removal = false
   }
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = <<TEMPLATE
 Resources:
   SysdigCSPMRole:
