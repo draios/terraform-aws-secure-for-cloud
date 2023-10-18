@@ -27,6 +27,10 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
     retain_stacks_on_account_removal = false
   }
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = <<TEMPLATE
 Resources:
   EventBridgeRule:
@@ -87,6 +91,10 @@ resource "aws_cloudformation_stack_set" "eb-role-stackset" {
   auto_deployment {
     enabled                          = true
     retain_stacks_on_account_removal = false
+  }
+
+  lifecycle {
+    ignore_changes = [administration_role_arn]
   }
 
   template_body = <<TEMPLATE
