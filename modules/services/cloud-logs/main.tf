@@ -46,18 +46,32 @@ data "aws_iam_policy_document" "assume_cloudlogs_s3_access_role" {
 data "aws_iam_policy_document" "cloudlogs_s3_access" {
 
   statement {
-    sid = "CloudlogsS3Access"
+    sid = "CloudlogsS3AccessGet"
 
     effect = "Allow"
 
     actions = [
       "s3:Get*",
-      "s3:List*"
     ]
 
     resources = [
       var.bucket_arn,
       "${var.bucket_arn}/*"
+    ]
+  }
+
+  statement {
+    sid = "CloudlogsS3AccessList"
+
+    effect = "Allow"
+
+    actions = [
+      "s3:List*"
+    ]
+
+    resources = [
+      "${var.bucket_arn}/AWSLogs/${var.account_id}",
+      "${var.bucket_arn}/AWSLogs/${var.account_id}/*"
     ]
   }
 }
