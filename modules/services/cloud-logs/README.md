@@ -17,7 +17,7 @@ The following resources will be created in each instrumented account:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.9.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.17.0 |
 
 ## Modules
 
@@ -29,15 +29,15 @@ No modules.
 |------|------|
 | [aws_iam_role.cloudlogs_s3_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_policy_document.assume_cloudlogs_s3_access_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.cloudlogs_s3_access_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.cloudlogs_s3_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_bucket_name"></a> [bucket\_name](#input\_bucket\_name) | (Required) The name of your s3 bucket associated with your Clloudtrail trail | `string` | n/a | yes |
+| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) The identifier of your AWS account | `string` | n/a | yes |
+| <a name="input_bucket_arn"></a> [bucket\_arn](#input\_bucket\_arn) | (Required) The ARN of your s3 bucket associated with your Cloudtrail trail | `string` | n/a | yes |
 | <a name="input_external_id"></a> [external\_id](#input\_external\_id) | (Required) Random string generated unique to a customer | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | (Optional) Default region for resource creation | `string` | `"eu-central-1"` | no |
 | <a name="input_role_name"></a> [role\_name](#input\_role\_name) | (Required) The name of the IAM Role that will enable access to the Cloudtrail logs | `string` | `"cloudtrail-s3-bucket-read-access"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
 | <a name="input_trusted_identity"></a> [trusted\_identity](#input\_trusted\_identity) | (Required) The name of Sysdig trusted identity | `string` | n/a | yes |

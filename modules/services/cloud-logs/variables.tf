@@ -3,6 +3,11 @@ variable "bucket_arn" {
   type        = string
 }
 
+variable "account_id" {
+  description = "(Required) The identifier of your AWS account"
+  type        = string
+}
+
 variable "external_id" {
   type        = string
   description = "(Required) Random string generated unique to a customer"
@@ -27,3 +32,4 @@ variable "trusted_identity" {
   description = "(Required) The name of Sysdig trusted identity"
   type        = string
 }
+

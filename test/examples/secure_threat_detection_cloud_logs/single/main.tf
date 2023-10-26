@@ -15,4 +15,5 @@ module "single-account-threat-detection" {
   external_id      = "external_id"
   role_name        = "sysdig-secure-single"
   bucket_arn       = "arn:aws:s3:::sample_bucket_name"
+  account_id       = "sample_account_id"
 }
