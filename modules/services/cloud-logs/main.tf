@@ -70,8 +70,8 @@ data "aws_iam_policy_document" "cloudlogs_s3_access" {
     ]
 
     resources = [
-      "${var.bucket_arn}/AWSLogs/${var.account_id}",
-      "${var.bucket_arn}/AWSLogs/${var.account_id}/*"
+      "${var.bucket_arn}",
+      "${var.bucket_arn}/*"
     ]
   }
 }
