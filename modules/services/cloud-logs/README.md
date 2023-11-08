@@ -4,7 +4,7 @@ This Module creates the resources required to send CloudTrail logs to Sysdig by 
 
 
 The following resources will be created in each instrumented account:
-- An IAM Role and associated policies that gives the ingestion component in Sysdig's account permission to list and retrieve items from it. 
+- An IAM Role and associated policies that gives the ingestion component in Sysdig's account permission to list and retrieve items from it.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ The following resources will be created in each instrumented account:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.17.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.23.1 |
 
 ## Modules
 
@@ -35,7 +35,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | (Required) The identifier of your AWS account | `string` | n/a | yes |
 | <a name="input_bucket_arn"></a> [bucket\_arn](#input\_bucket\_arn) | (Required) The ARN of your s3 bucket associated with your Cloudtrail trail | `string` | n/a | yes |
 | <a name="input_external_id"></a> [external\_id](#input\_external\_id) | (Required) Random string generated unique to a customer | `string` | n/a | yes |
 | <a name="input_role_name"></a> [role\_name](#input\_role\_name) | (Required) The name of the IAM Role that will enable access to the Cloudtrail logs | `string` | `"cloudtrail-s3-bucket-read-access"` | no |
