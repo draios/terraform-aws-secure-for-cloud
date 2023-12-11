@@ -43,6 +43,7 @@ Resources:
           - 'AWS API Call via CloudTrail'
           - 'AWS Console Sign In via CloudTrail'
           - 'AWS Service Event via CloudTrail'
+      State: ${var.rule_state}
       Targets:
         - Id: ${var.name}
           Arn: ${var.target_event_bus_arn}
