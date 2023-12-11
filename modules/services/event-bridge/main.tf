@@ -32,6 +32,7 @@ resource "aws_cloudwatch_event_rule" "sysdig" {
   name        = var.name
   description = "Capture all CloudTrail events"
   tags        = var.tags
+  state       = var.rule_state
 
   event_pattern = <<EOF
 {
