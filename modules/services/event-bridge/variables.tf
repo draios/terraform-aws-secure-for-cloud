@@ -62,3 +62,9 @@ variable "external_id" {
   type        = string
   description = "Random string generated unique to a customer"
 }
+
+variable "rule_state" {
+  type        = string
+  description = "State of the rule. When state is ENABLED, the rule is enabled for all events except those delivered by CloudTrail. To also enable the rule for events delivered by CloudTrail, set state to ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS."
+  default     = "ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS"
+}
