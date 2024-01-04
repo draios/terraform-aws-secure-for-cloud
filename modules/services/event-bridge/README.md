@@ -16,13 +16,13 @@ When run in Organizational mode, this module will be deployed as a CloudFormatio
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.39.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.27.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.39.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.27.0 |
 
 ## Modules
 
