@@ -39,7 +39,17 @@ resource "aws_cloudwatch_event_rule" "sysdig" {
   "detail-type": [
     "AWS API Call via CloudTrail",
     "AWS Console Sign In via CloudTrail",
-    "AWS Service Event via CloudTrail"
+    "AWS Service Event via CloudTrail",
+    "Object Access Tier Changed",
+    "Object ACL Updated",
+    "Object Created",
+    "Object Deleted",
+    "Object Restore Completed",
+    "Object Restore Expired",
+    "Object Restore Initiated",
+    "Object Storage Class Changed",
+    "Object Tags Added",
+    "Object Tags Deleted"
   ]
 }
 EOF
