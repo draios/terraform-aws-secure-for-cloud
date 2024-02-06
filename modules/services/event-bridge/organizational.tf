@@ -127,6 +127,11 @@ Resources:
                 - Effect: Allow
                   Action: 'events:PutEvents'
                   Resource: ${var.target_event_bus_arn}
+                - Effect: Allow
+                  Action:
+                    - "events:DescribeRule"
+                    - "events:ListTargetsByRule"
+                  Resource: "arn:aws:events:*:*:rule/${var.name}"
 TEMPLATE
 }
 

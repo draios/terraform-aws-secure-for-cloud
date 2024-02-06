@@ -98,21 +98,39 @@ resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
 EOF
   inline_policy {
     name   = var.name
-    policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": [
-                "events:PutEvents"
-            ],
-            "Resource": [
-                "${var.target_event_bus_arn}"
-            ],
-            "Effect": "Allow"
-        }
-    ]
+    policy = data.aws_iam_policy_document.cloud_trail_events.json
+  }
 }
-EOF
+
+# IAM Policy Document used by EventBridge role for the cloudtrail events policy
+data "aws_iam_policy_document" "cloud_trail_events" {
+
+  statement {
+    sid = "CloudTrailEventsPut"
+
+    effect = "Allow"
+
+    actions = [
+      "events:PutEvents",
+    ]
+
+    resources = [
+      var.target_event_bus_arn,
+    ]
+  }
+
+  statement {
+    sid = "CloudTrailEventRuleAccess"
+
+    effect = "Allow"
+
+    actions = [
+      "events:DescribeRule",
+      "events:ListTargetsByRule",
+    ]
+
+    resources = [
+      "arn:aws:events:*:*:rule/${var.name}",
+    ]
   }
 }
