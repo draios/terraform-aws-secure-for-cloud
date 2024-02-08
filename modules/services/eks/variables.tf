@@ -12,6 +12,7 @@ variable "onboard_all_clusters" {
 variable "clusters" {
   description = "Please list the clusters to be scanned by Sysdig (when 'onboard_all_clusters' is set to false, only the clusters specified here will be scanned)"
   type        = set(string)
+  default     = []
 }
 
 variable "principal_arn" {
