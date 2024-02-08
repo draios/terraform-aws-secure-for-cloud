@@ -1,8 +1,3 @@
-variable "region" {
-  description = "The AWS region where clusters are located"
-  type        = string
-}
-
 variable "onboard_all_clusters" {
   description = "Set the value to true if all public clusters should be scanned by Sysdig"
   type        = bool
