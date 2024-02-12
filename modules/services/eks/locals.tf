@@ -4,7 +4,7 @@ locals {
     cluster if contains(["API", "API_AND_CONFIG_MAP"], cluster.access_config[0].authentication_mode)
   ]
 
-  tag_key = "sysdig:secure:scan"
+  tag_key           = "sysdig:secure:scan"
   tag_opt_in_values = ["true", "all"]
   opted_in_clusters = [
     for cluster in local.api_enabled_clusters :
