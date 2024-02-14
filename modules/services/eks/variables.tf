@@ -10,7 +10,7 @@ variable "clusters" {
   default     = []
 }
 
-variable "principal_arn" {
-  description = "Sysdig's IAM Principal ARN which will access the EKS clusters"
+variable "role_name" {
+  description = "IAM role that Sysdig will assume to access the EKS clusters"
   type        = string
 }

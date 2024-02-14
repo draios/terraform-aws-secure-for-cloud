@@ -1,4 +1,7 @@
 locals {
+  account_id    = data.aws_caller_identity.current.account_id
+  principal_arn = "arn:aws:iam::${local.account_id}:role/${var.role_name}"
+
   api_enabled_clusters = [
     for cluster in data.aws_eks_cluster.clusters :
     cluster if contains(["API", "API_AND_CONFIG_MAP"], cluster.access_config[0].authentication_mode)
