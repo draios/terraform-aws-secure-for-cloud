@@ -31,11 +31,7 @@ data "aws_iam_policy_document" "scanning" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability",
-      "ecr:GetRepositoryPolicy",
-      "ecr:DescribeRepositories",
       "ecr:ListImages",
-      "ecr:DescribeImages",
-      "ecr:ListTagsForResource",
       "ecr:GetAuthorizationToken",
     ]
 
@@ -49,7 +45,7 @@ resource "aws_iam_policy" "scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name        = var.name
-  description = "Grants Sysdig Secure access to volumes and snapshots"
+  description = "Grants Sysdig Secure access to ECR images"
   policy      = data.aws_iam_policy_document.scanning[0].json
   tags        = var.tags
 }

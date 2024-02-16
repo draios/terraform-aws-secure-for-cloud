@@ -1,11 +1,12 @@
 variable "external_id" {
-  description = "Random string generated unique to a customer"
+  description = "(Optional) This value should be provided by Sysdig. External ID is optional information that you can use in an IAM role trust policy to designate who in Sysdig can assume the role."
   type        = string
+  default     = null
 }
 
 variable "trusted_identity" {
   type        = string
-  description = "The name of sysdig trusted identity"
+  description = "This value should be provided by Sysdig. The field refers to Sysdig's IAM role that will be authorized to pull ECR images"
 }
 
 variable "name" {
