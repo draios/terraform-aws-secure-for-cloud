@@ -35,7 +35,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="var_principal_arn"></a> [principal_arn](#var\_principal\_arn) | Sysdig's IAM Principal ARN which will access the EKS clusters | `string` | N/A | Yes |
+| <a name="role_name"></a> [role_name](#role\_name) | IAM role that Sysdig will assume to access the EKS clusters | `string` | N/A | Yes |
 | <a name="var_clusters"></a> [clusters](#var\_clusters) | The list of clusters to be scanned by Sysdig (when 'onboard_all_clusters' is set to false, only the clusters specified in this list will be scanned) | `set(string)` | Empty list | No |
 | <a name="var_onboard_all_clusters"></a> [onboard_all_clusters](#var\_onboard\_all\_clusters) | If set to `true`, all public clusters will be onboarded | `bool` | `false` | No |
 
