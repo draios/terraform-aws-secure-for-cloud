@@ -3,7 +3,9 @@
 This module will deploy a Trust Relationship (IAM Role) into a single AWS account, or each account within an AWS Organization.
 
 The following resources will be created in each instrumented account:
-- An IAM Role and associated IAM Policiy (`arn:aws:iam::aws:policy/SecurityAudit`) to grant Sysdig read only permissions to secure you AWS Account.
+- An IAM Role and associated IAM Policies mentioned below to grant Sysdig read only permissions to secure you AWS Account:
+    - `arn:aws:iam::aws:policy/SecurityAudit`
+    - a custom policy (`custom_resources_policy`)
     - An Access Policy attached to this role using a Sysdig provided `ExternalId`. 
 
 If instrumenting an AWS Organization, an `aws_cloudformation_stack_set` will be created in the Management Account. 
@@ -34,6 +36,7 @@ No modules.
 | [aws_cloudformation_stack_set_instance.stackset_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack_set_instance) | resource |
 | [aws_iam_role.cspm_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_organizations_organization.org](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
+| [aws_iam_policy_document.custom_resources_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
 

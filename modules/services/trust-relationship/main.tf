@@ -37,6 +37,58 @@ resource "aws_iam_role" "cspm_role" {
 }
 EOF
   managed_policy_arns = ["arn:aws:iam::aws:policy/SecurityAudit"]
+  inline_policy {
+    name   = var.role_name
+    policy = data.aws_iam_policy_document.custom_resources_policy.json
+  }
+}
+
+# Custom IAM Policy Document used by trust-relationship role
+data "aws_iam_policy_document" "custom_resources_policy" {
+
+  statement {
+    sid = "DescribeEFSAccessPoints"
+
+    effect = "Allow"
+
+    actions = [
+      "elasticfilesystem:DescribeAccessPoints",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+
+  statement {
+    sid = "ListWafRegionalRulesAndRuleGroups"
+
+    effect = "Allow"
+
+    actions = [
+      "waf-regional:ListRules",
+      "waf-regional:ListRuleGroups",
+    ]
+
+    resources = [
+      "arn:aws:waf-regional:*:*:rule/*",
+      "arn:aws:waf-regional:*:*:rulegroup/*"
+    ]
+  }
+
+  statement {
+    sid = "AccessAccountContactInfo"
+
+    effect = "Allow"
+
+    actions = [
+      "account:GetContactInformation",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 #----------------------------------------------------------
@@ -77,6 +129,28 @@ Resources:
                 sts:ExternalId: ${var.external_id}
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/SecurityAudit"
+      Policies:
+        - PolicyName: ${var.role_name}
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: "DescribeEFSAccessPoints"
+                Effect: "Allow"
+                Action: "elasticfilesystem:DescribeAccessPoints"
+                Resource: "*"
+              - Sid: "ListWafRegionalRulesAndRuleGroups"
+                Effect: "Allow"
+                Action:
+                  - "waf-regional:ListRules"
+                  - "waf-regional:ListRuleGroups"
+                Resource:
+                  - "arn:aws:waf-regional:*:*:rule/*"
+                  - "arn:aws:waf-regional:*:*:rulegroup/*"
+              - Sid: "AccessAccountContactInfo"
+                Effect: "Allow"
+                Action:
+                  - "account:GetContactInformation"
+                Resource: "*"
 TEMPLATE
 }
 
