@@ -27,4 +27,7 @@ locals {
     }
     policy_arn = local.eks_view_policy
   }
+
+  // ECR role to pull images
+  n = var.deploy_global_resources ? 1 : 0
 }
