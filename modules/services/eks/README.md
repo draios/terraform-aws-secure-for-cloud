@@ -44,10 +44,10 @@ No modules.
 | <a name="var_clusters"></a> [clusters](#var\_clusters) | The list of clusters to be scanned by Sysdig (when 'onboard_all_clusters' is set to false, only the clusters specified in this list will be scanned) | `set(string)` | Empty list | No |
 | <a name="var_onboard_all_clusters"></a> [onboard_all_clusters](#var\_onboard\_all\_clusters) | If set to `true`, all public clusters will be onboarded | `bool` | `false` | No |
 | <a name="var_deploy_global_resources"></a> [deploy\_global\_resources](#var\_deploy\_global\_resources) | (Optional) Setting this field to 'true' creates an IAM role that allows Sysdig to pull ECR images | `bool` | `false` | no |
-| <a name="var_external_id"></a> [external\_id](#var\_external\_id) | (Optional) This value should be provided by Sysdig. External ID is optional information that you can use in an IAM role trust policy to designate who in Sysdig can assume the role | `string` | n/a | yes |
+| <a name="var_external_id"></a> [external\_id](#var\_external\_id) | (Optional) This value should be provided by Sysdig. External ID is optional information that you can use in an IAM role trust policy to designate who in Sysdig can assume the role | `string` | | yes |
 | <a name="var_name"></a> [name](#var\_name) | (Optional) This value should be provided by Sysdig. The field refers to an installation name, which will also be used to name the IAM role that grants access to pull ECR images | `string` | | no |
-| <a name="var_tags"></a> [tags](#var\_tags) | (Optional) This value should be provided by Sysdig. Tags that will be associated with the IAM role. | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
-| <a name="var_trusted_identity"></a> [trusted\_identity](#var\_trusted\_identity) | (Optional) This value should be provided by Sysdig. The field refers to Sysdig's IAM role that will be authorized to pull ECR images | `string` | n/a | yes |
+| <a name="var_tags"></a> [tags](#var\_tags) | (Optional) This value should be provided by Sysdig. Tags that will be associated with the IAM role. | `map(string)` | <pre>{ "product": "sysdig-secure-for-cloud" }</pre> | no |
+| <a name="var_trusted_identity"></a> [trusted\_identity](#var\_trusted\_identity) | (Optional) This value should be provided by Sysdig. The field refers to Sysdig's IAM role that will be authorized to pull ECR images | `string` | | yes |
 
 ## Outputs
 
