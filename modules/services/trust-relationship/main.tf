@@ -75,20 +75,6 @@ data "aws_iam_policy_document" "custom_resources_policy" {
       "arn:aws:waf-regional:*:*:rulegroup/*"
     ]
   }
-
-  statement {
-    sid = "AccessAccountContactInfo"
-
-    effect = "Allow"
-
-    actions = [
-      "account:GetContactInformation",
-    ]
-
-    resources = [
-      "*",
-    ]
-  }
 }
 
 #----------------------------------------------------------
@@ -146,11 +132,6 @@ Resources:
                 Resource:
                   - "arn:aws:waf-regional:*:*:rule/*"
                   - "arn:aws:waf-regional:*:*:rulegroup/*"
-              - Sid: "AccessAccountContactInfo"
-                Effect: "Allow"
-                Action:
-                  - "account:GetContactInformation"
-                Resource: "*"
 TEMPLATE
 }
 
