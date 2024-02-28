@@ -40,7 +40,7 @@ variable "external_id" {
 
 variable "tags" {
   type        = map(string)
-  description = "(Optional) This value should be provided by Sysdig."
+  description = "(Optional) This value should be provided by Sysdig. Tags that will be associated with the IAM role."
   default = {
     "product" = "sysdig-secure-for-cloud"
   }
