@@ -1,4 +1,4 @@
-# AWS Trust Relationship Module
+# AWS EKS Module
 
 This module will onboard AWS EKS clusters into Agentless scanning.
 
