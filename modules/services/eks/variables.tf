@@ -5,20 +5,20 @@ variable "role_name" {
 }
 
 variable "onboard_all_clusters" {
-  description = "(Optional) Set the value to true if all public clusters (API and API_AND_CONFIG_MAP-type clusters) should be scanned by Sysdig. Only the clusters having authentication mode set to either API or API_AND_CONFIG_MAP will be onboarded."
+  description = "(Optional) Set the value to true to ensure Sysdig scans all public clusters. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded."
   type        = bool
   default     = false
 }
 
 variable "clusters" {
-  description = "(Optional) Please list the clusters to be scanned by Sysdig (when 'onboard_all_clusters' is set to false, only the clusters specified here will be scanned). The clusters must have authentication mode set to either API or API_AND_CONFIG_MAP to be onboarded."
+  description = "(Optional) To only scan some public clusters, enter their names here. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded."
   type        = set(string)
   default     = []
 }
 
 // Values required to create the ECR role
 variable "deploy_global_resources" {
-  description = "(Optional) Setting this field to 'true' creates an IAM role that allows Sysdig to pull ECR images."
+  description = "(Optional) Setting this field to 'true' creates an IAM role that allows Sysdig to pull ECR images in order to scan them."
   type        = bool
   default     = false
 }
