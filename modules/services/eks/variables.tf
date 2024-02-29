@@ -26,16 +26,19 @@ variable "deploy_global_resources" {
 variable "trusted_identity" {
   type        = string
   description = "(Optional) This value should be provided by Sysdig. The field refers to Sysdig's IAM role that will be authorized to pull ECR images."
+  default     = null
 }
 
 variable "name" {
   description = "(Optional) This value should be provided by Sysdig. The field refers to an installation name, which will also be used to name the IAM role that grants access to pull ECR images."
   type        = string
+  default     = null
 }
 
 variable "external_id" {
   description = "(Optional) This value should be provided by Sysdig. External ID is optional information that you can use in an IAM role trust policy to designate who in Sysdig can assume the role."
   type        = string
+  default     = null
 }
 
 variable "tags" {
@@ -43,5 +46,21 @@ variable "tags" {
   description = "(Optional) This value should be provided by Sysdig. Tags that will be associated with the IAM role."
   default = {
     "product" = "sysdig-secure-for-cloud"
+  }
+}
+
+output "validate_deploy_global_resources" {
+  value = null
+  precondition {
+    condition     = (var.deploy_global_resources && var.external_id != null)
+    error_message = "Please provide external_id or set deploy_global_resources to false."
+  }
+  precondition {
+    condition     = (var.deploy_global_resources && var.name != null)
+    error_message = "Please provide name or set deploy_global_resources set to false."
+  }
+  precondition {
+    condition     = (var.deploy_global_resources && var.trusted_identity != null)
+    error_message = "Please provide trusted_identity or set deploy_global_resources to false."
   }
 }
