@@ -68,3 +68,27 @@ variable "rule_state" {
   description = "State of the rule. When state is ENABLED, the rule is enabled for all events except those delivered by CloudTrail. To also enable the rule for events delivered by CloudTrail, set state to ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS."
   default     = "ENABLED_WITH_ALL_CLOUDTRAIL_MANAGEMENT_EVENTS"
 }
+
+variable "event_pattern" {
+  description = "Event pattern for CloudWatch Event Rule"
+  type        = string
+  default     = <<EOF
+{
+  "detail-type": [
+    "AWS API Call via CloudTrail",
+    "AWS Console Sign In via CloudTrail",
+    "AWS Service Event via CloudTrail",
+    "Object Access Tier Changed",
+    "Object ACL Updated",
+    "Object Created",
+    "Object Deleted",
+    "Object Restore Completed",
+    "Object Restore Expired",
+    "Object Restore Initiated",
+    "Object Storage Class Changed",
+    "Object Tags Added",
+    "Object Tags Deleted"
+  ]
+}
+EOF
+}
