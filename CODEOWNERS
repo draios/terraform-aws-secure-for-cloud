@@ -1,1 +1,4 @@
 * @draios/team-secure-onboarding
+
+/modules/services/workload-scanning/ @draios/team-agentless-eu @draios/team-agentless-us
+/modules/services/eks/ @draios/team-agentless-eu @draios/team-agentless-us
