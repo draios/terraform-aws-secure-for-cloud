@@ -8,9 +8,14 @@ data "aws_organizations_organization" "org" {
   count = var.is_organizational ? 1 : 0
 }
 
+data "aws_caller_identity" "current" {
+  count = var.is_organizational ? 1 : 0
+}
+
 locals {
-  organizational_unit_ids = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
-  region_set              = toset(var.regions)
+  organizational_unit_ids   = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
+  region_set                = toset(var.regions)
+  eb_rule_stackset_role_arn = var.is_organizational ? "arn:aws:iam::${data.aws_caller_identity.current[0].account_id}:role/${var.name}" : ""
 }
 
 # stackset to deploy eventbridge rule in organization unit
@@ -31,34 +36,13 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
     ignore_changes = [administration_role_arn]
   }
 
-  template_body = <<TEMPLATE
-Resources:
-  EventBridgeRule:
-    Type: AWS::Events::Rule
-    Properties:
-      Name: ${var.name}
-      Description: Capture all CloudTrail events
-      EventPattern:
-        detail-type:
-          - 'AWS API Call via CloudTrail'
-          - 'AWS Console Sign In via CloudTrail'
-          - 'AWS Service Event via CloudTrail'
-          - 'Object Access Tier Changed'
-          - 'Object ACL Updated'
-          - 'Object Created'
-          - 'Object Deleted'
-          - 'Object Restore Completed'
-          - 'Object Restore Expired'
-          - 'Object Restore Initiated'
-          - 'Object Storage Class Changed'
-          - 'Object Tags Added'
-          - 'Object Tags Deleted'
-      State: ${var.rule_state}
-      Targets:
-        - Id: ${var.name}
-          Arn: ${var.target_event_bus_arn}
-          RoleArn: !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"
-TEMPLATE
+  template_body = templatefile("${path.module}/stackset_template_body.tpl", {
+    name                 = var.name
+    event_pattern        = var.event_pattern
+    rule_state           = var.rule_state
+    target_event_bus_arn = var.target_event_bus_arn
+    role_arn             = local.eb_rule_stackset_role_arn
+  })
 }
 
 # stackset to deploy eventbridge rule in management account
@@ -71,34 +55,13 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = var.stackset_admin_role_arn
 
-  template_body = <<TEMPLATE
-Resources:
-  EventBridgeRule:
-    Type: AWS::Events::Rule
-    Properties:
-      Name: ${var.name}
-      Description: Capture all CloudTrail events
-      EventPattern:
-        detail-type:
-          - 'AWS API Call via CloudTrail'
-          - 'AWS Console Sign In via CloudTrail'
-          - 'AWS Service Event via CloudTrail'
-          - 'Object Access Tier Changed'
-          - 'Object ACL Updated'
-          - 'Object Created'
-          - 'Object Deleted'
-          - 'Object Restore Completed'
-          - 'Object Restore Expired'
-          - 'Object Restore Initiated'
-          - 'Object Storage Class Changed'
-          - 'Object Tags Added'
-          - 'Object Tags Deleted'
-      State: ${var.rule_state}
-      Targets:
-        - Id: ${var.name}
-          Arn: ${var.target_event_bus_arn}
-          RoleArn: ${aws_iam_role.event_bus_invoke_remote_event_bus[0].arn}
-TEMPLATE
+  template_body = templatefile("${path.module}/stackset_template_body.tpl", {
+    name                 = var.name
+    event_pattern        = var.event_pattern
+    rule_state           = var.rule_state
+    target_event_bus_arn = var.target_event_bus_arn
+    role_arn             = aws_iam_role.event_bus_invoke_remote_event_bus[0].arn
+  })
 }
 
 # stackset to deploy eventbridge role in organization unit

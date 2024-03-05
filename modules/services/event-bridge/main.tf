@@ -34,27 +34,8 @@ resource "aws_cloudwatch_event_rule" "sysdig" {
   tags        = var.tags
   state       = var.rule_state
 
-  event_pattern = <<EOF
-{
-  "detail-type": [
-    "AWS API Call via CloudTrail",
-    "AWS Console Sign In via CloudTrail",
-    "AWS Service Event via CloudTrail",
-    "Object Access Tier Changed",
-    "Object ACL Updated",
-    "Object Created",
-    "Object Deleted",
-    "Object Restore Completed",
-    "Object Restore Expired",
-    "Object Restore Initiated",
-    "Object Storage Class Changed",
-    "Object Tags Added",
-    "Object Tags Deleted"
-  ]
+  event_pattern = var.event_pattern
 }
-EOF
-}
-
 # Target to forward all CloudTrail events to Sysdig's EventBridge Bus.
 # See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target#cross-account-event-bus-target
 resource "aws_cloudwatch_event_target" "sysdig" {
