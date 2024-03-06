@@ -29,7 +29,6 @@ No modules.
 | Name | Type |
 |------|------|
 | [awscc_eks_access_entry](https://registry.terraform.io/providers/hashicorp/awscc/latest/docs/resources/eks_access_entry) | resource |
-| [aws_eks_clusters](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_clusters) | data source |
 | [aws_eks_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
@@ -40,12 +39,11 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="role_name"></a> [role_name](#role\_name) | (Required) IAM role that Sysdig will assume to access the EKS clusters | `string` | N/A | Yes |
-| <a name="var_clusters"></a> [clusters](#var\_clusters) | (Optional) To only scan some public clusters, enter their names here. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded. | `set(string)` | Empty list | No |
-| <a name="var_onboard_all_clusters"></a> [onboard_all_clusters](#var\_onboard\_all\_clusters) | (Optional) Set the value to true to ensure Sysdig scans all public clusters. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded. | `bool` | `false` | No |
+| <a name="eks_role_name"></a> [eks_role_name](#var\_eks\_role\_name) | (Required) IAM role that Sysdig will assume to access the EKS clusters. Prerequisite: Before this module can be invoked, Sysdig's CSPM Terraform module needs to create this role. | `string` | N/A | Yes |
+| <a name="var_clusters"></a> [clusters](#var\_clusters) | (Required) List the clusters that Sysdig will scan. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded. | `set(string)` | | Yes |
 | <a name="var_deploy_global_resources"></a> [deploy\_global\_resources](#var\_deploy\_global\_resources) | (Optional) Setting this field to 'true' creates an IAM role that allows Sysdig to pull ECR images in order to scan them. | `bool` | `false` | No |
 | <a name="var_external_id"></a> [external\_id](#var\_external\_id) | (Optional) This value should be provided by Sysdig. External ID is optional information that you can use in an IAM role trust policy to designate who in Sysdig can assume the role | `string` | | No |
-| <a name="var_name"></a> [name](#var\_name) | (Optional) This value should be provided by Sysdig. The field refers to an installation name, which will also be used to name the IAM role that grants access to pull ECR images | `string` | | No |
+| <a name="var_ecr_role_name"></a> [ecr_role_name](#var\_ecr\_role\_name) | (Optional) This value should be provided by Sysdig. The field refers to an installation name, which will also be used to name the IAM role that grants access to pull ECR images | `string` | | No |
 | <a name="var_tags"></a> [tags](#var\_tags) | (Optional) This value should be provided by Sysdig. Tags that will be associated with the IAM role. | `map(string)` | <pre>{ "product": "sysdig-secure-for-cloud" }</pre> | No |
 | <a name="var_trusted_identity"></a> [trusted\_identity](#var\_trusted\_identity) | (Optional) This value should be provided by Sysdig. The field refers to Sysdig's IAM role that will be authorized to pull ECR images | `string` | | No |
 

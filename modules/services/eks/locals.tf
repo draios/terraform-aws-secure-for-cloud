@@ -1,21 +1,14 @@
 locals {
   account_id    = data.aws_caller_identity.current.account_id
-  principal_arn = "arn:aws:iam::${local.account_id}:role/${var.role_name}"
+  principal_arn = "arn:aws:iam::${local.account_id}:role/${var.eks_role_name}"
 
   api_enabled_clusters = [
     for cluster in data.aws_eks_cluster.clusters :
     cluster if contains(["API", "API_AND_CONFIG_MAP"], cluster.access_config[0].authentication_mode)
   ]
 
-  tag_key           = "sysdig:secure:scan"
-  tag_opt_in_values = ["true", "all"]
-  opted_in_clusters = [
-    for cluster in local.api_enabled_clusters :
-    cluster if var.onboard_all_clusters || contains(var.clusters, cluster.name) || contains(local.tag_opt_in_values, lookup(cluster.tags, local.tag_key, "false"))
-  ]
-
   clusters = {
-    for cluster in local.opted_in_clusters : cluster.name => cluster
+    for cluster in local.api_enabled_clusters : cluster.name => cluster
     // Only onboard public clusters or clusters that Sysdig has access to
     if cluster.vpc_config[0].endpoint_public_access
   }
@@ -30,4 +23,12 @@ locals {
 
   // ECR role to pull images
   n = var.deploy_global_resources ? 1 : 0
+}
+
+output "validate_cluster_authentication_mode" {
+  value = null
+  precondition {
+    condition     = length(var.clusters) > 0 && length(var.clusters) == length(local.clusters)
+    error_message = "Some clusters are not API-enabled. Sysdig Agentless only supports API-enabled clusters."
+  }
 }

@@ -1,19 +1,12 @@
 // Values required to create access entries
-variable "role_name" {
-  description = "(Required) IAM role that Sysdig will assume to access the EKS clusters"
+variable "eks_role_name" {
+  description = "(Required) IAM role that Sysdig will assume to access the EKS clusters. Prerequisite: Before this module can be invoked, Sysdig's CSPM Terraform module needs to create this role."
   type        = string
 }
 
-variable "onboard_all_clusters" {
-  description = "(Optional) Set the value to true to ensure Sysdig scans all public clusters. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded."
-  type        = bool
-  default     = false
-}
-
 variable "clusters" {
-  description = "(Optional) To only scan some public clusters, enter their names here. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded."
+  description = "(Optional) List the clusters that Sysdig will scan. Please note that only clusters with authentication mode set to API or API_AND_CONFIG_MAP will be onboarded."
   type        = set(string)
-  default     = []
 }
 
 // Values required to create the ECR role
@@ -29,7 +22,7 @@ variable "trusted_identity" {
   default     = null
 }
 
-variable "name" {
+variable "ecr_role_name" {
   description = "(Optional) This value should be provided by Sysdig. The field refers to an installation name, which will also be used to name the IAM role that grants access to pull ECR images."
   type        = string
   default     = null
@@ -56,7 +49,7 @@ output "validate_deploy_global_resources" {
     error_message = "Please provide external_id or set deploy_global_resources to false."
   }
   precondition {
-    condition     = (var.deploy_global_resources && var.name != null)
+    condition     = (var.deploy_global_resources && var.ecr_role_name != null)
     error_message = "Please provide name or set deploy_global_resources set to false."
   }
   precondition {
