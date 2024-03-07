@@ -18,7 +18,6 @@ The following resource will be created in each EKS cluster:
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
-| <a name="provider_awscc"></a> [aws](#provider\_awscc) | >= 0.69 |
 
 ## Modules
 
@@ -28,7 +27,8 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [awscc_eks_access_entry](https://registry.terraform.io/providers/hashicorp/awscc/latest/docs/resources/eks_access_entry) | resource |
+| [aws_eks_access_entry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_access_entry) | resource |
+| [aws_eks_access_policy_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_access_policy_association) | resource |
 | [aws_eks_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
