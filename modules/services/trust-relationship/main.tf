@@ -75,6 +75,20 @@ data "aws_iam_policy_document" "custom_resources_policy" {
       "arn:aws:waf-regional:*:*:rulegroup/*"
     ]
   }
+
+  statement {
+    sid = "ListJobsOnConsole"
+
+    effect = "Allow"
+
+    actions = [
+      "macie2:ListClassificationJobs",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 #----------------------------------------------------------
@@ -132,6 +146,10 @@ Resources:
                 Resource:
                   - "arn:aws:waf-regional:*:*:rule/*"
                   - "arn:aws:waf-regional:*:*:rulegroup/*"
+              - Sid: "ListJobsOnConsole"
+                Effect: "Allow"
+                Action: "macie2:ListClassificationJobs"
+                Resource: "*"
 TEMPLATE
 }
 
