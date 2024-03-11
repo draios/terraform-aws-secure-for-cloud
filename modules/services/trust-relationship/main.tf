@@ -77,12 +77,12 @@ data "aws_iam_policy_document" "custom_resources_policy" {
   }
 
   statement {
-    sid = "AccessAccountContactInfo"
+    sid = "ListJobsOnConsole"
 
     effect = "Allow"
 
     actions = [
-      "account:GetContactInformation",
+      "macie2:ListClassificationJobs",
     ]
 
     resources = [
@@ -146,10 +146,9 @@ Resources:
                 Resource:
                   - "arn:aws:waf-regional:*:*:rule/*"
                   - "arn:aws:waf-regional:*:*:rulegroup/*"
-              - Sid: "AccessAccountContactInfo"
+              - Sid: "ListJobsOnConsole"
                 Effect: "Allow"
-                Action:
-                  - "account:GetContactInformation"
+                Action: "macie2:ListClassificationJobs"
                 Resource: "*"
 TEMPLATE
 }
