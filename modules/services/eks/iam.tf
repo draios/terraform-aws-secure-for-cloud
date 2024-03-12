@@ -1,7 +1,5 @@
 // This is a Single Account installation. The resources are created globally (instead of regionally). 
 data "aws_iam_policy_document" "ecr_pull_image" {
-  count = local.n
-
   statement {
     sid = "SysdigEcrPullImagePermissions"
 
@@ -31,8 +29,6 @@ resource "aws_iam_policy" "ecr_pull_image" {
 }
 
 data "aws_iam_policy_document" "ecr_assume_role" {
-  count = local.n
-
   statement {
     sid = "SysdigEcrAssumeRole"
 
