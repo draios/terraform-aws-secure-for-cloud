@@ -50,7 +50,7 @@ output "validate_deploy_global_resources" {
   }
   precondition {
     condition     = (var.deploy_global_resources && var.ecr_role_name != null)
-    error_message = "Please provide name or set deploy_global_resources set to false."
+    error_message = "Please provide ecr_role_name or set deploy_global_resources set to false."
   }
   precondition {
     condition     = (var.deploy_global_resources && var.trusted_identity != null)
