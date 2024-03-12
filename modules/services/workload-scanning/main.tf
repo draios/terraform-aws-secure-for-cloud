@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "scanning" {
   }
 }
 
-resource "aws_iam_policy" "scanning" {
+resource "aws_iam_policy" "ecr_scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
   name        = var.name
@@ -88,5 +88,5 @@ resource "aws_iam_policy_attachment" "scanning" {
 
   name       = var.name
   roles      = [aws_iam_role.scanning[0].name]
-  policy_arn = aws_iam_policy.scanning[0].arn
+  policy_arn = aws_iam_policy.ecr_scanning[0].arn
 }

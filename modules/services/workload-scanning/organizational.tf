@@ -41,7 +41,7 @@ resource "aws_cloudformation_stack_set" "scanning_role_stackset" {
 
   template_body = <<TEMPLATE
 Resources:
-  AgentlessWorkloadRole:
+  SysdigAgentlessWorkloadRole:
       Type: AWS::IAM::Role
       Properties:
         RoleName: ${var.name}
