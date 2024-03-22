@@ -24,7 +24,7 @@ resource "aws_iam_policy" "ecr_pull_image" {
 
   name        = var.ecr_role_name
   description = "Allows Sysdig Secure to pull ECR images"
-  policy      = data.aws_iam_policy_document.ecr_pull_image[0].json
+  policy      = data.aws_iam_policy_document.ecr_pull_image.json
   tags        = var.tags
 }
 
@@ -56,7 +56,7 @@ resource "aws_iam_role" "ecr" {
 
   name               = var.ecr_role_name
   tags               = var.tags
-  assume_role_policy = data.aws_iam_policy_document.ecr_assume_role[0].json
+  assume_role_policy = data.aws_iam_policy_document.ecr_assume_role.json
 }
 
 resource "aws_iam_policy_attachment" "ecr" {
