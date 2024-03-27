@@ -9,7 +9,7 @@ variable "trusted_identity" {
   description = "This value should be provided by Sysdig. The field refers to Sysdig's IAM role that will be authorized to pull ECR images"
 }
 
-variable "name" {
+variable "ecr_role_name" {
   description = "The name of the installation. Assigned to most child resource(s)"
   type        = string
   default     = "sysdig-workload-scanning"
