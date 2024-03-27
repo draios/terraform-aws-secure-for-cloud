@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "scanning" {
 resource "aws_iam_policy" "ecr_scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
-  name        = var.name
+  name        = var.ecr_role_name
   description = "Grants Sysdig Secure access to ECR images"
   policy      = data.aws_iam_policy_document.scanning[0].json
   tags        = var.tags
@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "scanning_assume_role_policy" {
 resource "aws_iam_role" "scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
-  name               = var.name
+  name               = var.ecr_role_name
   tags               = var.tags
   assume_role_policy = data.aws_iam_policy_document.scanning_assume_role_policy[0].json
 }
@@ -86,7 +86,7 @@ resource "aws_iam_role" "scanning" {
 resource "aws_iam_policy_attachment" "scanning" {
   count = (var.deploy_global_resources || var.is_organizational) ? 1 : 0
 
-  name       = var.name
+  name       = var.ecr_role_name
   roles      = [aws_iam_role.scanning[0].name]
   policy_arn = aws_iam_policy.ecr_scanning[0].arn
 }

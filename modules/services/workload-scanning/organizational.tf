@@ -25,7 +25,7 @@ locals {
 resource "aws_cloudformation_stack_set" "scanning_role_stackset" {
   count = var.is_organizational ? 1 : 0
 
-  name             = join("-", [var.name, "ScanningRoleOrg"])
+  name             = join("-", [var.ecr_role_name, "ScanningRoleOrg"])
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
@@ -44,7 +44,7 @@ Resources:
   SysdigAgentlessWorkloadRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: ${var.name}
+        RoleName: ${var.ecr_role_name}
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -57,7 +57,7 @@ Resources:
                 StringEquals:
                   sts:ExternalId: "${var.external_id}"
         Policies:
-          - PolicyName: ${var.name}
+          - PolicyName: ${var.ecr_role_name}
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
