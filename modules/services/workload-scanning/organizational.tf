@@ -75,7 +75,7 @@ TEMPLATE
 }
 
 # stackset instance to deploy agentless scanning role, in all organization units
-resource "aws_cloudformation_stack_set_registry" "scanning_role_stackset_registry" {
+resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instance" {
   count = var.is_organizational ? 1 : 0
 
   stack_set_name = aws_cloudformation_stack_set.scanning_role_stackset[0].name
