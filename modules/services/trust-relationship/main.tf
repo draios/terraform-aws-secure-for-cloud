@@ -162,7 +162,6 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
     organizational_unit_ids = local.org_units_to_deploy
   }
   operation_preferences {
-    failure_tolerance_count = 10
-    max_concurrent_count    = 10
+    max_concurrent_count = 10
   }
 }

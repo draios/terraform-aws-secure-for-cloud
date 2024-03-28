@@ -134,8 +134,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
     organizational_unit_ids = local.organizational_unit_ids
   }
   operation_preferences {
-    failure_tolerance_count = 10
-    max_concurrent_count    = 10
+    max_concurrent_count = 10
   }
 }
 
@@ -206,7 +205,6 @@ resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
 
   stack_set_name = aws_cloudformation_stack_set.mgmt_acc_resources_stackset[0].name
   operation_preferences {
-    failure_tolerance_count = 10
     max_concurrent_count    = 10
     region_concurrency_type = "PARALLEL"
   }
@@ -286,7 +284,6 @@ resource "aws_cloudformation_stack_set_instance" "ou_stackset_instance" {
     organizational_unit_ids = local.organizational_unit_ids
   }
   operation_preferences {
-    failure_tolerance_count = 10
     max_concurrent_count    = 10
     region_concurrency_type = "PARALLEL"
   }
