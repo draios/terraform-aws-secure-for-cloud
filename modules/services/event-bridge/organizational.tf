@@ -8,14 +8,9 @@ data "aws_organizations_organization" "org" {
   count = var.is_organizational ? 1 : 0
 }
 
-data "aws_caller_identity" "current" {
-  count = var.is_organizational ? 1 : 0
-}
-
 locals {
-  organizational_unit_ids   = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
-  region_set                = toset(var.regions)
-  eb_rule_stackset_role_arn = var.is_organizational ? "arn:aws:iam::${data.aws_caller_identity.current[0].account_id}:role/${var.name}" : ""
+  organizational_unit_ids = var.is_organizational && length(var.org_units) == 0 ? [for root in data.aws_organizations_organization.org[0].roots : root.id] : toset(var.org_units)
+  region_set              = toset(var.regions)
 }
 
 # stackset to deploy eventbridge rule in organization unit
@@ -41,7 +36,6 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
     event_pattern        = var.event_pattern
     rule_state           = var.rule_state
     target_event_bus_arn = var.target_event_bus_arn
-    role_arn             = local.eb_rule_stackset_role_arn
   })
 }
 
@@ -60,7 +54,6 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
     event_pattern        = var.event_pattern
     rule_state           = var.rule_state
     target_event_bus_arn = var.target_event_bus_arn
-    role_arn             = aws_iam_role.event_bus_invoke_remote_event_bus[0].arn
   })
 }
 
