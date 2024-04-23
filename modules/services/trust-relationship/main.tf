@@ -89,6 +89,20 @@ data "aws_iam_policy_document" "custom_resources_policy" {
       "*",
     ]
   }
+
+  statement {
+    sid ="GetRuntimeManagementConfig"
+
+    effect = "Allow"
+
+    actions = [
+      "lambda:GetRuntimeManagementConfig",
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
 }
 
 #----------------------------------------------------------
