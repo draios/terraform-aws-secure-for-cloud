@@ -250,7 +250,6 @@ data "aws_iam_policy_document" "key_policy" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${var.scanning_account_id}:root",
-        var.trusted_identity,
         (var.deploy_global_resources) ? aws_iam_role.scanning[0].arn : var.role_arn,
       ]
     }
