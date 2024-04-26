@@ -103,6 +103,10 @@ resource "aws_cloudformation_stack_set" "stackset" {
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
 
+  managed_execution {
+    active = true
+  }
+
   auto_deployment {
     enabled                          = true
     retain_stacks_on_account_removal = false

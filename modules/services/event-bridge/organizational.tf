@@ -22,6 +22,10 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
 
+  managed_execution {
+    active = true
+  }
+
   auto_deployment {
     enabled                          = true
     retain_stacks_on_account_removal = false
@@ -49,6 +53,10 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = var.stackset_admin_role_arn
 
+  managed_execution {
+    active = true
+  }
+
   template_body = templatefile("${path.module}/stackset_template_body.tpl", {
     name                 = var.name
     event_pattern        = var.event_pattern
@@ -65,6 +73,10 @@ resource "aws_cloudformation_stack_set" "eb-role-stackset" {
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
+
+  managed_execution {
+    active = true
+  }
 
   auto_deployment {
     enabled                          = true
