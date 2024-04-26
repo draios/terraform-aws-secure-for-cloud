@@ -34,6 +34,10 @@ resource "aws_cloudformation_stack_set" "scanning_role_stackset" {
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
 
+  managed_execution {
+    active = true
+  }
+
   auto_deployment {
     enabled                          = true
     retain_stacks_on_account_removal = false
@@ -155,6 +159,10 @@ resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
   capabilities            = ["CAPABILITY_NAMED_IAM"]
   administration_role_arn = var.stackset_admin_role_arn
 
+  managed_execution {
+    active = true
+  }
+
   lifecycle {
     ignore_changes = [administration_role_arn]
   }
@@ -224,6 +232,10 @@ resource "aws_cloudformation_stack_set" "ou_resources_stackset" {
   tags             = var.tags
   permission_model = "SERVICE_MANAGED"
   capabilities     = ["CAPABILITY_NAMED_IAM"]
+
+  managed_execution {
+    active = true
+  }
 
   auto_deployment {
     enabled                          = true
