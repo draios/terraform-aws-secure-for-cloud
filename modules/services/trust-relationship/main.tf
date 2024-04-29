@@ -89,6 +89,20 @@ data "aws_iam_policy_document" "custom_resources_policy" {
       "*",
     ]
   }
+
+  statement {
+    sid = "GetRuntimeManagementConfig"
+
+    effect = "Allow"
+
+    actions = [
+      "lambda:GetRuntimeManagementConfig",
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
 }
 
 #----------------------------------------------------------
@@ -153,6 +167,10 @@ Resources:
               - Sid: "ListJobsOnConsole"
                 Effect: "Allow"
                 Action: "macie2:ListClassificationJobs"
+                Resource: "*"
+              - Sid: "GetRuntimeManagementConfig"
+                Effect: "Allow"
+                Action: "lambda:GetRuntimeManagementConfig"
                 Resource: "*"
 TEMPLATE
 }
