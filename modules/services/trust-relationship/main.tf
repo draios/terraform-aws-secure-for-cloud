@@ -164,6 +164,10 @@ Resources:
                 Effect: "Allow"
                 Action: "macie2:ListClassificationJobs"
                 Resource: "*"
+              - Sid: "GetRuntimeManagementConfig"
+                Effect: "Allow"
+                Action: "lambda:GetRuntimeManagementConfig"
+                Resource: "*"
 TEMPLATE
 }
 
