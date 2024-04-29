@@ -61,6 +61,7 @@ No modules.
 | <a name="input_stackset_admin_role_arn"></a> [stackset\_admin\_role\_arn](#input\_stackset\_admin\_role\_arn) | (Optional) stackset admin role to run SELF\_MANAGED stackset | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
 | <a name="input_trusted_identity"></a> [trusted\_identity](#input\_trusted\_identity) | The name of sysdig trusted identity | `string` | n/a | yes |
+| <a name="input_timeouts"></a> [timeouts](#input\_timeouts) | stackset instance timeout | `map(string)` | <pre>{<br>"create"= "30m"<br>"update"= "30m"<br>"delete"= "30m"<br>}</pre> | no |
 
 ## Outputs
 
