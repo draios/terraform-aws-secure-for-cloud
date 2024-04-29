@@ -44,3 +44,13 @@ variable "tags" {
     "product" = "sysdig-secure-for-cloud"
   }
 }
+
+variable "timeouts" {
+  description = "Default timeout values for create, update, and delete operations"
+  type        = map(string)
+  default = {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
+}

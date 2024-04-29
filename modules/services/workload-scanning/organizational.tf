@@ -85,4 +85,10 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
   operation_preferences {
     max_concurrent_count = 10
   }
+
+  timeouts {
+    create = var.timeouts["create"]
+    update = var.timeouts["update"]
+    delete = var.timeouts["delete"]
+  }
 }

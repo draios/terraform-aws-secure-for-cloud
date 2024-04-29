@@ -124,6 +124,12 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
     max_concurrent_count    = 10
     region_concurrency_type = "PARALLEL"
   }
+
+  timeouts {
+    create = var.timeouts["create"]
+    update = var.timeouts["update"]
+    delete = var.timeouts["delete"]
+  }
 }
 
 // stackset instance to deploy rule in all regions of management account
@@ -135,6 +141,12 @@ resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
   operation_preferences {
     max_concurrent_count    = 10
     region_concurrency_type = "PARALLEL"
+  }
+
+  timeouts {
+    create = var.timeouts["create"]
+    update = var.timeouts["update"]
+    delete = var.timeouts["delete"]
   }
 }
 
@@ -149,5 +161,11 @@ resource "aws_cloudformation_stack_set_instance" "eb_role_stackset_instance" {
   operation_preferences {
     max_concurrent_count    = 10
     region_concurrency_type = "PARALLEL"
+  }
+
+  timeouts {
+    create = var.timeouts["create"]
+    update = var.timeouts["update"]
+    delete = var.timeouts["delete"]
   }
 }
