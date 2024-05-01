@@ -49,7 +49,7 @@ No modules.
 | <a name="input_org_units"></a> [org\_units](#input\_org\_units) | (Optional) List of Organization Unit IDs in which to setup Agentless Workload Scanning. By default, Agentless Workload Scanning will be setup in all accounts within the Organization. This field is ignored if `is_organizational = false` | `set(string)` | `[]`                                                        | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning                                                                                                                                    | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
 | <a name="input_trusted_identity"></a> [trusted\_identity](#input\_trusted\_identity) | The name of sysdig trusted identity                                                                                                                                                                                                         | `string` | n/a                                                         | yes |
-| <a name="input_timeouts"></a> [timeouts](#input\_timeouts) | stackset instance timeout | `map(string)` | <pre>{<br>"create"= "30m"<br>"update"= "30m"<br>"delete"= "30m"<br>}</pre> | no |
+| <a name="input_timeout"></a> [timeout](#input\_timeout) | Stackset instance timeout | `string` | `"30m"` | no |
 
 ## Outputs
 

@@ -166,8 +166,8 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   }
 
   timeouts {
-    create = var.timeouts["create"]
-    update = var.timeouts["update"]
-    delete = var.timeouts["delete"]
+    create = var.timeout
+    update = var.timeout
+    delete = var.timeout
   }
 }

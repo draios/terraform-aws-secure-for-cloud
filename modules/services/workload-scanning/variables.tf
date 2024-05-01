@@ -47,12 +47,8 @@ variable "role_arn" {
   default     = ""
 }
 
-variable "timeouts" {
+variable "timeout" {
+  type        = string
   description = "Default timeout values for create, update, and delete operations"
-  type        = map(string)
-  default = {
-    create = "30m"
-    update = "30m"
-    delete = "30m"
-  }
+  default     = "30m"
 }

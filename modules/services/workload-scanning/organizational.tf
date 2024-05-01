@@ -87,8 +87,8 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
   }
 
   timeouts {
-    create = var.timeouts["create"]
-    update = var.timeouts["update"]
-    delete = var.timeouts["delete"]
+    create = var.timeout
+    update = var.timeout
+    delete = var.timeout
   }
 }
