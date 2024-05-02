@@ -181,7 +181,7 @@ Resources:
             - Sid: "SysdigAllowKms"
               Effect: "Allow"
               Principal:
-                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
               Action:
                 - "kms:Encrypt"
                 - "kms:Decrypt"
@@ -260,7 +260,7 @@ Resources:
             - Sid: "SysdigAllowKms"
               Effect: "Allow"
               Principal:
-                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", "${var.trusted_identity}", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
+                AWS: ["arn:aws:iam::${var.scanning_account_id}:root", !Sub "arn:aws:iam::$${AWS::AccountId}:role/${var.name}"]
               Action:
                 - "kms:Encrypt"
                 - "kms:Decrypt"
