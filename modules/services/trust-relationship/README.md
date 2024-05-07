@@ -49,6 +49,7 @@ No modules.
 | <a name="input_region"></a> [region](#input\_region) | Default region for resource creation in organization mode | `string` | `"eu-central-1"` | no |
 | <a name="input_role_name"></a> [role\_name](#input\_role\_name) | The name of the IAM Role that will be created. | `string` | `"sysdig-secure"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
+| <a name="input_timeout"></a> [timeout](#input\_timeout) | Stackset instance timeout | `string` | `"30m"` | no |
 
 ## Outputs
 

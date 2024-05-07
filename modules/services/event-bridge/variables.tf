@@ -92,3 +92,9 @@ variable "event_pattern" {
 }
 EOF
 }
+
+variable "timeout" {
+  type        = string
+  description = "Default timeout values for create, update, and delete operations"
+  default     = "30m"
+}
