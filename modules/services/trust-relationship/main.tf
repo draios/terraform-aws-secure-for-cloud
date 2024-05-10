@@ -103,6 +103,20 @@ data "aws_iam_policy_document" "custom_resources_policy" {
       "*"
     ]
   }
+
+  statement {
+    sid = "GetFunction"
+
+    effect = "Allow"
+
+    actions = [
+      "lambda:GetFunction",
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
 }
 
 #----------------------------------------------------------
