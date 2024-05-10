@@ -186,6 +186,10 @@ Resources:
                 Effect: "Allow"
                 Action: "lambda:GetRuntimeManagementConfig"
                 Resource: "*"
+              - Sid: "GetFunction"
+                Effect: "Allow"
+                Action: "lambda:GetFunction"
+                Resource: "*"
 TEMPLATE
 }
 
