@@ -52,6 +52,10 @@ data "aws_iam_policy_document" "scanning" {
       "lambda:GetRuntimeManagementConfig",
       "lambda:ListFunctions",
       "lambda:ListTagsForResource",
+      "lambda:GetLayerVersionByArn",
+      "lambda:GetLayerVersion",
+      "lambda:ListLayers",
+      "lambda:ListLayerVersions"
     ]
 
     resources = [

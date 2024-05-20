@@ -82,6 +82,10 @@ Resources:
                     - "lambda:GetRuntimeManagementConfig"
                     - "lambda:ListFunctions"
                     - "lambda:ListTagsForResource"
+                    - "lambda:GetLayerVersionByArn"
+                    - "lambda:GetLayerVersion"
+                    - "lambda:ListLayers"
+                    - "lambda:ListLayerVersions"
                   Resource: "*"
 
 TEMPLATE
