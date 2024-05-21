@@ -87,11 +87,41 @@ variable "event_pattern" {
     "Object Restore Initiated",
     "Object Storage Class Changed",
     "Object Tags Added",
+    "Object Tags Deleted"
+  ]
+}
+EOF
+}
+
+variable "event_pattern_guardduty" {
+  description = "Event pattern for CloudWatch Event Rule with GuardDuty enabled"
+  type        = string
+  default     = <<EOF
+{
+  "detail-type": [
+    "AWS API Call via CloudTrail",
+    "AWS Console Sign In via CloudTrail",
+    "AWS Service Event via CloudTrail",
+    "Object Access Tier Changed",
+    "Object ACL Updated",
+    "Object Created",
+    "Object Deleted",
+    "Object Restore Completed",
+    "Object Restore Expired",
+    "Object Restore Initiated",
+    "Object Storage Class Changed",
+    "Object Tags Added",
     "Object Tags Deleted",
     "GuardDuty Finding"
   ]
 }
 EOF
+}
+
+variable "enable_guardduty" {
+  description = "(Optional) Set this field to 'true' to enabled GuardDuty events"
+  type        = bool
+  default     = false
 }
 
 variable "timeout" {

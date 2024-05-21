@@ -34,7 +34,7 @@ resource "aws_cloudwatch_event_rule" "sysdig" {
   tags        = var.tags
   state       = var.rule_state
 
-  event_pattern = var.event_pattern
+  event_pattern = var.enable_guardduty ? var.event_pattern_guardduty : var.event_pattern
 }
 # Target to forward all CloudTrail events to Sysdig's EventBridge Bus.
 # See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target#cross-account-event-bus-target

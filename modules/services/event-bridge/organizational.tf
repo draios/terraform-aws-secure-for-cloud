@@ -37,7 +37,7 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
 
   template_body = templatefile("${path.module}/stackset_template_body.tpl", {
     name                 = var.name
-    event_pattern        = var.event_pattern
+    event_pattern        = var.enable_guardduty ? var.event_pattern_guardduty : var.event_pattern
     rule_state           = var.rule_state
     target_event_bus_arn = var.target_event_bus_arn
   })
@@ -59,7 +59,7 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
 
   template_body = templatefile("${path.module}/stackset_template_body.tpl", {
     name                 = var.name
-    event_pattern        = var.event_pattern
+    event_pattern        = var.enable_guardduty ? var.event_pattern_guardduty : var.event_pattern
     rule_state           = var.rule_state
     target_event_bus_arn = var.target_event_bus_arn
   })
