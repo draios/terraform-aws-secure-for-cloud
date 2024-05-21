@@ -39,6 +39,7 @@ jobs:
           - "secure_threat_detection_cloud_logs/single/main.tf"
           - "secure_threat_detection_event_bridge/single/main.tf"
           - "secure_config_posture/single/main.tf"
+          - "secure_config_posture/single_guardduty/main.tf"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
