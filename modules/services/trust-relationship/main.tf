@@ -104,6 +104,20 @@ data "aws_iam_policy_document" "custom_resources_policy" {
       "*"
     ]
   }
+
+  statement {
+    sid = "AccessAccountContactInfo"
+
+    effect = "Allow"
+
+    actions = [
+      "account:GetContactInformation",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 #----------------------------------------------------------
@@ -174,6 +188,11 @@ Resources:
                 Action:
                   - "lambda:GetRuntimeManagementConfig"
                   - "lambda:GetFunction"
+                Resource: "*"
+              - Sid: "AccessAccountContactInfo"
+                Effect: "Allow"
+                Action:
+                  - "account:GetContactInformation"
                 Resource: "*"
 TEMPLATE
 }
