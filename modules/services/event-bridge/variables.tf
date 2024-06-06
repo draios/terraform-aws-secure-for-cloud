@@ -88,6 +88,7 @@ variable "event_pattern" {
     "Object Storage Class Changed",
     "Object Tags Added",
     "Object Tags Deleted"
+    "GuardDuty Finding"
   ]
 }
 EOF
