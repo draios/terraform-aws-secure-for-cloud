@@ -87,7 +87,7 @@ variable "event_pattern" {
     "Object Restore Initiated",
     "Object Storage Class Changed",
     "Object Tags Added",
-    "Object Tags Deleted"
+    "Object Tags Deleted",
     "GuardDuty Finding"
   ]
 }
