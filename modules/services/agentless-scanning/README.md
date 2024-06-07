@@ -62,6 +62,7 @@ No modules.
 | <a name="input_tags"></a> [tags](#input\_tags) | sysdig secure-for-cloud tags. always include 'product' default tag for resource-group proper functioning | `map(string)` | <pre>{<br>  "product": "sysdig-secure-for-cloud"<br>}</pre> | no |
 | <a name="input_trusted_identity"></a> [trusted\_identity](#input\_trusted\_identity) | The name of sysdig trusted identity | `string` | n/a | yes |
 | <a name="input_timeout"></a> [timeout](#input\_timeout) | Stackset instance timeout | `string` | `"30m"` | no |
+| <a name="mgt_stackset"></a> [mgt_stackset](#mgt\_stackset) | Whether to create the resources on the management account using a stackset | `bool` | `true` | no |
 
 ## Outputs
 

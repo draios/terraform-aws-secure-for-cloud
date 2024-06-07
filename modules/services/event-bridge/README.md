@@ -59,6 +59,7 @@ No modules.
 | <a name="input_stackset_admin_role_arn"></a> [stackset\_admin\_role\_arn](#input\_stackset\_admin\_role\_arn) | (Optional) stackset admin role to run SELF\_MANAGED stackset | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Tags to be attached to all Sysdig resources. | `map(string)` | <pre>{<br>  "product": "sysdig"<br>}</pre> | no |
 | <a name="input_timeout"></a> [timeout](#input\_timeout) | Stackset instance timeout | `string` | `"30m"` | no |
+| <a name="mgt_stackset"></a> [mgt_stackset](#mgt\_stackset) | Whether to create the resources on the management account using a stackset | `bool` | `true` | no |
 
 ## Outputs
 
