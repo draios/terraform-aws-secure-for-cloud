@@ -214,7 +214,7 @@ TEMPLATE
 
 # stackset instance to deploy resources for agentless scanning, in all regions of the management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
-  for_each = var.mgt_stackset ? local.region_set : toset([]) 
+  for_each = var.mgt_stackset ? local.region_set : toset([])
   region   = each.key
 
   stack_set_name = aws_cloudformation_stack_set.mgmt_acc_resources_stackset[0].name
