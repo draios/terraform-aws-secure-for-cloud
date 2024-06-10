@@ -74,3 +74,9 @@ variable "timeout" {
   description = "Default timeout values for create, update, and delete operations"
   default     = "30m"
 }
+
+variable "mgt_stackset" {
+  description = "(Optional) Indicates if the management stackset should be deployed"
+  type        = bool
+  default     = true
+}
