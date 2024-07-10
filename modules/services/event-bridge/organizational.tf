@@ -57,6 +57,10 @@ resource "aws_cloudformation_stack_set" "mgmt-stackset" {
     active = true
   }
 
+  lifecycle {
+    ignore_changes = [administration_role_arn]
+  }
+
   template_body = templatefile("${path.module}/stackset_template_body.tpl", {
     name                 = var.name
     event_pattern        = var.event_pattern
