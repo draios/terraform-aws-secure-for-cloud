@@ -87,7 +87,10 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
     organizational_unit_ids = local.organizational_unit_ids
   }
   operation_preferences {
-    max_concurrent_count = 10
+    #    max_concurrent_count    = 10
+    max_concurrent_percentage    = 100
+    failure_tolerance_percentage = 100
+    // Roles are not regional and hence do not need regional parallelism
   }
 
   timeouts {
