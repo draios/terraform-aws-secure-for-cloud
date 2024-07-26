@@ -141,7 +141,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
     max_concurrent_percentage    = 100
     failure_tolerance_percentage = var.failure_tolerance_percentage
     concurrency_mode             = "SOFT_FAILURE_TOLERANCE"
-    // Roles are not regional and hence do not need regional parallelism
+    # Roles are not regional and hence do not need regional parallelism
   }
 
   timeouts {
