@@ -137,8 +137,10 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
     organizational_unit_ids = local.organizational_unit_ids
   }
   operation_preferences {
-    max_concurrent_count    = 10
-    region_concurrency_type = "PARALLEL"
+    max_concurrent_percentage    = 100
+    failure_tolerance_percentage = var.failure_tolerance_percentage
+    concurrency_mode             = "SOFT_FAILURE_TOLERANCE"
+    region_concurrency_type      = "PARALLEL"
   }
 
   timeouts {
@@ -155,8 +157,10 @@ resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
   stack_set_name = aws_cloudformation_stack_set.mgmt-stackset[0].name
 
   operation_preferences {
-    max_concurrent_count    = 10
-    region_concurrency_type = "PARALLEL"
+    max_concurrent_percentage    = 100
+    failure_tolerance_percentage = var.failure_tolerance_percentage
+    concurrency_mode             = "SOFT_FAILURE_TOLERANCE"
+    region_concurrency_type      = "PARALLEL"
   }
 
   timeouts {
@@ -175,8 +179,10 @@ resource "aws_cloudformation_stack_set_instance" "eb_role_stackset_instance" {
     organizational_unit_ids = local.organizational_unit_ids
   }
   operation_preferences {
-    max_concurrent_count    = 10
-    region_concurrency_type = "PARALLEL"
+    max_concurrent_percentage    = 100
+    failure_tolerance_percentage = var.failure_tolerance_percentage
+    concurrency_mode             = "SOFT_FAILURE_TOLERANCE"
+    # Roles are not regional and hence do not need regional parallelism
   }
 
   timeouts {
