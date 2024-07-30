@@ -14,6 +14,7 @@ locals {
 # If this is not an Organizational deploy, create role/polices directly
 #----------------------------------------------------------
 resource "aws_iam_role" "cspm_role" {
+  count               = var.delegated ? 0 : 1
   name                = var.role_name
   tags                = var.tags
   assume_role_policy  = <<EOF
@@ -145,6 +146,8 @@ resource "aws_cloudformation_stack_set" "stackset" {
     ignore_changes = [administration_role_arn]
   }
 
+  call_as = var.delegated ? "DELEGATED_ADMIN" : "SELF"
+
   template_body = <<TEMPLATE
 Resources:
   SysdigCSPMRole:
@@ -208,6 +211,8 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
   operation_preferences {
     max_concurrent_count = 10
   }
+
+  call_as = var.delegated ? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout

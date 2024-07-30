@@ -56,7 +56,7 @@ resource "aws_cloudwatch_event_target" "sysdig" {
 # Role that will be used by EventBridge when sending events to Sysdig's EventBridge Bus. The EventBridge service is
 # given permission to assume this role.
 resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
-  count = (var.is_organizational && var.mgt_stackset || var.deploy_global_resources) ? 1 : 0
+  count = (var.is_organizational && var.mgt_stackset && !var.delegated || var.deploy_global_resources) ? 1 : 0
 
   name = var.name
   tags = var.tags

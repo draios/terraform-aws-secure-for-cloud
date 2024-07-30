@@ -80,3 +80,9 @@ variable "mgt_stackset" {
   type        = bool
   default     = true
 }
+
+variable "delegated" {
+  description = "Whether a delegated admin account will be used"
+  type        = bool
+  default     = false
+}

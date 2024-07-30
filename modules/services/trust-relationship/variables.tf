@@ -50,3 +50,9 @@ variable "timeout" {
   description = "Default timeout values for create, update, and delete operations"
   default     = "30m"
 }
+
+variable "delegated" {
+  description = "Whether a delegated admin account will be used"
+  type        = bool
+  default     = false
+}
