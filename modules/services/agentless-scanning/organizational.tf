@@ -47,7 +47,7 @@ resource "aws_cloudformation_stack_set" "scanning_role_stackset" {
     ignore_changes = [administration_role_arn]
   }
 
-  call_as = var.delegated ? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
 
   template_body = <<TEMPLATE
 Resources:
@@ -143,7 +143,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
     max_concurrent_count = 10
   }
 
-  call_as = var.delegated ? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout
@@ -160,7 +160,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
 
 # stackset to deploy resources for agentless scanning in management account
 resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
-  count      = var.is_organizational && var.mgt_stackset && !var.delegated ? 1 : 0
+  count      = var.is_organizational && var.mgt_stackset && !var.delegated_admin? 1 : 0
   depends_on = [aws_iam_role.scanning]
 
   name                    = join("-", [var.name, "ScanningKmsMgmtAcc"])
@@ -218,7 +218,7 @@ TEMPLATE
 
 # stackset instance to deploy resources for agentless scanning, in all regions of the management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
-  for_each = var.mgt_stackset && !var.delegated ? local.region_set : toset([])
+  for_each = var.mgt_stackset && !var.delegated_admin? local.region_set : toset([])
   region   = each.key
 
   stack_set_name = aws_cloudformation_stack_set.mgmt_acc_resources_stackset[0].name
@@ -262,7 +262,7 @@ resource "aws_cloudformation_stack_set" "ou_resources_stackset" {
     ignore_changes = [administration_role_arn]
   }
 
-  call_as = var.delegated ? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
 
   template_body = <<TEMPLATE
 Resources:
@@ -319,7 +319,7 @@ resource "aws_cloudformation_stack_set_instance" "ou_stackset_instance" {
     region_concurrency_type = "PARALLEL"
   }
 
-  call_as = var.delegated ? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout

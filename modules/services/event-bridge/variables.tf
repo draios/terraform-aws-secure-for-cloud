@@ -106,7 +106,7 @@ variable "mgt_stackset" {
   default     = true
 }
 
-variable "delegated" {
+variable "delegated_admin" {
   description = "Whether a delegated admin account will be used"
   type        = bool
   default     = false

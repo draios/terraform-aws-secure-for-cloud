@@ -51,7 +51,7 @@ variable "timeout" {
   default     = "30m"
 }
 
-variable "delegated" {
+variable "delegated_admin" {
   description = "Whether a delegated admin account will be used"
   type        = bool
   default     = false

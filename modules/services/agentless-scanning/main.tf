@@ -20,7 +20,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 data "aws_iam_policy_document" "scanning" {
-  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated) ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated_admin) ? 1 : 0
 
   # General read permission, necessary for the discovery phase.
   statement {
@@ -184,7 +184,7 @@ data "aws_iam_policy_document" "scanning" {
 }
 
 resource "aws_iam_policy" "scanning" {
-  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated) ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated_admin) ? 1 : 0
 
   name        = var.name
   description = "Grants Sysdig Secure access to volumes and snapshots"
@@ -193,7 +193,7 @@ resource "aws_iam_policy" "scanning" {
 }
 
 data "aws_iam_policy_document" "scanning_assume_role_policy" {
-  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated) ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated_admin) ? 1 : 0
 
   statement {
     sid = "SysdigSecureScanning"
@@ -218,7 +218,7 @@ data "aws_iam_policy_document" "scanning_assume_role_policy" {
 }
 
 resource "aws_iam_role" "scanning" {
-  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated) ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated_admin) ? 1 : 0
 
   name               = var.name
   tags               = var.tags
@@ -226,7 +226,7 @@ resource "aws_iam_role" "scanning" {
 }
 
 resource "aws_iam_policy_attachment" "scanning" {
-  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated) ? 1 : 0
+  count = (var.deploy_global_resources || var.is_organizational && var.mgt_stackset && !var.delegated_admin) ? 1 : 0
 
   name       = var.name
   roles      = [aws_iam_role.scanning[0].name]
