@@ -67,8 +67,8 @@ resource "aws_cloudwatch_event_target" "sysdig" {
 # given permission to assume this role.
 resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
   count = ((var.is_organizational && local.deploy_stackset) || var.deploy_global_resources) ? 1 : 0
-  name = var.name
-  tags = var.tags
+  name  = var.name
+  tags  = var.tags
 
   assume_role_policy = <<EOF
 {

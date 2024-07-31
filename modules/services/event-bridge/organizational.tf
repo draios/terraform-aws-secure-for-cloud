@@ -35,7 +35,7 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
     ignore_changes = [administration_role_arn]
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   template_body = templatefile("${path.module}/stackset_template_body.tpl", {
     name                 = var.name
@@ -93,7 +93,7 @@ resource "aws_cloudformation_stack_set" "eb-role-stackset" {
     ignore_changes = [administration_role_arn]
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   template_body = <<TEMPLATE
 Resources:
@@ -147,7 +147,7 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
     region_concurrency_type      = "PARALLEL"
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout
@@ -191,7 +191,7 @@ resource "aws_cloudformation_stack_set_instance" "eb_role_stackset_instance" {
     # Roles are not regional and hence do not need regional parallelism
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout

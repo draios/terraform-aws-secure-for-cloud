@@ -47,7 +47,7 @@ resource "aws_cloudformation_stack_set" "scanning_role_stackset" {
     ignore_changes = [administration_role_arn]
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   template_body = <<TEMPLATE
 Resources:
@@ -146,7 +146,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
     # Roles are not regional and hence do not need regional parallelism
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout
@@ -267,7 +267,7 @@ resource "aws_cloudformation_stack_set" "ou_resources_stackset" {
     ignore_changes = [administration_role_arn]
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   template_body = <<TEMPLATE
 Resources:
@@ -326,7 +326,7 @@ resource "aws_cloudformation_stack_set_instance" "ou_stackset_instance" {
     region_concurrency_type      = "PARALLEL"
   }
 
-  call_as = var.delegated_admin? "DELEGATED_ADMIN" : "SELF"
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout
