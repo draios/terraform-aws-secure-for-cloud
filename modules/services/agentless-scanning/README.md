@@ -63,7 +63,7 @@ No modules.
 | <a name="input_trusted_identity"></a> [trusted\_identity](#input\_trusted\_identity) | The name of sysdig trusted identity | `string` | n/a | yes |
 | <a name="input_timeout"></a> [timeout](#input\_timeout) | Stackset instance timeout | `string` | `"30m"` | no |
 | <a name="mgt_stackset"></a> [mgt_stackset](#mgt\_stackset) | Whether to create the resources on the management account using a stackset | `bool` | `true` | no |
-| <a name="delegated"></a> [delegated_admin](#input\_delegated\_admin) | Whether to create the resources using an delegated admin account | `bool` | `false` | no |
+| <a name="delegated_admin"></a> [delegated_admin](#input\_delegated\_admin) | Whether to create the resources using an delegated admin account | `bool` | `false` | no |
 
 ## Outputs
 
