@@ -160,7 +160,7 @@ resource "aws_cloudformation_stack_set_instance" "scanning_role_stackset_instanc
 
 # stackset to deploy resources for agentless scanning in management account
 resource "aws_cloudformation_stack_set" "mgmt_acc_resources_stackset" {
-  count      = var.is_organizational && var.mgt_stackset && !var.delegated_admin? 1 : 0
+  count      = var.is_organizational && local.deploy_stackset ? 1 : 0
   depends_on = [aws_iam_role.scanning]
 
   name                    = join("-", [var.name, "ScanningKmsMgmtAcc"])
@@ -218,7 +218,7 @@ TEMPLATE
 
 # stackset instance to deploy resources for agentless scanning, in all regions of the management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
-  for_each = var.mgt_stackset && !var.delegated_admin? local.region_set : toset([])
+  for_each = local.deploy_stackset ? local.region_set : toset([])
   region   = each.key
 
   stack_set_name = aws_cloudformation_stack_set.mgmt_acc_resources_stackset[0].name

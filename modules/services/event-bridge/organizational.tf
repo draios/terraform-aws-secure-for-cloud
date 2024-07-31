@@ -47,7 +47,7 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
 
 # stackset to deploy eventbridge rule in management account
 resource "aws_cloudformation_stack_set" "mgmt-stackset" {
-  count = var.is_organizational && var.mgt_stackset && !var.delegated_admin? 1 : 0
+  count = var.is_organizational && local.deploy_stackset ? 1 : 0
 
   name                    = join("-", [var.name, "EBRuleMgmtAcc"])
   tags                    = var.tags
@@ -156,7 +156,7 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
 
 // stackset instance to deploy rule in all regions of management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
-  for_each       = var.mgt_stackset && !var.delegated_admin? local.region_set : toset([])
+  for_each       = local.deploy_stackset ? local.region_set : toset([])
   region         = each.key
   stack_set_name = aws_cloudformation_stack_set.mgmt-stackset[0].name
 

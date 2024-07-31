@@ -12,6 +12,16 @@
 locals {
   is_role_empty = length(var.role_arn) == 0
 }
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Dertermine whether to deploy self-managed stacksets in the management account.
+# This might be disabled if using a delegated admin account or to avoid creating a stackset admin and execution role
+# in the management account.
+#-----------------------------------------------------------------------------------------------------------------------
+locals {
+  deploy_stackset = var.mgt_stackset && !var.delegated_admin
+}
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Determine if this is an Organizational install, or a single account install. For Single Account installs, resources
 # are created directly using the AWS Terraform Provider (This is the default behaviour). For Organizational installs,
@@ -56,8 +66,7 @@ resource "aws_cloudwatch_event_target" "sysdig" {
 # Role that will be used by EventBridge when sending events to Sysdig's EventBridge Bus. The EventBridge service is
 # given permission to assume this role.
 resource "aws_iam_role" "event_bus_invoke_remote_event_bus" {
-  count = (var.is_organizational && var.mgt_stackset && !var.delegated_admin|| var.deploy_global_resources) ? 1 : 0
-
+  count = ((var.is_organizational && local.deploy_stackset) || var.deploy_global_resources) ? 1 : 0
   name = var.name
   tags = var.tags
 
