@@ -81,6 +81,13 @@ variable "mgt_stackset" {
   default     = true
 }
 
+variable "failure_tolerance_percentage" {
+  type        = number
+  description = "The percentage of accounts, per Region, for which stack operations can fail before AWS CloudFormation stops the operation in that Region"
+  default     = 90
+}
+
+
 variable "delegated_admin" {
   description = "Whether a delegated admin account will be used"
   type        = bool
