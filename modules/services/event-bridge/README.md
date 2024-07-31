@@ -64,6 +64,7 @@ No modules.
 | <a name="input_stackset_admin_role_arn"></a> [stackset\_admin\_role\_arn](#input\_stackset\_admin\_role\_arn) | (Optional) stackset admin role to run SELF\_MANAGED stackset | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Tags to be attached to all Sysdig resources. | `map(string)` | <pre>{<br>  "product": "sysdig"<br>}</pre> | no |
 | <a name="input_timeout"></a> [timeout](#input\_timeout) | Default timeout values for create, update, and delete operations | `string` | `"30m"` | no |
+| <a name="delegated_admin"></a> [delegated_admin](#input\_delegated\_admin) | Whether to create the resources using an delegated admin account | `bool` | `false` | no |
 
 ## Outputs
 

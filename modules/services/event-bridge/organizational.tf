@@ -35,6 +35,8 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
     ignore_changes = [administration_role_arn]
   }
 
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
+
   template_body = templatefile("${path.module}/stackset_template_body.tpl", {
     name                 = var.name
     event_pattern        = var.event_pattern
@@ -45,7 +47,7 @@ resource "aws_cloudformation_stack_set" "eb-rule-stackset" {
 
 # stackset to deploy eventbridge rule in management account
 resource "aws_cloudformation_stack_set" "mgmt-stackset" {
-  count = var.is_organizational && var.mgt_stackset ? 1 : 0
+  count = var.is_organizational && local.deploy_stackset ? 1 : 0
 
   name                    = join("-", [var.name, "EBRuleMgmtAcc"])
   tags                    = var.tags
@@ -90,6 +92,8 @@ resource "aws_cloudformation_stack_set" "eb-role-stackset" {
   lifecycle {
     ignore_changes = [administration_role_arn]
   }
+
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   template_body = <<TEMPLATE
 Resources:
@@ -143,6 +147,8 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
     region_concurrency_type      = "PARALLEL"
   }
 
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
+
   timeouts {
     create = var.timeout
     update = var.timeout
@@ -152,7 +158,7 @@ resource "aws_cloudformation_stack_set_instance" "stackset_instance" {
 
 // stackset instance to deploy rule in all regions of management account
 resource "aws_cloudformation_stack_set_instance" "mgmt_acc_stackset_instance" {
-  for_each       = var.mgt_stackset ? local.region_set : toset([])
+  for_each       = local.deploy_stackset ? local.region_set : toset([])
   region         = each.key
   stack_set_name = aws_cloudformation_stack_set.mgmt-stackset[0].name
 
@@ -184,6 +190,8 @@ resource "aws_cloudformation_stack_set_instance" "eb_role_stackset_instance" {
     concurrency_mode             = "SOFT_FAILURE_TOLERANCE"
     # Roles are not regional and hence do not need regional parallelism
   }
+
+  call_as = var.delegated_admin ? "DELEGATED_ADMIN" : "SELF"
 
   timeouts {
     create = var.timeout
