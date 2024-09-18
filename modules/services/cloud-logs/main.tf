@@ -74,4 +74,19 @@ data "aws_iam_policy_document" "cloudlogs_s3_access" {
       "${var.bucket_arn}/*"
     ]
   }
+
+  statement {
+    sid = "CloudlogsS3AccessHead"
+
+    effect = "Allow"
+
+    actions = [
+      "s3:GetBucketLocation"
+    ]
+
+    resources = [
+      var.bucket_arn,
+      "${var.bucket_arn}/*"
+    ]
+  }
 }
