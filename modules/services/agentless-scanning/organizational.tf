@@ -277,6 +277,7 @@ Resources:
         Description: "Sysdig Agentless Scanning encryption key"
         PendingWindowInDays: ${var.kms_key_deletion_window}
         KeyUsage: "ENCRYPT_DECRYPT"
+        EnableKeyRotation: true   # Enables automatic yearly rotation
         KeyPolicy:
           Id: ${var.name}
           Statement:
