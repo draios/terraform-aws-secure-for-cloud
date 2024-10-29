@@ -303,8 +303,8 @@ resource "aws_kms_key" "scanning" {
 
 # Enable key rotation for the KMS key
 resource "aws_kms_key_rotation" "scanning_rotation" {
-  count = var.is_organizational ? 0 : 1
-  key_id = aws_kms_key.scanning[0].id  # Reference to the KMS key
+  count  = var.is_organizational ? 0 : 1
+  key_id = aws_kms_key.scanning[0].id # Reference to the KMS key
 }
 
 # KMS alias resource only if singleton account
