@@ -295,16 +295,11 @@ resource "aws_kms_key" "scanning" {
   count = var.is_organizational ? 0 : 1
 
   description             = "Sysdig Agentless Scanning encryption key"
+  enable_key_rotation     = true
   deletion_window_in_days = var.kms_key_deletion_window
   key_usage               = "ENCRYPT_DECRYPT"
   policy                  = data.aws_iam_policy_document.key_policy[0].json
   tags                    = var.tags
-}
-
-# Enable key rotation for the KMS key
-resource "aws_kms_key_rotation" "scanning_rotation" {
-  count  = var.is_organizational ? 0 : 1
-  key_id = aws_kms_key.scanning[0].id # Reference to the KMS key
 }
 
 # KMS alias resource only if singleton account
