@@ -119,6 +119,45 @@ data "aws_iam_policy_document" "custom_resources_policy" {
       "*",
     ]
   }
+  statement {
+    sid = "bedrockListAgents"
+
+    effect = "Allow"
+
+    actions = [
+      "bedrock:ListAgents",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+  statement {
+    sid = "bedrockListCustomModels"
+
+    effect = "Allow"
+
+    actions = [
+      "bedrock:ListCustomModels",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+  statement {
+    sid = "bedrockListKnowledgeBases"
+
+    effect = "Allow"
+
+    actions = [
+      "bedrock:ListKnowledgeBases",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
 }
 
 #----------------------------------------------------------
@@ -196,6 +235,21 @@ Resources:
                 Effect: "Allow"
                 Action:
                   - "account:GetContactInformation"
+                Resource: "*"
+              - Sid: "bedrockListAgents"
+                Effect: "Allow"
+                Action:
+                  - "bedrock:ListAgents"
+                Resource: "*"
+              - Sid: "bedrockListCustomModels"
+                Effect: "Allow"
+                Action:
+                  - "bedrock:ListCustomModels"
+                Resource: "*"
+              - Sid: "bedrockListKnowledgeBases"
+                Effect: "Allow"
+                Action:
+                  - "bedrock:ListKnowledgeBases"
                 Resource: "*"
 TEMPLATE
 }
