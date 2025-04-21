@@ -133,19 +133,6 @@ data "aws_iam_policy_document" "custom_resources_policy" {
     ]
   }
   statement {
-    sid = "bedrockListCustomModels"
-
-    effect = "Allow"
-
-    actions = [
-      "bedrock:ListCustomModels",
-    ]
-
-    resources = [
-      "*",
-    ]
-  }
-  statement {
     sid = "bedrockListKnowledgeBases"
 
     effect = "Allow"
@@ -240,11 +227,6 @@ Resources:
                 Effect: "Allow"
                 Action:
                   - "bedrock:ListAgents"
-                Resource: "*"
-              - Sid: "bedrockListCustomModels"
-                Effect: "Allow"
-                Action:
-                  - "bedrock:ListCustomModels"
                 Resource: "*"
               - Sid: "bedrockListKnowledgeBases"
                 Effect: "Allow"
